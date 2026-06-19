@@ -2,7 +2,7 @@ import { useState } from 'react'
 import {
   Button, Field, FieldLabel, Input, Select, Textarea, Alert, Checkbox,
 } from '@qijenchen/design-system'
-import { ArrowLeft, Plus } from 'lucide-react'
+import { Plus, Info, ArrowUpFromLine } from 'lucide-react'
 import { AppLayout } from './AppLayout'
 import { AddInvoiceDialog } from './AddInvoiceDialog'
 import { AddPaymentItemDialog } from './AddPaymentItemDialog'
@@ -17,6 +17,10 @@ const PAYEE_OPTIONS = [
   { value: 'vendor', label: '廠商' },
 ]
 
+const COMPANY_OPTIONS = [
+  { value: 'TA01', label: 'TA01' },
+]
+
 interface InvoiceRow {
   id: string
   type: string
@@ -28,6 +32,10 @@ interface AttachmentRow {
   id: string
   type: string
   name: string
+}
+
+function InfoIcon() {
+  return <Info size={14} className="inline-block align-middle text-fg-secondary shrink-0" />
 }
 
 function EmptyState({ text }: { text: string }) {
@@ -48,6 +56,7 @@ function SectionCard({ title, children }: { title: string; children: React.React
 }
 
 export function ApplicationPage({ onBack }: ApplicationPageProps) {
+  const [company, setCompany] = useState('TA01')
   const [payeeType, setPayeeType] = useState('employee')
   const [showNotice, setShowNotice] = useState(true)
   const [useUrgent, setUseUrgent] = useState(false)
@@ -74,15 +83,14 @@ export function ApplicationPage({ onBack }: ApplicationPageProps) {
         {/* Breadcrumb + title row */}
         <div className="bg-surface border-b border-divider px-[var(--layout-space-loose)] py-[var(--layout-space-tight)]">
           <div className="flex items-center gap-[var(--layout-space-tight)] mb-[var(--layout-space-tight)]">
-            <button onClick={onBack} className="text-body text-fg-secondary hover:text-fg flex items-center gap-[var(--layout-space-tight)] transition-colors">
-              <ArrowLeft size={16} />
+            <button onClick={onBack} className="text-body text-fg-secondary hover:text-fg transition-colors">
               暫存申請單
             </button>
             <span className="text-body text-fg-secondary">/</span>
           </div>
           <div className="flex items-center gap-[var(--layout-space-loose)]">
             <h1 className="text-h4 font-medium text-fg flex-1">一般項目申請單</h1>
-            <Button variant="tertiary" size="sm">批次匯入申請</Button>
+            <Button variant="tertiary" size="sm" startIcon={ArrowUpFromLine}>批次匯入申請</Button>
           </div>
         </div>
 
@@ -94,18 +102,18 @@ export function ApplicationPage({ onBack }: ApplicationPageProps) {
             <SectionCard title="基本資訊">
               <div className="grid grid-cols-2 gap-[var(--layout-space-loose)]">
                 <Field>
-                  <FieldLabel>公司代號</FieldLabel>
-                  <Input mode="readonly" value="TA01" />
+                  <FieldLabel>公司代號&nbsp;<InfoIcon /></FieldLabel>
+                  <Select options={COMPANY_OPTIONS} value={company} onChange={setCompany} />
                 </Field>
                 <div />
               </div>
               <div className="grid grid-cols-2 gap-[var(--layout-space-loose)]">
                 <Field>
-                  <FieldLabel required>申請人</FieldLabel>
+                  <FieldLabel required>申請人&nbsp;<InfoIcon /></FieldLabel>
                   <Input mode="readonly" value="林問宜 (023156)" />
                 </Field>
                 <Field>
-                  <FieldLabel required>收款對象</FieldLabel>
+                  <FieldLabel required>收款對象&nbsp;<InfoIcon /></FieldLabel>
                   <Select
                     options={PAYEE_OPTIONS}
                     value={payeeType}
@@ -114,7 +122,7 @@ export function ApplicationPage({ onBack }: ApplicationPageProps) {
                 </Field>
               </div>
               <Field>
-                <FieldLabel required>申請原因</FieldLabel>
+                <FieldLabel required>申請原因&nbsp;<InfoIcon /></FieldLabel>
                 <Textarea placeholder="填寫申請原因，最多 250 字" rows={4} maxLength={250} />
               </Field>
             </SectionCard>
@@ -190,7 +198,7 @@ export function ApplicationPage({ onBack }: ApplicationPageProps) {
                 <Alert
                   variant="info"
                   title="注意事項"
-                  description="預計付款日為申請單簽核完畢後的下個月一般付款日（每月最後工作日），若有緊急付款需求，請參考下列簽核層級：一般付款日：100,000 TWD 以下簽核至處長，以上簽核至副總。特殊付款日：一律簽核至副總。"
+                  description={`預計付款日為申請單簽核完畢後的下個月一般付款日（每月最後工作日），若有緊急付款需求，請參考下列簽核層級：\n• 一般付款日：100,000 TWD 以下簽核至處長，以上簽核至副總。\n• 特殊付款日：一律簽核至副總。`}
                   onDismiss={() => setShowNotice(false)}
                 />
               )}
