@@ -55,8 +55,8 @@ function EmptyState({ text }: { text: string }) {
 
 function SectionCard({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="bg-surface rounded-lg p-[var(--layout-space-loose)] flex flex-col gap-[var(--layout-space-loose)]">
-      <h2 className="text-body-lg font-medium text-fg">{title}</h2>
+    <div className="bg-surface rounded-lg px-[var(--layout-space-loose)] py-[var(--layout-space-tight)] flex flex-col gap-[var(--layout-space-tight)]">
+      <h2 className="text-h4 font-medium text-fg">{title}</h2>
       {children}
     </div>
   )
@@ -112,14 +112,14 @@ export function ApplicationPage({ onBack }: ApplicationPageProps) {
             <span className="text-body text-fg-secondary">/</span>
           </div>
           <div className="flex items-center gap-[var(--layout-space-loose)]">
-            <h1 className="text-h4 font-medium text-fg flex-1">一般項目申請單</h1>
+            <h1 className="text-h3 font-medium text-fg flex-1">一般項目申請單</h1>
             <Button variant="tertiary" size="sm" startIcon={ArrowUpFromLine}>批次匯入申請</Button>
           </div>
         </div>
 
         {/* Form content */}
-        <div className="flex-1 overflow-auto p-[var(--layout-space-loose)]">
-          <div className="max-w-3xl mx-auto flex flex-col gap-[var(--layout-space-loose)]">
+        <div className="flex-1 overflow-auto bg-surface-sunken p-[var(--layout-space-loose)]">
+          <div className="w-full max-w-[960px] mx-auto flex flex-col gap-[var(--layout-space-loose)]">
 
             {/* 基本資訊 */}
             <SectionCard title="基本資訊">
@@ -209,7 +209,7 @@ export function ApplicationPage({ onBack }: ApplicationPageProps) {
               )}
 
               {/* 檢附憑證 / 證明 */}
-              <h2 className="text-body-lg font-medium text-fg mt-[var(--layout-space-tight)]">檢附憑證 / 證明</h2>
+              <h2 className="text-h4 font-medium text-fg mt-[var(--layout-space-tight)]">檢附憑證 / 證明</h2>
               <div>
                 <AddAttachmentDialog
                   trigger={
