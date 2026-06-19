@@ -129,13 +129,15 @@ export function ApplicationPage({ onBack }: ApplicationPageProps) {
 
             {/* 請款資訊 */}
             <SectionCard title="請款資訊">
-              <AddInvoiceDialog
-                trigger={
-                  <Button variant="tertiary" size="sm" startIcon={Plus}>新增請款</Button>
-                }
-                payeeType={payeeType === 'employee' ? 'employee' : 'vendor'}
-                onConfirm={addInvoice}
-              />
+              <div>
+                <AddInvoiceDialog
+                  trigger={
+                    <Button variant="tertiary" size="sm" startIcon={Plus}>新增請款</Button>
+                  }
+                  payeeType={payeeType === 'employee' ? 'employee' : 'vendor'}
+                  onConfirm={addInvoice}
+                />
+              </div>
 
               {invoices.length === 0 ? (
                 <EmptyState text="沒有任何資料" />
@@ -169,12 +171,14 @@ export function ApplicationPage({ onBack }: ApplicationPageProps) {
 
               {/* 檢附憑證 / 證明 */}
               <h2 className="text-body-lg font-medium text-fg mt-[var(--layout-space-tight)]">檢附憑證 / 證明</h2>
-              <AddAttachmentDialog
-                trigger={
-                  <Button variant="tertiary" size="sm" startIcon={Plus}>新增附件</Button>
-                }
-                onConfirm={addAttachment}
-              />
+              <div>
+                <AddAttachmentDialog
+                  trigger={
+                    <Button variant="tertiary" size="sm" startIcon={Plus}>新增附件</Button>
+                  }
+                  onConfirm={addAttachment}
+                />
+              </div>
               {attachments.length === 0 ? (
                 <EmptyState text="沒有任何資料" />
               ) : (
