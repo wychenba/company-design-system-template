@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react'
 import InvoiceFlow from './InvoiceFlow'
 
 const meta: Meta<typeof InvoiceFlow> = {
-  title: 'Apps/template/InvoiceFlow',
+  title: 'Apps/template/Invoice_payeelist_v1',
   component: InvoiceFlow,
   parameters: {
     layout: 'fullscreen',
