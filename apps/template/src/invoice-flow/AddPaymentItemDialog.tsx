@@ -3,7 +3,7 @@ import {
   Dialog, DialogTrigger, DialogContent, DialogHeader, DialogBody, DialogFooter, DialogTitle, DialogDescription,
   Button, Field, FieldLabel, Input, Select, RadioGroup, RadioGroupItem, Alert,
 } from '@qijenchen/design-system'
-import { Plus, Trash2 } from 'lucide-react'
+import { Info, Plus, Trash2 } from 'lucide-react'
 import type { ReactNode } from 'react'
 
 interface AddPaymentItemDialogProps {
@@ -28,6 +28,10 @@ const TAX_RATE_OPTIONS = [
   { value: '0', label: '0%' },
   { value: 'exempt', label: '免稅' },
 ]
+
+function InfoIcon() {
+  return <Info size={14} className="inline-block align-middle text-fg-secondary shrink-0" />
+}
 
 export function AddPaymentItemDialog({ trigger, onConfirm }: AddPaymentItemDialogProps) {
   const [open, setOpen] = useState(false)
@@ -59,16 +63,22 @@ export function AddPaymentItemDialog({ trigger, onConfirm }: AddPaymentItemDialo
         </DialogHeader>
 
         <DialogBody>
-          {/* Info bar */}
-          <div className="flex items-center gap-[var(--layout-space-loose)] bg-surface-raised rounded px-[var(--layout-space-loose)] py-[var(--layout-space-tight)] mb-[var(--layout-space-loose)]">
-            <span className="text-body text-fg-secondary">請款單號</span>
-            <span className="text-body text-fg font-medium">PAGE2605250001-1</span>
+          {/* Info bar — label(caption) on top, value(body) below */}
+          <div className="flex bg-surface-raised rounded px-[var(--layout-space-loose)] py-[var(--layout-space-tight)] mb-[var(--layout-space-loose)] gap-[var(--layout-space-loose)]">
+            <div className="flex flex-col">
+              <span className="text-caption text-fg-secondary">請款單號</span>
+              <span className="text-body font-medium text-fg">PAGE2605250001-1</span>
+            </div>
             <div className="w-px self-stretch bg-divider" />
-            <span className="text-body text-fg-secondary">發票號碼</span>
-            <span className="text-body text-fg font-medium">BE-49506445</span>
+            <div className="flex flex-col">
+              <span className="text-caption text-fg-secondary">發票號碼</span>
+              <span className="text-body font-medium text-fg">BE-49506445</span>
+            </div>
             <div className="w-px self-stretch bg-divider" />
-            <span className="text-body text-fg-secondary">序號</span>
-            <span className="text-body text-fg font-medium">1</span>
+            <div className="flex flex-col">
+              <span className="text-caption text-fg-secondary">序號</span>
+              <span className="text-body font-medium text-fg">1</span>
+            </div>
           </div>
 
           {/* Info alert */}
@@ -77,13 +87,14 @@ export function AddPaymentItemDialog({ trigger, onConfirm }: AddPaymentItemDialo
               <Alert
                 variant="info"
                 title="注意事項"
-                description="自2026/12/31起各項已移至首頁/專區"
+                description="自 2026/12/31 起「國內出差」、「現金獎金」、「QIF」、「銀行自動扣款」已移至首頁/專區，如有需求請前往專區請款。"
                 onDismiss={() => setShowNotice(false)}
               />
             </div>
           )}
 
           <div className="flex flex-col gap-[var(--layout-space-loose)]">
+            {/* 分類 | 子分類 */}
             <div className="grid grid-cols-2 gap-[var(--layout-space-loose)]">
               <Field>
                 <FieldLabel required>分類</FieldLabel>
@@ -95,24 +106,26 @@ export function AddPaymentItemDialog({ trigger, onConfirm }: AddPaymentItemDialo
               </Field>
             </div>
 
+            {/* 成本中心 ⓘ | 會計科目 ⓘ */}
             <div className="grid grid-cols-2 gap-[var(--layout-space-loose)]">
               <Field>
-                <FieldLabel required>成本中心</FieldLabel>
+                <FieldLabel required>成本中心&nbsp;<InfoIcon /></FieldLabel>
                 <Input placeholder="輸入成本中心" />
               </Field>
               <Field>
-                <FieldLabel>會計科目</FieldLabel>
+                <FieldLabel>會計科目&nbsp;<InfoIcon /></FieldLabel>
                 <Input placeholder="輸入會計科目" />
               </Field>
             </div>
 
+            {/* 總額 | 稅率 ⓘ | 稅額 */}
             <div className="grid grid-cols-3 gap-[var(--layout-space-loose)]">
               <Field>
                 <FieldLabel required>總額</FieldLabel>
-                <Input type="number" placeholder="0" />
+                <Input type="number" placeholder="填寫總額" />
               </Field>
               <Field>
-                <FieldLabel>稅率</FieldLabel>
+                <FieldLabel>稅率&nbsp;<InfoIcon /></FieldLabel>
                 <Select options={TAX_RATE_OPTIONS} placeholder="請選擇" />
               </Field>
               <Field>
@@ -148,7 +161,7 @@ export function AddPaymentItemDialog({ trigger, onConfirm }: AddPaymentItemDialo
                           next[idx] = e.target.value
                           setContractIds(next)
                         }}
-                        placeholder="輸入合約編號"
+                        placeholder="請填寫合約編號"
                       />
                     </Field>
                     {idx > 0 && (
