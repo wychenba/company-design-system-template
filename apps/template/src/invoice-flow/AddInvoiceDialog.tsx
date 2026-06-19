@@ -1,9 +1,9 @@
 import { useState } from 'react'
 import {
-  Dialog, DialogTrigger, DialogContent, DialogHeader, DialogBody, DialogFooter, DialogTitle, DialogDescription,
+  Dialog, DialogTrigger, DialogContent, DialogHeader, DialogBody, DialogFooter, DialogTitle,
   Button, Field, FieldLabel, Input, Select, Tag, Checkbox,
 } from '@qijenchen/design-system'
-import { Info } from 'lucide-react'
+import { Info, Calendar } from 'lucide-react'
 import type { ReactNode } from 'react'
 
 interface AddInvoiceDialogProps {
@@ -59,7 +59,6 @@ export function AddInvoiceDialog({ trigger, payeeType = 'employee', onConfirm }:
       <DialogContent maxWidth={560}>
         <DialogHeader>
           <DialogTitle>新增發票</DialogTitle>
-          <DialogDescription>填寫請款發票資訊</DialogDescription>
         </DialogHeader>
 
         <DialogBody>
@@ -98,7 +97,7 @@ export function AddInvoiceDialog({ trigger, payeeType = 'employee', onConfirm }:
             <div className="grid grid-cols-2 gap-[var(--layout-space-loose)]">
               <Field>
                 <FieldLabel required>日期</FieldLabel>
-                <Input type="date" placeholder="填寫日期" />
+                <Input placeholder="填寫日期" endAction={{ icon: Calendar, label: '選擇日期', onClick: () => {} }} />
               </Field>
               <Field>
                 <FieldLabel>發票號碼</FieldLabel>

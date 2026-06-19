@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import {
-  Dialog, DialogTrigger, DialogContent, DialogHeader, DialogBody, DialogFooter, DialogTitle, DialogDescription,
+  Dialog, DialogTrigger, DialogContent, DialogHeader, DialogBody, DialogFooter, DialogTitle,
   Button, Field, FieldLabel, Input, RadioGroup, RadioGroupItem,
 } from '@qijenchen/design-system'
 import { Upload } from 'lucide-react'
@@ -27,7 +27,6 @@ export function AddAttachmentDialog({ trigger, onConfirm }: AddAttachmentDialogP
       <DialogContent maxWidth={480}>
         <DialogHeader>
           <DialogTitle>新增附件</DialogTitle>
-          <DialogDescription>上傳並說明附件</DialogDescription>
         </DialogHeader>
 
         <DialogBody>

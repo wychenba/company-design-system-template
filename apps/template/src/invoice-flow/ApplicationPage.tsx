@@ -2,7 +2,7 @@ import { useState } from 'react'
 import {
   Button, Field, FieldLabel, Input, Select, Textarea, Alert, Checkbox,
 } from '@qijenchen/design-system'
-import { Plus, Info, ArrowUpFromLine } from 'lucide-react'
+import { Plus, Info, ArrowUpFromLine, Calendar } from 'lucide-react'
 import { AppLayout } from './AppLayout'
 import { AddInvoiceDialog } from './AddInvoiceDialog'
 import { AddPaymentItemDialog } from './AddPaymentItemDialog'
@@ -21,11 +21,18 @@ const COMPANY_OPTIONS = [
   { value: 'TA01', label: 'TA01' },
 ]
 
+interface PaymentItem {
+  id: string
+  category: string
+  amount: string
+}
+
 interface InvoiceRow {
   id: string
   type: string
   date: string
   amount: string
+  items: PaymentItem[]
 }
 
 interface AttachmentRow {
@@ -66,8 +73,24 @@ export function ApplicationPage({ onBack }: ApplicationPageProps) {
   function addInvoice() {
     setInvoices((prev) => [
       ...prev,
-      { id: `INV-${prev.length + 1}`, type: '電子統一發票', date: '2026/06/19', amount: '1,000' },
+      { id: `INV-${prev.length + 1}`, type: '電子統一發票', date: '2026/06/19', amount: '1,000', items: [] },
     ])
+  }
+
+  function addPaymentItem(invoiceId: string) {
+    setInvoices((prev) =>
+      prev.map((inv) =>
+        inv.id === invoiceId
+          ? {
+              ...inv,
+              items: [
+                ...inv.items,
+                { id: `${invoiceId}-ITEM-${inv.items.length + 1}`, category: '一般費用 / 辦公用品', amount: '1,000' },
+              ],
+            }
+          : inv,
+      ),
+    )
   }
 
   function addAttachment() {
@@ -150,20 +173,36 @@ export function ApplicationPage({ onBack }: ApplicationPageProps) {
                     <div style={{ width: 96 }} />
                   </div>
                   {invoices.map((inv, i) => (
-                    <div key={inv.id} className={`flex items-center ${i > 0 ? 'border-t border-divider' : ''}`}>
-                      <div className="flex-1 px-[var(--layout-space-tight)] py-[var(--layout-space-tight)] text-body text-fg">{inv.type}</div>
-                      <div style={{ width: 112 }} className="px-[var(--layout-space-tight)] py-[var(--layout-space-tight)] text-body text-fg">{inv.date}</div>
-                      <div style={{ width: 112 }} className="px-[var(--layout-space-tight)] py-[var(--layout-space-tight)] text-body text-fg">{inv.amount}</div>
-                      <div style={{ width: 96 }} className="flex items-center gap-[var(--layout-space-tight)] px-[var(--layout-space-tight)]">
-                        <AddPaymentItemDialog
-                          trigger={
-                            <Button variant="text" size="sm" iconOnly startIcon={Plus} aria-label="新增付款細項" />
-                          }
-                        />
-                        <Button variant="text" size="sm" aria-label="刪除" onClick={() => setInvoices(prev => prev.filter(r => r.id !== inv.id))}>
-                          刪除
-                        </Button>
+                    <div key={inv.id} className={i > 0 ? 'border-t border-divider' : ''}>
+                      <div className="flex items-center">
+                        <div className="flex-1 px-[var(--layout-space-tight)] py-[var(--layout-space-tight)] text-body text-fg">{inv.type}</div>
+                        <div style={{ width: 112 }} className="px-[var(--layout-space-tight)] py-[var(--layout-space-tight)] text-body text-fg">{inv.date}</div>
+                        <div style={{ width: 112 }} className="px-[var(--layout-space-tight)] py-[var(--layout-space-tight)] text-body text-fg">{inv.amount}</div>
+                        <div style={{ width: 96 }} className="flex items-center gap-[var(--layout-space-tight)] px-[var(--layout-space-tight)]">
+                          <AddPaymentItemDialog
+                            trigger={
+                              <Button variant="text" size="sm" iconOnly startIcon={Plus} aria-label="新增付款細項" />
+                            }
+                            onConfirm={() => addPaymentItem(inv.id)}
+                          />
+                          <Button variant="text" size="sm" aria-label="刪除" onClick={() => setInvoices(prev => prev.filter(r => r.id !== inv.id))}>
+                            刪除
+                          </Button>
+                        </div>
                       </div>
+                      {/* Payment item sub-rows */}
+                      {inv.items.map((item) => (
+                        <div key={item.id} className="flex items-center bg-surface-sunken border-t border-divider">
+                          <div className="flex-1 px-[var(--layout-space-loose)] py-[var(--layout-space-tight)] text-caption text-fg-secondary">付款細項 · {item.category}</div>
+                          <div style={{ width: 112 }} className="px-[var(--layout-space-tight)] py-[var(--layout-space-tight)] text-caption text-fg-secondary" />
+                          <div style={{ width: 112 }} className="px-[var(--layout-space-tight)] py-[var(--layout-space-tight)] text-caption text-fg">{item.amount}</div>
+                          <div style={{ width: 96 }} className="flex items-center px-[var(--layout-space-tight)]">
+                            <Button variant="text" size="sm" aria-label="刪除細項" onClick={() => setInvoices(prev => prev.map(r => r.id === inv.id ? { ...r, items: r.items.filter(it => it.id !== item.id) } : r))}>
+                              刪除
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   ))}
                 </div>
@@ -202,7 +241,15 @@ export function ApplicationPage({ onBack }: ApplicationPageProps) {
                 <Alert
                   variant="info"
                   title="注意事項"
-                  description={`預計付款日為申請單簽核完畢後的下個月一般付款日（每月最後工作日），若有緊急付款需求，請參考下列簽核層級：\n• 一般付款日：100,000 TWD 以下簽核至處長，以上簽核至副總。\n• 特殊付款日：一律簽核至副總。`}
+                  description={
+                    <div className="flex flex-col gap-[var(--layout-space-tight)]">
+                      <p>預計付款日為申請單簽核完畢後的下個月一般付款日（每月最後工作日），若有緊急付款需求，請參考下列簽核層級：</p>
+                      <ul className="list-disc pl-[var(--layout-space-loose)] flex flex-col gap-[var(--layout-space-tight)]">
+                        <li>一般付款日：100,000 TWD 以下簽核至處長，以上簽核至副總。</li>
+                        <li>特殊付款日：一律簽核至副總。</li>
+                      </ul>
+                    </div>
+                  }
                   onDismiss={() => setShowNotice(false)}
                 />
               )}
@@ -215,7 +262,7 @@ export function ApplicationPage({ onBack }: ApplicationPageProps) {
 
               <Field>
                 <FieldLabel>緊急/指定付款日</FieldLabel>
-                <Input type="date" disabled={!useUrgent} placeholder="請選擇" />
+                <Input disabled={!useUrgent} placeholder="請選擇" endAction={{ icon: Calendar, label: '選擇日期', onClick: () => {} }} />
               </Field>
             </SectionCard>
           </div>
