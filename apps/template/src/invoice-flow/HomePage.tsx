@@ -59,8 +59,9 @@ export function HomePage({ onNewApplication }: HomePageProps) {
             </Button>
           </div>
 
-          {/* Table — bounded region */}
-          <div className="bg-surface border border-divider rounded overflow-hidden">
+          {/* Table — horizontal scroll wrapper for narrower viewports */}
+          <div className="overflow-x-auto">
+          <div className="bg-surface border border-divider rounded overflow-hidden min-w-max">
             {/* Header */}
             <div className="bg-surface-raised flex items-center border-b border-divider">
               {TABLE_COLS.map((col, i) => (
@@ -106,6 +107,7 @@ export function HomePage({ onNewApplication }: HomePageProps) {
                 </div>
               </div>
             ))}
+          </div>
           </div>
         </div>
       </div>
