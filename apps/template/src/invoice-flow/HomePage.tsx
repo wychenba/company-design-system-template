@@ -76,7 +76,7 @@ export function HomePage({ onNewApplication }: HomePageProps) {
               新增
             </Button>
             <Separator orientation="vertical" style={{ height: 24 }} />
-            <Button variant="secondary" size="sm" startIcon={Download}>
+            <Button variant="tertiary" size="sm" startIcon={Download}>
               下載 Excel 範本
             </Button>
           </div>
@@ -86,6 +86,7 @@ export function HomePage({ onNewApplication }: HomePageProps) {
             columns={COLUMNS}
             data={DRAFT_ROWS}
             getRowId={(r) => r.id}
+            size="sm"
             height="auto"
             autoRowHeight
             rowActions={(row) => (

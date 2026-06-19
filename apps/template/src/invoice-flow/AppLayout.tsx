@@ -91,9 +91,9 @@ function GlobalHeader() {
         <Button variant="text" size="sm" startIcon={Building2} endIcon={ChevronDown}>HQ</Button>
       </div>
       <div className="flex items-center gap-[var(--layout-space-loose)]">
-        <Button variant="secondary" size="sm" startIcon={BookOpen}>使用手冊</Button>
+        <Button variant="tertiary" size="sm" startIcon={BookOpen}>使用手冊</Button>
         <Separator orientation="vertical" style={{ height: 24 }} />
-        <Button variant="secondary" size="sm" startIcon={Globe} endIcon={ChevronDown}>繁體中文</Button>
+        <Button variant="tertiary" size="sm" startIcon={Globe} endIcon={ChevronDown}>繁體中文</Button>
         <AccountMenu />
       </div>
     </ChromeHeader>
