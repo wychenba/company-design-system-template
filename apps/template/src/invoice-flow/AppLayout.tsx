@@ -1,9 +1,10 @@
 import type { ReactNode } from 'react'
-import { Separator } from '@qijenchen/design-system'
+import { Separator, Button, Avatar } from '@qijenchen/design-system'
 import {
   Home, FileText, FileInput, ClipboardList,
   FileSearch, ClipboardCheck, BookOpen, Megaphone,
-  Briefcase, Shield, type LucideIcon,
+  Briefcase, Shield, Menu, Building2, Globe, ChevronDown,
+  type LucideIcon,
 } from 'lucide-react'
 
 interface AppLayoutProps {
@@ -65,20 +66,28 @@ export function AppLayout({ children, activeMenu }: AppLayoutProps) {
   return (
     <div className="flex flex-col h-screen">
       {/* Top header */}
-      <header className="bg-surface border-b border-divider flex items-center h-14 px-[var(--layout-space-loose)] shrink-0">
-        <div className="flex items-center gap-[var(--layout-space-tight)]">
-          <div className="flex items-center justify-center size-8 rounded border border-divider overflow-hidden shrink-0">
-            <span className="text-caption font-bold text-primary">R</span>
+      <header className="bg-surface border-b border-divider flex items-center h-16 shrink-0">
+        {/* Collapse trigger + divider */}
+        <Button variant="text" iconOnly startIcon={Menu} aria-label="收合選單" className="mx-[var(--layout-space-loose)]" />
+        <Separator orientation="vertical" style={{ height: 36 }} />
+        {/* Logo + company selector */}
+        <div className="flex flex-1 min-w-0 items-center gap-[var(--layout-space-loose)] px-[var(--layout-space-loose)]">
+          <div className="flex items-center gap-[var(--layout-space-tight)]">
+            <div className="flex items-center justify-center size-8 rounded-lg border border-divider overflow-hidden shrink-0">
+              <span className="text-caption font-bold text-primary">R</span>
+            </div>
+            <span className="text-h4 text-fg whitespace-nowrap">RFC/PettyCash</span>
+            <Button variant="text" size="sm" startIcon={Building2} endIcon={ChevronDown}>HQ</Button>
           </div>
-          <span className="text-body-lg font-medium text-fg">RFC/PettyCash</span>
         </div>
-        <div className="flex-1" />
-        <div className="flex items-center gap-[var(--layout-space-tight)]">
-          <span className="text-body text-fg-secondary">使用手冊</span>
-          <Separator orientation="vertical" style={{ height: 20 }} />
-          <span className="text-body text-fg-secondary">繁體中文</span>
-          <div className="size-8 rounded-full bg-primary-subtle flex items-center justify-center">
-            <span className="text-caption font-medium text-primary">林</span>
+        {/* Settings + avatar */}
+        <div className="flex items-center gap-[var(--layout-space-loose)] px-[var(--layout-space-loose)]">
+          <Button variant="secondary" size="sm" startIcon={BookOpen}>使用手冊</Button>
+          <Separator orientation="vertical" style={{ height: 36 }} />
+          <Button variant="secondary" size="sm" startIcon={Globe} endIcon={ChevronDown}>繁體中文</Button>
+          <div className="flex items-center gap-[var(--layout-space-tight)]">
+            <Avatar size={32} alt="林問宜" />
+            <ChevronDown size={18} className="text-fg-secondary" />
           </div>
         </div>
       </header>

@@ -35,7 +35,7 @@ export function HomePage({ onNewApplication }: HomePageProps) {
       <div className="flex flex-col h-full">
         {/* Page header + DS Tabs */}
         <div className="bg-surface border-b border-divider px-[var(--layout-space-loose)] pt-[var(--layout-space-loose)]">
-          <h1 className="text-h4 font-medium text-fg mb-[var(--layout-space-tight)]">暫存申請單</h1>
+          <h1 className="text-h3 font-medium text-fg mb-[var(--layout-space-tight)]">暫存申請單</h1>
           <Tabs defaultValue="general">
             <TabsList>
               <TabsTrigger value="general">一般</TabsTrigger>
@@ -49,10 +49,11 @@ export function HomePage({ onNewApplication }: HomePageProps) {
         <div className="flex-1 overflow-auto p-[var(--layout-space-loose)]">
           {/* Section header */}
           <div className="flex items-center gap-[var(--layout-space-tight)] mb-[var(--layout-space-loose)]">
-            <span className="flex-1 text-body-lg font-medium text-fg">一般暫存申請</span>
+            <span className="flex-1 text-h4 font-medium text-fg">一般暫存申請</span>
             <Button variant="primary" size="sm" startIcon={Plus} endIcon={ChevronDown} onClick={onNewApplication}>
               新增
             </Button>
+            <Separator orientation="vertical" style={{ height: 24 }} />
             <Button variant="secondary" size="sm" startIcon={Download}>
               下載 Excel 範本
             </Button>
