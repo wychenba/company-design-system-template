@@ -1,32 +1,54 @@
-import { Button, Tag, Tabs, TabsList, TabsTrigger, Separator } from '@qijenchen/design-system'
+import { Button, Tag, Tabs, TabsList, TabsTrigger, Separator, DataTable } from '@qijenchen/design-system'
+import { createColumnHelper } from '@tanstack/react-table'
 import { Plus, Download, Info, PenLine, Trash2, ChevronDown } from 'lucide-react'
 import { AppLayout } from './AppLayout'
 
-interface HomePageProps {
-  onNewApplication: () => void
+interface DraftRow {
+  id: string
+  date: string
+  company: string
+  applicant: string
+  payeeType: string
+  total: string
+  urgentDate: string
+  reason: string
+  status: 'Default' | 'Processing'
 }
 
-const DRAFT_ROWS = [
+const DRAFT_ROWS: DraftRow[] = [
   { id: 'PAE20260525001', date: '2026/5/29', company: 'TA01', applicant: '林問宜 (023156)', payeeType: '員工', total: '1,600', urgentDate: '-', reason: '-', status: 'Default' },
   { id: 'PAE20260525002', date: '2026/5/28', company: 'TA01', applicant: '林問宜 (023156)', payeeType: '員工', total: '2,400', urgentDate: '-', reason: '-', status: 'Default' },
   { id: 'PAE20260525003', date: '2026/5/27', company: 'TA01', applicant: '林問宜 (023156)', payeeType: '員工', total: '3,800', urgentDate: '-', reason: '-', status: 'Processing' },
 ]
 
-// Column widths are fixed structural table dimensions stored as JS data, not Tailwind spacing
-const TABLE_COLS = [
-  { label: '單號', w: 184 },
-  { label: '申請日期', w: 120 },
-  { label: '公司代號', w: 120 },
-  { label: '申請人', w: 160 },
-  { label: '收款對象', w: 80 },
-  { label: '總額', w: 160 },
-  { label: '緊急/指定付款日期', w: 160 },
-  { label: '申請原因', w: 160 },
+const col = createColumnHelper<DraftRow>()
+
+// 單號 column has no `meta.type` → DataTable honours this custom cell (id stacked
+// over a status Tag), matching the Figma table-item anatomy.
+const COLUMNS = [
+  col.accessor('id', {
+    header: '單號',
+    meta: { width: 184 },
+    cell: ({ row }) => (
+      <div className="flex flex-col items-start gap-[var(--layout-space-tight)]">
+        <span className="text-body text-fg truncate">{row.original.id}</span>
+        <Tag color={row.original.status === 'Processing' ? 'blue' : 'neutral'} size="sm">
+          {row.original.status === 'Processing' ? '審核中' : '草稿'}
+        </Tag>
+      </div>
+    ),
+  }),
+  col.accessor('date', { header: '申請日期', meta: { type: 'string', width: 120 } }),
+  col.accessor('company', { header: '公司代號', meta: { type: 'string', width: 120 } }),
+  col.accessor('applicant', { header: '申請人', meta: { type: 'string', width: 160 } }),
+  col.accessor('payeeType', { header: '收款對象', meta: { type: 'string', width: 80 } }),
+  col.accessor('total', { header: '總額', meta: { type: 'string', width: 160 } }),
+  col.accessor('urgentDate', { header: '緊急/指定付款日期', meta: { type: 'string', width: 160 } }),
+  col.accessor('reason', { header: '申請原因', meta: { type: 'string', width: 160 } }),
 ]
 
-// Cell padding via inline style so no Tailwind magic numbers are introduced
-const CELL_STYLE: React.CSSProperties = {
-  padding: 'var(--layout-space-tight)',
+interface HomePageProps {
+  onNewApplication: () => void
 }
 
 export function HomePage({ onNewApplication }: HomePageProps) {
@@ -59,56 +81,21 @@ export function HomePage({ onNewApplication }: HomePageProps) {
             </Button>
           </div>
 
-          {/* Table — horizontal scroll wrapper for narrower viewports */}
-          <div className="overflow-x-auto">
-          <div className="bg-surface border border-divider rounded overflow-hidden min-w-max">
-            {/* Header */}
-            <div className="bg-surface-raised flex items-center border-b border-divider">
-              {TABLE_COLS.map((col, i) => (
-                <div key={col.label} className="flex items-center self-stretch">
-                  {i > 0 && <Separator orientation="vertical" />}
-                  <div style={{ ...CELL_STYLE, width: col.w }} className="text-body text-fg">
-                    {col.label}
-                  </div>
-                </div>
-              ))}
-              <div className="flex-1" />
-            </div>
-
-            {/* Rows */}
-            {DRAFT_ROWS.map((row, rowIdx) => (
-              <div key={row.id}>
-                {rowIdx > 0 && <Separator />}
-                <div className="flex items-center hover:bg-surface-hovered transition-colors">
-                  <div style={{ ...CELL_STYLE, width: 184 }} className="flex flex-col gap-[var(--layout-space-tight)]">
-                    <span className="text-body text-fg truncate">{row.id}</span>
-                    <Tag color={row.status === 'Processing' ? 'blue' : 'neutral'} size="sm">
-                      {row.status === 'Processing' ? '審核中' : '草稿'}
-                    </Tag>
-                  </div>
-                  {[
-                    { val: row.date, w: 120 },
-                    { val: row.company, w: 120 },
-                    { val: row.applicant, w: 160 },
-                    { val: row.payeeType, w: 80 },
-                    { val: row.total, w: 160 },
-                    { val: row.urgentDate, w: 160 },
-                    { val: row.reason, w: 160 },
-                  ].map((cell, i) => (
-                    <div key={i} style={{ ...CELL_STYLE, width: cell.w }} className="text-body text-fg">
-                      {cell.val}
-                    </div>
-                  ))}
-                  <div className="flex items-center gap-[var(--layout-space-tight)] px-[var(--layout-space-tight)]">
-                    <Button variant="text" size="sm" iconOnly startIcon={Info} aria-label="查看詳情" />
-                    <Button variant="text" size="sm" iconOnly startIcon={PenLine} aria-label="編輯" onClick={onNewApplication} />
-                    <Button variant="text" size="sm" iconOnly startIcon={Trash2} aria-label="刪除" />
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-          </div>
+          {/* Draft list — consumes DataTable primitive */}
+          <DataTable
+            columns={COLUMNS}
+            data={DRAFT_ROWS}
+            getRowId={(r) => r.id}
+            height="auto"
+            autoRowHeight
+            rowActions={(row) => (
+              <>
+                <Button variant="text" size="xs" iconOnly startIcon={Info} aria-label="查看詳情" />
+                <Button variant="text" size="xs" iconOnly startIcon={PenLine} aria-label="編輯" onClick={onNewApplication} />
+                <Button variant="text" size="xs" iconOnly startIcon={Trash2} aria-label="刪除" />
+              </>
+            )}
+          />
         </div>
       </div>
     </AppLayout>

@@ -1,10 +1,18 @@
 import type { ReactNode } from 'react'
-import { Separator, Button, Avatar } from '@qijenchen/design-system'
+import { useState } from 'react'
+import {
+  AppShell,
+  Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel,
+  SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarProvider, SidebarTrigger,
+  Button, Avatar, Separator,
+  DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuGroup,
+  DropdownMenuLabel, DropdownMenuItem,
+} from '@qijenchen/design-system'
+import { ChromeHeader } from '@qijenchen/design-system/patterns/header-canonical'
 import {
   Home, FileText, FileInput, ClipboardList,
   FileSearch, ClipboardCheck, BookOpen, Megaphone,
-  Briefcase, Shield, Menu, Building2, Globe, ChevronDown,
-  type LucideIcon,
+  Building2, Globe, ChevronDown, User, Settings, LogOut, type LucideIcon,
 } from 'lucide-react'
 
 interface AppLayoutProps {
@@ -13,14 +21,14 @@ interface AppLayoutProps {
 }
 
 const MENU_SECTIONS: {
-  label?: { text: string; icon: LucideIcon }
+  label?: string
   items: { id: string; label: string; icon: LucideIcon }[]
 }[] = [
   {
     items: [{ id: '首頁', label: '首頁', icon: Home }],
   },
   {
-    label: { text: '工作區', icon: Briefcase },
+    label: '工作區',
     items: [
       { id: '暫存申請單', label: '暫存申請單', icon: FileText },
       { id: '批次匯入紀錄', label: '批次匯入紀錄', icon: FileInput },
@@ -28,7 +36,7 @@ const MENU_SECTIONS: {
     ],
   },
   {
-    label: { text: '管理', icon: Shield },
+    label: '管理',
     items: [
       { id: '查看申請單', label: '查看申請單', icon: FileSearch },
       { id: '審核工作清單', label: '審核工作清單', icon: ClipboardCheck },
@@ -40,79 +48,99 @@ const MENU_SECTIONS: {
   },
 ]
 
-function MenuItem({ label, icon: Icon, active }: { label: string; icon: LucideIcon; active: boolean }) {
+// Left nav — consumes Sidebar primitive. Brand + account live in the global
+// header (primary-header mode), so the sidebar carries navigation only.
+function InvoiceSidebar() {
   return (
-    <div
-      className={`flex items-center h-9 gap-[var(--layout-space-tight)] px-[var(--layout-space-loose)] cursor-pointer text-body-lg font-medium rounded-sm transition-colors ${
-        active ? 'bg-surface-hovered text-fg' : 'text-fg-secondary hover:bg-surface-hovered hover:text-fg'
-      }`}
-    >
-      <Icon size={20} className="shrink-0" />
-      {label}
-    </div>
+    <Sidebar collapsible="icon" viewportInsetTop="var(--chrome-header-height)">
+      <SidebarContent>
+        {MENU_SECTIONS.map((section, si) => (
+          <SidebarGroup key={section.label ?? `section-${si}`}>
+            {section.label && <SidebarGroupLabel>{section.label}</SidebarGroupLabel>}
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {section.items.map((item) => (
+                  <SidebarMenuItem key={item.id}>
+                    <SidebarMenuButton id={item.id} startIcon={item.icon} tooltip={item.label}>
+                      {item.label}
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        ))}
+      </SidebarContent>
+    </Sidebar>
   )
 }
 
-function SectionLabel({ text, icon: Icon }: { text: string; icon: LucideIcon }) {
+// Global top bar — consumes ChromeHeader primitive. leadingRail aligns the
+// sidebar collapse trigger with the icon rail; raw <Avatar size={24}> is the
+// chrome-header canonical (not ItemAvatar).
+function GlobalHeader() {
   return (
-    <div className="flex items-center h-9 gap-[var(--layout-space-loose)] px-[var(--layout-space-loose)] text-body-lg font-medium text-fg-secondary">
-      <Icon size={20} className="shrink-0" />
-      {text}
-    </div>
+    <ChromeHeader className="bg-surface" leadingRail={<SidebarTrigger />}>
+      <div className="flex flex-1 min-w-0 items-center gap-[var(--layout-space-loose)]">
+        <div className="flex items-center gap-[var(--layout-space-tight)] min-w-0">
+          <div className="flex items-center justify-center size-6 rounded border border-divider overflow-hidden shrink-0">
+            <span className="text-caption font-bold text-primary">R</span>
+          </div>
+          <span className="text-body-lg font-medium text-fg whitespace-nowrap">RFC/PettyCash</span>
+        </div>
+        <Button variant="text" size="sm" startIcon={Building2} endIcon={ChevronDown}>HQ</Button>
+      </div>
+      <div className="flex items-center gap-[var(--layout-space-loose)]">
+        <Button variant="secondary" size="sm" startIcon={BookOpen}>使用手冊</Button>
+        <Separator orientation="vertical" style={{ height: 24 }} />
+        <Button variant="secondary" size="sm" startIcon={Globe} endIcon={ChevronDown}>繁體中文</Button>
+        <AccountMenu />
+      </div>
+    </ChromeHeader>
+  )
+}
+
+// Account entry — chrome header canonical: raw 24px Avatar trigger + DropdownMenu
+// (per app-shell account-entry SSOT). ProfileCard is for viewing *others*, not self.
+function AccountMenu() {
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <button
+          type="button"
+          aria-label="帳號與設定"
+          className="flex items-center justify-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1"
+        >
+          <Avatar size={24} alt="林問宜" color="blue" />
+        </button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        <DropdownMenuGroup>
+          <DropdownMenuLabel>林問宜 (023156)</DropdownMenuLabel>
+          <DropdownMenuItem startIcon={User}>個人資料</DropdownMenuItem>
+          <DropdownMenuItem startIcon={Settings}>設定</DropdownMenuItem>
+        </DropdownMenuGroup>
+        <DropdownMenuGroup>
+          <DropdownMenuItem startIcon={LogOut}>登出</DropdownMenuItem>
+        </DropdownMenuGroup>
+      </DropdownMenuContent>
+    </DropdownMenu>
   )
 }
 
 export function AppLayout({ children, activeMenu }: AppLayoutProps) {
+  // Prototype navigation is static (one page per screen); seed active state from
+  // the current page so the matching menu item highlights.
+  const [activeId, setActiveId] = useState(activeMenu)
   return (
-    <div className="flex flex-col h-screen">
-      {/* Top header */}
-      <header className="bg-surface border-b border-divider flex items-center h-16 shrink-0">
-        {/* Collapse trigger + divider */}
-        <Button variant="text" iconOnly startIcon={Menu} aria-label="收合選單" className="mx-[var(--layout-space-loose)]" />
-        <Separator orientation="vertical" style={{ height: 36 }} />
-        {/* Logo + company selector */}
-        <div className="flex flex-1 min-w-0 items-center gap-[var(--layout-space-loose)] px-[var(--layout-space-loose)]">
-          <div className="flex items-center gap-[var(--layout-space-tight)]">
-            <div className="flex items-center justify-center size-8 rounded-lg border border-divider overflow-hidden shrink-0">
-              <span className="text-caption font-bold text-primary">R</span>
-            </div>
-            <span className="text-h4 text-fg whitespace-nowrap">RFC/PettyCash</span>
-            <Button variant="text" size="sm" startIcon={Building2} endIcon={ChevronDown}>HQ</Button>
-          </div>
-        </div>
-        {/* Settings + avatar */}
-        <div className="flex items-center gap-[var(--layout-space-loose)] px-[var(--layout-space-loose)]">
-          <Button variant="secondary" size="sm" startIcon={BookOpen}>使用手冊</Button>
-          <Separator orientation="vertical" style={{ height: 36 }} />
-          <Button variant="secondary" size="sm" startIcon={Globe} endIcon={ChevronDown}>繁體中文</Button>
-          <div className="flex items-center gap-[var(--layout-space-tight)]">
-            <Avatar size={32} alt="林問宜" />
-            <ChevronDown size={18} className="text-fg-secondary" />
-          </div>
-        </div>
-      </header>
-
-      <div className="flex flex-1 min-h-0">
-        {/* Left sidebar */}
-        <aside className="w-70 border-r border-divider overflow-y-auto shrink-0 py-[var(--layout-space-tight)]">
-          {MENU_SECTIONS.map((section, si) => (
-            <div key={si}>
-              {si > 0 && <Separator className="my-[var(--layout-space-tight)]" />}
-              {section.label && (
-                <SectionLabel text={section.label.text} icon={section.label.icon} />
-              )}
-              {section.items.map((item) => (
-                <MenuItem key={item.id} label={item.label} icon={item.icon} active={item.id === activeMenu} />
-              ))}
-            </div>
-          ))}
-        </aside>
-
-        {/* Main content */}
-        <main className="flex-1 min-w-0 bg-surface-sunken overflow-auto">
-          {children}
-        </main>
-      </div>
-    </div>
+    <SidebarProvider activeId={activeId} onActiveChange={setActiveId}>
+      <AppShell
+        layout="primary-header"
+        globalHeader={<GlobalHeader />}
+        sidebar={<InvoiceSidebar />}
+      >
+        {children}
+      </AppShell>
+    </SidebarProvider>
   )
 }
