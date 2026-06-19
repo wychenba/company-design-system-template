@@ -6,7 +6,7 @@ import { Plus, Info, ArrowUpFromLine, Calendar } from 'lucide-react'
 import { AppLayout } from './AppLayout'
 import { AddInvoiceDialog } from './AddInvoiceDialog'
 import { AddPaymentItemDialog } from './AddPaymentItemDialog'
-import { AddAttachmentDialog } from './AddAttachmentDialog'
+import { AddAttachmentDialog, type NewAttachment } from './AddAttachmentDialog'
 
 interface ApplicationPageProps {
   onBack: () => void
@@ -38,6 +38,7 @@ interface InvoiceRow {
 interface AttachmentRow {
   id: string
   type: string
+  description: string
   name: string
 }
 
@@ -93,10 +94,10 @@ export function ApplicationPage({ onBack }: ApplicationPageProps) {
     )
   }
 
-  function addAttachment() {
+  function addAttachment(newOnes: NewAttachment[]) {
     setAttachments((prev) => [
       ...prev,
-      { id: `ATT-${prev.length + 1}`, type: '發票', name: `附件_${prev.length + 1}.pdf` },
+      ...newOnes.map((a, i) => ({ id: `ATT-${prev.length + i + 1}`, ...a })),
     ])
   }
 
@@ -224,8 +225,9 @@ export function ApplicationPage({ onBack }: ApplicationPageProps) {
                 <div className="flex flex-col gap-[var(--layout-space-tight)]">
                   {attachments.map((att) => (
                     <div key={att.id} className="flex items-center gap-[var(--layout-space-loose)] border border-divider rounded px-[var(--layout-space-loose)] py-[var(--layout-space-tight)]">
-                      <span className="text-body text-fg flex-1">{att.name}</span>
-                      <span className="text-caption text-fg-secondary">{att.type}</span>
+                      <span className="text-body text-fg-secondary shrink-0 w-20">{att.type}</span>
+                      <span className="text-body text-fg-secondary flex-1 truncate">{att.description || '-'}</span>
+                      <span className="text-body text-primary truncate">{att.name}</span>
                       <Button variant="text" size="sm" aria-label="刪除" onClick={() => setAttachments(prev => prev.filter(r => r.id !== att.id))}>
                         刪除
                       </Button>
