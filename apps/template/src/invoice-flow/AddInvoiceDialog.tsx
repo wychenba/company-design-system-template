@@ -157,7 +157,7 @@ export function AddInvoiceDialog({ trigger, payeeType = 'employee', onConfirm }:
                 </Field>
                 <Field>
                   <FieldLabel>免稅額</FieldLabel>
-                  <Select options={[{ value: '0', label: '0' }]} value="0" onChange={() => {}} />
+                  <Select options={[{ value: '0', label: '無' }, { value: '90000', label: '90,000' }]} placeholder="請選擇" />
                 </Field>
                 <Field>
                   <FieldLabel>代扣金額</FieldLabel>
@@ -180,7 +180,7 @@ export function AddInvoiceDialog({ trigger, payeeType = 'employee', onConfirm }:
 
         <DialogFooter>
           <Button variant="tertiary" onClick={() => setOpen(false)}>取消</Button>
-          <Button variant="primary" onClick={handleConfirm}>下一步</Button>
+          <Button variant="primary" onClick={handleConfirm}>新增</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
