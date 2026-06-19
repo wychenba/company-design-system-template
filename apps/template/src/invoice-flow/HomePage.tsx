@@ -26,7 +26,7 @@ const TABLE_COLS = [
 
 // Cell padding via inline style so no Tailwind magic numbers are introduced
 const CELL_STYLE: React.CSSProperties = {
-  padding: '8px var(--layout-space-tight)',
+  padding: 'var(--layout-space-tight)',
 }
 
 export function HomePage({ onNewApplication }: HomePageProps) {

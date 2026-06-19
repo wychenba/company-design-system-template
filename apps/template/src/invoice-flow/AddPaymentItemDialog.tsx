@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import {
-  Dialog, DialogTrigger, DialogContent, DialogHeader, DialogBody, DialogFooter, DialogTitle,
+  Dialog, DialogTrigger, DialogContent, DialogHeader, DialogBody, DialogFooter, DialogTitle, DialogDescription,
   Button, Field, FieldLabel, Input, Select, RadioGroup, RadioGroupItem, Alert,
 } from '@qijenchen/design-system'
 import { Plus, Trash2 } from 'lucide-react'
@@ -55,6 +55,7 @@ export function AddPaymentItemDialog({ trigger, onConfirm }: AddPaymentItemDialo
       <DialogContent maxWidth={560}>
         <DialogHeader>
           <DialogTitle>新增付款細項</DialogTitle>
+          <DialogDescription>填寫付款細項資訊</DialogDescription>
         </DialogHeader>
 
         <DialogBody>

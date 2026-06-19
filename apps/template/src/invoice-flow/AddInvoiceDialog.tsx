@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import {
-  Dialog, DialogTrigger, DialogContent, DialogHeader, DialogBody, DialogFooter, DialogTitle,
-  Button, Field, FieldLabel, Input, Select, Tag,
+  Dialog, DialogTrigger, DialogContent, DialogHeader, DialogBody, DialogFooter, DialogTitle, DialogDescription,
+  Button, Field, FieldLabel, Input, Select, Tag, Checkbox,
 } from '@qijenchen/design-system'
 import type { ReactNode } from 'react'
 
@@ -49,6 +49,7 @@ export function AddInvoiceDialog({ trigger, payeeType = 'employee', onConfirm }:
       <DialogContent maxWidth={560}>
         <DialogHeader>
           <DialogTitle>新增發票</DialogTitle>
+          <DialogDescription>填寫請款發票資訊</DialogDescription>
         </DialogHeader>
 
         <DialogBody>
@@ -169,16 +170,11 @@ export function AddInvoiceDialog({ trigger, payeeType = 'employee', onConfirm }:
               </div>
             )}
 
-            {/* 使用不足額請款 checkbox */}
-            <label className="flex items-center gap-[var(--layout-space-tight)] cursor-pointer">
-              <input
-                type="checkbox"
-                checked={usePartial}
-                onChange={(e) => setUsePartial(e.target.checked)}
-                className="rounded border-divider"
-              />
-              <span className="text-body text-fg">使用不足額請款</span>
-            </label>
+            <Checkbox
+              checked={usePartial}
+              onCheckedChange={(checked) => setUsePartial(checked as boolean)}
+              label="使用不足額請款"
+            />
           </div>
         </DialogBody>
 

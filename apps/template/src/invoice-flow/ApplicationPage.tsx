@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import {
-  Button, Field, FieldLabel, Input, Select, Textarea, Alert,
+  Button, Field, FieldLabel, Input, Select, Textarea, Alert, Checkbox,
 } from '@qijenchen/design-system'
 import { ArrowLeft, Plus } from 'lucide-react'
 import { AppLayout } from './AppLayout'
@@ -135,16 +135,16 @@ export function ApplicationPage({ onBack }: ApplicationPageProps) {
                 <div className="border border-divider rounded overflow-hidden">
                   <div className="bg-surface-raised flex items-center border-b border-divider text-body text-fg">
                     <div className="flex-1 px-[var(--layout-space-tight)] py-[var(--layout-space-tight)]">憑證類型</div>
-                    <div className="w-28 px-[var(--layout-space-tight)] py-[var(--layout-space-tight)]">日期</div>
-                    <div className="w-28 px-[var(--layout-space-tight)] py-[var(--layout-space-tight)]">合計金額</div>
-                    <div className="w-24" />
+                    <div style={{ width: 112 }} className="px-[var(--layout-space-tight)] py-[var(--layout-space-tight)]">日期</div>
+                    <div style={{ width: 112 }} className="px-[var(--layout-space-tight)] py-[var(--layout-space-tight)]">合計金額</div>
+                    <div style={{ width: 96 }} />
                   </div>
                   {invoices.map((inv, i) => (
                     <div key={inv.id} className={`flex items-center ${i > 0 ? 'border-t border-divider' : ''}`}>
                       <div className="flex-1 px-[var(--layout-space-tight)] py-[var(--layout-space-tight)] text-body text-fg">{inv.type}</div>
-                      <div className="w-28 px-[var(--layout-space-tight)] py-[var(--layout-space-tight)] text-body text-fg">{inv.date}</div>
-                      <div className="w-28 px-[var(--layout-space-tight)] py-[var(--layout-space-tight)] text-body text-fg">{inv.amount}</div>
-                      <div className="w-24 flex items-center gap-[var(--layout-space-tight)] px-[var(--layout-space-tight)]">
+                      <div style={{ width: 112 }} className="px-[var(--layout-space-tight)] py-[var(--layout-space-tight)] text-body text-fg">{inv.date}</div>
+                      <div style={{ width: 112 }} className="px-[var(--layout-space-tight)] py-[var(--layout-space-tight)] text-body text-fg">{inv.amount}</div>
+                      <div style={{ width: 96 }} className="flex items-center gap-[var(--layout-space-tight)] px-[var(--layout-space-tight)]">
                         <AddPaymentItemDialog
                           trigger={
                             <Button variant="text" size="sm" iconOnly startIcon={Plus} aria-label="新增付款細項" />
@@ -195,15 +195,11 @@ export function ApplicationPage({ onBack }: ApplicationPageProps) {
                 />
               )}
 
-              <label className="flex items-center gap-[var(--layout-space-tight)] cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={useUrgent}
-                  onChange={(e) => setUseUrgent(e.target.checked)}
-                  className="rounded border-divider"
-                />
-                <span className="text-body text-fg">使用緊急/指定付款</span>
-              </label>
+              <Checkbox
+                checked={useUrgent}
+                onCheckedChange={(checked) => setUseUrgent(checked as boolean)}
+                label="使用緊急/指定付款"
+              />
 
               <Field>
                 <FieldLabel>緊急/指定付款日</FieldLabel>
