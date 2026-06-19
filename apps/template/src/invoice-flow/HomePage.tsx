@@ -1,5 +1,5 @@
 import { Button, Tag, Tabs, TabsList, TabsTrigger, Separator } from '@qijenchen/design-system'
-import { Plus, Download, Info, PenLine, Trash2 } from 'lucide-react'
+import { Plus, Download, Info, PenLine, Trash2, ChevronDown } from 'lucide-react'
 import { AppLayout } from './AppLayout'
 
 interface HomePageProps {
@@ -50,11 +50,10 @@ export function HomePage({ onNewApplication }: HomePageProps) {
           {/* Section header */}
           <div className="flex items-center gap-[var(--layout-space-tight)] mb-[var(--layout-space-loose)]">
             <span className="flex-1 text-body-lg font-medium text-fg">一般暫存申請</span>
-            <Button variant="primary" size="sm" startIcon={Plus} onClick={onNewApplication}>
+            <Button variant="primary" size="sm" startIcon={Plus} endIcon={ChevronDown} onClick={onNewApplication}>
               新增
             </Button>
-            <Separator orientation="vertical" style={{ height: 20 }} />
-            <Button variant="tertiary" size="sm" startIcon={Download}>
+            <Button variant="secondary" size="sm" startIcon={Download}>
               下載 Excel 範本
             </Button>
           </div>
