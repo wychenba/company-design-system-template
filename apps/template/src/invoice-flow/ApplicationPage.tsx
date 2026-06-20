@@ -328,7 +328,15 @@ export function ApplicationPage({ onBack }: ApplicationPageProps) {
                       onConfirm={addAttachment}
                     />
                   </div>
-                  <EmptyState text="沒有任何資料" />
+                  {attachments.length === 0 ? (
+                    <EmptyState text="沒有任何資料" />
+                  ) : (
+                    <AttachmentTable
+                      attachments={attachments}
+                      onEdit={editAttachment}
+                      onDelete={(id) => setAttachments((prev) => prev.filter((a) => a.id !== id))}
+                    />
+                  )}
                 </div>
               </Card>
             )}
