@@ -7,6 +7,7 @@ import { AppLayout } from './AppLayout'
 import { AddInvoiceDialog } from './AddInvoiceDialog'
 import { EditInvoiceDialog } from './EditInvoiceDialog'
 import { DeleteInvoiceDialog } from './DeleteInvoiceDialog'
+import { EditAttachmentDialog } from './EditAttachmentDialog'
 import { AddPaymentItemDialog } from './AddPaymentItemDialog'
 import { AddAttachmentDialog, type NewAttachment } from './AddAttachmentDialog'
 import { SubmittedDialog } from './SubmittedDialog'
@@ -126,7 +127,11 @@ function LineItemsTable({ items, onDelete }: { items: PaymentItem[]; onDelete: (
   )
 }
 
-function AttachmentTable({ attachments, onDelete }: { attachments: AttachmentRow[]; onDelete: (id: string) => void }) {
+function AttachmentTable({ attachments, onEdit, onDelete }: {
+  attachments: AttachmentRow[]
+  onEdit: (id: string, updated: { type: string; description: string; fileName: string }) => void
+  onDelete: (id: string) => void
+}) {
   return (
     <div className="border border-divider rounded overflow-hidden bg-surface overflow-x-auto">
       <div style={{ display: 'grid', gridTemplateColumns: ATTACH_COLS, minWidth: 680 }}
@@ -148,7 +153,13 @@ function AttachmentTable({ attachments, onDelete }: { attachments: AttachmentRow
             </span>
           </div>
           <div className="p-[var(--layout-space-tight)] flex items-center gap-[var(--layout-space-tight)]">
-            <Button variant="text" size="sm" iconOnly startIcon={Pencil} aria-label="編輯" />
+            <EditAttachmentDialog
+              trigger={<Button variant="text" size="sm" iconOnly startIcon={Pencil} aria-label="編輯" />}
+              initialType={att.type}
+              initialDescription={att.description}
+              initialFileName={att.fileName}
+              onConfirm={(updated) => onEdit(att.id, updated)}
+            />
             <Button variant="text" size="sm" iconOnly startIcon={Trash2} aria-label="刪除" onClick={() => onDelete(att.id)} />
           </div>
         </div>
@@ -226,6 +237,10 @@ export function ApplicationPage({ onBack }: ApplicationPageProps) {
         inv.id === invoiceId ? { ...inv, items: inv.items.filter((it) => it.id !== itemId) } : inv,
       ),
     )
+  }
+
+  function editAttachment(id: string, updated: { type: string; description: string; fileName: string }) {
+    setAttachments((prev) => prev.map((a) => a.id === id ? { ...a, ...updated } : a))
   }
 
   function addAttachment(newOnes: NewAttachment[]) {
@@ -434,6 +449,7 @@ export function ApplicationPage({ onBack }: ApplicationPageProps) {
                   ) : (
                     <AttachmentTable
                       attachments={attachments}
+                      onEdit={editAttachment}
                       onDelete={(id) => setAttachments((prev) => prev.filter((a) => a.id !== id))}
                     />
                   )}
