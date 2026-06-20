@@ -1,9 +1,9 @@
 import { useState } from 'react'
 import {
   Dialog, DialogTrigger, DialogContent, DialogHeader, DialogBody, DialogFooter, DialogTitle,
-  Button, Field, FieldLabel, Input, Select, Tag, Checkbox,
+  Button, Field, FieldLabel, Input, Select, Tag, Checkbox, DatePicker,
 } from '@qijenchen/design-system'
-import { Info, Calendar } from 'lucide-react'
+import { Info } from 'lucide-react'
 import type { ReactNode } from 'react'
 
 interface AddInvoiceDialogProps {
@@ -13,15 +13,15 @@ interface AddInvoiceDialogProps {
 }
 
 const VOUCHER_TYPES = [
-  { value: 'e-invoice', label: '電子統一發票' },
+  { value: 'e-invoice-25', label: '電子統一發票 (25)' },
   { value: 'paper-invoice', label: '紙本統一發票' },
-  { value: 'receipt', label: '統一發票收據' },
-  { value: 'deferred', label: '統一發票後補' },
-  { value: 'acknowledgment', label: '茲收到' },
-  { value: 'domestic', label: '國內廠商收據' },
-  { value: 'foreign', label: '國外廠商收據' },
-  { value: 'handler', label: '經手人證明' },
-  { value: 'discount', label: '折讓單' },
+  { value: 'receipt-26', label: '統一發票收據 (26)' },
+  { value: 'deferred-26', label: '統一發票後補 (26)' },
+  { value: 'acknowledgment-26', label: '茲收到 (26)' },
+  { value: 'domestic-26', label: '國內廠商收據 (26)' },
+  { value: 'foreign-26', label: '國外廠商收據 (26)' },
+  { value: 'handler-26', label: '經手人證明 (26)' },
+  { value: 'discount-23', label: '折讓單 (23)' },
 ]
 
 const CURRENCY_OPTIONS = [
@@ -32,18 +32,23 @@ const CURRENCY_OPTIONS = [
 ]
 
 const TAX_EXEMPT_OPTIONS = [
-  { value: '0', label: '無' },
-  { value: '90000', label: '90,000' },
+  { value: 'yes', label: '是' },
+  { value: 'no', label: '否' },
 ]
 
-function InfoIcon() {
-  return <Info size={14} className="inline-block align-middle text-fg-secondary shrink-0" />
+function InfoIcon({ tip }: { tip?: string }) {
+  return (
+    <span title={tip} className="inline-flex items-center">
+      <Info size={14} className="text-fg-secondary shrink-0 cursor-default" aria-label={tip} />
+    </span>
+  )
 }
 
 export function AddInvoiceDialog({ trigger, payeeType = 'employee', onConfirm }: AddInvoiceDialogProps) {
   const [open, setOpen] = useState(false)
   const [voucherType, setVoucherType] = useState('')
   const [currency, setCurrency] = useState('TWD')
+  const [invoiceDate, setInvoiceDate] = useState('')
   const [usePartial, setUsePartial] = useState(false)
 
   const isEmployee = payeeType === 'employee'
@@ -56,13 +61,13 @@ export function AddInvoiceDialog({ trigger, payeeType = 'employee', onConfirm }:
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
-      <DialogContent maxWidth={560}>
+      <DialogContent maxWidth={720}>
         <DialogHeader>
           <DialogTitle>新增發票</DialogTitle>
         </DialogHeader>
 
         <DialogBody>
-          {/* Info bar — label(caption) on top, value(body) below, sections separated by divider */}
+          {/* Info bar */}
           <div className="flex bg-surface-raised rounded px-[var(--layout-space-loose)] py-[var(--layout-space-tight)] mb-[var(--layout-space-loose)] gap-[var(--layout-space-loose)]">
             <div className="flex flex-col flex-1">
               <span className="text-caption text-fg-secondary">請款單號</span>
@@ -82,7 +87,7 @@ export function AddInvoiceDialog({ trigger, payeeType = 'employee', onConfirm }:
               <Input mode="readonly" value={isEmployee ? '林問宜 (023156)' : '沈淮民 (Y_123136)'} />
             </Field>
 
-            {/* 憑證類型 — full width */}
+            {/* 憑證類型 */}
             <Field>
               <FieldLabel required>憑證類型</FieldLabel>
               <Select
@@ -97,7 +102,7 @@ export function AddInvoiceDialog({ trigger, payeeType = 'employee', onConfirm }:
             <div className="grid grid-cols-2 gap-[var(--layout-space-loose)]">
               <Field>
                 <FieldLabel required>日期</FieldLabel>
-                <Input placeholder="填寫日期" endAction={{ icon: Calendar, label: '選擇日期', onClick: () => {} }} />
+                <DatePicker value={invoiceDate} onChange={setInvoiceDate} />
               </Field>
               <Field>
                 <FieldLabel>發票號碼</FieldLabel>
@@ -118,51 +123,47 @@ export function AddInvoiceDialog({ trigger, payeeType = 'employee', onConfirm }:
               <div />
             </div>
 
-            {/* 合計金額 | 稅額 ⓘ */}
+            {/* 合計金額（未稅） | 稅額 */}
             <div className="grid grid-cols-2 gap-[var(--layout-space-loose)]">
               <Field>
                 <FieldLabel required>合計金額（未稅）</FieldLabel>
                 <Input type="number" placeholder="0" />
               </Field>
               <Field>
-                <FieldLabel>稅額&nbsp;<InfoIcon /></FieldLabel>
+                <FieldLabel>稅額&nbsp;<InfoIcon tip="依憑證類型自動計算" /></FieldLabel>
                 <Input type="number" placeholder="0" />
               </Field>
             </div>
 
-            {/* 稅後金額 panel */}
-            <div className="bg-surface-raised rounded px-[var(--layout-space-loose)] py-[var(--layout-space-tight)]">
-              <div className="flex gap-[var(--layout-space-loose)]">
-                <div className="flex-1 flex flex-col gap-[var(--layout-space-tight)]">
-                  <div>
-                    <div className="text-caption text-fg-secondary">稅後金額</div>
-                    <div className="text-body font-medium text-fg">-</div>
-                  </div>
-                  <div className="text-caption text-fg-secondary">
-                    當地稅後金額&nbsp;<InfoIcon />&nbsp;-
-                  </div>
+            {/* 稅後金額 / 匯率 panel */}
+            <div className="flex gap-[var(--layout-space-loose)] bg-surface-raised rounded px-[var(--layout-space-loose)] py-[var(--layout-space-tight)]">
+              {/* gap-[var(--layout-space-tight)] for stacked label/value rows within summary panel */}
+              <div className="flex-1 flex flex-col gap-[var(--layout-space-tight)]">
+                <div className="text-caption text-fg-secondary">稅後金額</div>
+                <div className="text-body font-medium text-fg">-</div>
+                {/* @layout-space-magic-ok: inline icon+text row — 4px is icon-text gap, not consumer layout spacing */}
+                <div className="text-caption text-fg-secondary flex items-center gap-1">
+                  當地稅後金額&nbsp;<InfoIcon tip="以TWD計算的稅後金額" />&nbsp;<span>-</span>
                 </div>
-                <div className="w-px self-stretch bg-divider" />
-                <div className="flex-1 flex flex-col gap-[var(--layout-space-tight)]">
-                  <div>
-                    <div className="text-caption text-fg-secondary">匯率</div>
-                    <div className="text-body font-medium text-fg">-</div>
-                  </div>
-                  <div className="text-caption text-fg-secondary">更新時間 -</div>
-                </div>
+              </div>
+              <div className="w-px self-stretch bg-divider" />
+              <div className="flex-1 flex flex-col gap-[var(--layout-space-tight)]">
+                <div className="text-caption text-fg-secondary">匯率</div>
+                <div className="text-body font-medium text-fg">-</div>
+                <div className="text-caption text-fg-muted">更新時間 -</div>
               </div>
             </div>
 
-            {/* Employee-specific fields */}
+            {/* Employee-specific: 稅號 | 二代健保 */}
             {isEmployee && (
               <div className="grid grid-cols-2 gap-[var(--layout-space-loose)]">
                 <Field>
-                  <FieldLabel>稅號&nbsp;<InfoIcon /></FieldLabel>
-                  <Input placeholder="輸入稅號" />
+                  <FieldLabel>稅號&nbsp;<InfoIcon tip="統一編號" /></FieldLabel>
+                  <Input placeholder="" />
                 </Field>
                 <Field>
                   <FieldLabel>二代健保</FieldLabel>
-                  <Input mode="readonly" value="—" />
+                  <Input mode="readonly" value="" />
                 </Field>
               </div>
             )}
@@ -172,8 +173,8 @@ export function AddInvoiceDialog({ trigger, payeeType = 'employee', onConfirm }:
               <>
                 <div className="grid grid-cols-2 gap-[var(--layout-space-loose)]">
                   <Field>
-                    <FieldLabel>收入類型&nbsp;<InfoIcon /></FieldLabel>
-                    <Input placeholder="輸入收入類型" />
+                    <FieldLabel>收入類型&nbsp;<InfoIcon tip="所得類型代碼" /></FieldLabel>
+                    <Input placeholder="" />
                   </Field>
                   <Field>
                     <FieldLabel>免稅額</FieldLabel>
@@ -182,12 +183,12 @@ export function AddInvoiceDialog({ trigger, payeeType = 'employee', onConfirm }:
                 </div>
                 <div className="grid grid-cols-2 gap-[var(--layout-space-loose)]">
                   <Field>
-                    <FieldLabel>代扣金額&nbsp;<InfoIcon /></FieldLabel>
-                    <Input mode="readonly" value="—" />
+                    <FieldLabel>代扣金額&nbsp;<InfoIcon tip="依所得類型計算扣繳金額" /></FieldLabel>
+                    <Input mode="readonly" value="" />
                   </Field>
                   <Field>
                     <FieldLabel>二代健保</FieldLabel>
-                    <Input mode="readonly" value="—" />
+                    <Input mode="readonly" value="" />
                   </Field>
                 </div>
               </>

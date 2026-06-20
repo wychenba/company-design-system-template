@@ -12,16 +12,109 @@ interface AddPaymentItemDialogProps {
 }
 
 const CATEGORY_OPTIONS = [
-  { value: 'a', label: '一般費用' },
-  { value: 'b', label: '差旅費' },
-  { value: 'c', label: '採購' },
+  { value: '維修及購買零配件', label: '維修及購買零配件' },
+  { value: '維修及購買零配件（公司產品）', label: '維修及購買零配件（公司產品）' },
+  { value: '小型工具/物品、電腦/手機週邊、辦公室用品', label: '小型工具/物品、電腦/手機週邊、辦公室用品' },
+  { value: '贈、郵快遞費', label: '贈、郵快遞費' },
+  { value: '文具用品、印刷、書報雜誌/資料庫、軟體', label: '文具用品、印刷、書報雜誌/資料庫、軟體' },
+  { value: '外部研討會/跨組織學習之研討會、宣導活動', label: '外部研討會/跨組織學習之研討會、宣導活動' },
+  { value: '訓練/招募/JDP/國內JOS', label: '訓練/招募/JDP/國內JOS' },
+  { value: '品片光罩等連接器/機器設備/辦公室傢俱/辦公室裝潢', label: '品片光罩等連接器/機器設備/辦公室傢俱/辦公室裝潢' },
+  { value: '雜支/打印/廣告公布置', label: '雜支/打印/廣告公布置' },
+  { value: '廣告費', label: '廣告費' },
+  { value: 'Legal專用', label: 'Legal專用' },
+  { value: '健康中心/JERG@tsmc等員工關懷', label: '健康中心/JERG@tsmc等員工關懷' },
+  { value: '專業費用/專區', label: '專業費用/專區' },
 ]
 
-const SUB_CATEGORY_OPTIONS = [
-  { value: 'a1', label: '辦公用品' },
-  { value: 'a2', label: '餐費' },
-  { value: 'a3', label: '交通費' },
-]
+const SUBCATEGORY_MAP: Record<string, string[]> = {
+  '維修及購買零配件': [
+    '純工/建工費料(制加工、加工等)',
+    '純料(螺絲、O-ring等)',
+    '公司設備/辦公室及其他非Fab區域',
+    '維修服務及儀器維護',
+  ],
+  '維修及購買零配件（公司產品）': [
+    '純工/建工費料(制加工、加工等)',
+    '純料(螺絲、O-ring等)',
+  ],
+  '小型工具/物品、電腦/手機週邊、辦公室用品': [
+    '電腦/手機週邊',
+    '辦公室用品',
+    '數位軟體/訂閱費(學習平台、adobe、字體、輸入法等)',
+    '雲端化軟體服務(Kahoot/Canvas等)、雲端服務(AI、API等)',
+  ],
+  '贈、郵快遞費': [
+    '郵快遞費(如郵局、ups、快遞等)',
+  ],
+  '文具用品、印刷、書報雜誌/資料庫、軟體': [
+    '雲端化軟體服務(Kahoot/Canvas等)、雲端服務(AI、API等)',
+    '公司書籍、書報雜誌、電子報、線上資料庫',
+    '印刷(海報/傳貼/貼紙...等)',
+    '周刊',
+    '文具用品及紙品/資料夾...等)',
+  ],
+  '外部研討會/跨組織學習之研討會、宣導活動': [
+    '跨組織學習之研討會、宣導活動-餐飲費用',
+    '跨組織學習之研討會、宣導活動-禮品及其他',
+    '跨組織學習之研討會、宣導活動-講師外聘講師費',
+    '跨組織學習之研討會、宣導活動-場地費',
+    '參與台灣境內研討會-報費',
+    '參與台灣境內研討會-報名費',
+    '參與台灣境外研討會-旅費',
+    '參與台灣境外研討會-報名費',
+  ],
+  '訓練/招募/JDP/國內JOS': [
+    '訓練費-全部門集體訓練學費',
+    '訓練費-人力資源費用-台積學習平台',
+    '訓練費-人力資源費用-外部教育訓練平台及工具',
+    '訓練費-人力資源費用-交通費',
+    '訓練費-人力資源費用-餐飲費用',
+    '訓練費-人力資源費用-禮品/贈獎',
+    '訓練費-人力資源費用-器材及其他物品',
+    '訓練費-人力資源費用-報名費/語言及進修補助費',
+    '訓練費-餐飲費用',
+    '國內招募-用品及其他',
+    '國外招募-用品及其他',
+    '國外招募-禮品/贈獎',
+    'JDP 文辦校外合作教學專業',
+    '考訓/學習支援',
+    'JOS 平女貸幣補助',
+    '考訓學習費用',
+  ],
+  '品片光罩等連接器/機器設備/辦公室傢俱/辦公室裝潢': [
+    '裝潢傢俱之期購置及期後裝設費用',
+    '手提式電腦及其他(handcarry資產)',
+    '門禁/安全',
+  ],
+  '雜支/打印/廣告公布置': [
+    '雜支/打印(個人與機關機構間)',
+    '生活鐘',
+  ],
+  '廣告費': [
+    '廣告費(國內)',
+    '廣告費(國外)',
+    '非象廣告費(國內)',
+    '非象廣告費(國外)',
+  ],
+  'Legal專用': [
+    '律師費(216631)-國外事務所只在海外執行業務',
+    '律師費(216631)-國內事務所及其他',
+    '專利費(01)-國外事務所只在海外執行業務',
+    '專利費(01)-國外',
+    '專利License',
+  ],
+  '健康中心/JERG@tsmc等員工關懷': [
+    '醫療器材、救護車…等非勞務費用',
+    '禮品/贈物',
+    '非醫療用品及其他',
+  ],
+  '專業費用/專區': [
+    '會計顧問費',
+    '財務費用',
+    '顧問費/學術合作',
+  ],
+}
 
 const TAX_RATE_OPTIONS = [
   { value: '5', label: '5%' },
@@ -29,16 +122,31 @@ const TAX_RATE_OPTIONS = [
   { value: 'exempt', label: '免稅' },
 ]
 
-function InfoIcon() {
-  return <Info size={14} className="inline-block align-middle text-fg-secondary shrink-0" />
+function InfoIcon({ tip }: { tip?: string }) {
+  return (
+    <span title={tip} className="inline-flex items-center">
+      <Info size={14} className="text-fg-secondary shrink-0 cursor-default" aria-label={tip} />
+    </span>
+  )
 }
 
 export function AddPaymentItemDialog({ trigger, onConfirm }: AddPaymentItemDialogProps) {
   const [open, setOpen] = useState(false)
+  const [category, setCategory] = useState('')
+  const [subCategory, setSubCategory] = useState('')
   const [hasContract, setHasContract] = useState<'yes' | 'no'>('yes')
   const [contractIds, setContractIds] = useState([''])
   const [noContractReason, setNoContractReason] = useState('')
   const [showNotice, setShowNotice] = useState(true)
+
+  const subCategoryOptions = category
+    ? (SUBCATEGORY_MAP[category] ?? []).map((v) => ({ value: v, label: v }))
+    : []
+
+  function handleCategoryChange(val: string) {
+    setCategory(val)
+    setSubCategory('')
+  }
 
   function addContract() {
     setContractIds((prev) => [...prev, ''])
@@ -56,13 +164,13 @@ export function AddPaymentItemDialog({ trigger, onConfirm }: AddPaymentItemDialo
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
-      <DialogContent maxWidth={560}>
+      <DialogContent maxWidth={720}>
         <DialogHeader>
           <DialogTitle>新增付款細項</DialogTitle>
         </DialogHeader>
 
         <DialogBody>
-          {/* Info bar — label(caption) on top, value(body) below */}
+          {/* Info bar */}
           <div className="flex bg-surface-raised rounded px-[var(--layout-space-loose)] py-[var(--layout-space-tight)] mb-[var(--layout-space-loose)] gap-[var(--layout-space-loose)]">
             <div className="flex flex-col">
               <span className="text-caption text-fg-secondary">請款單號</span>
@@ -80,13 +188,12 @@ export function AddPaymentItemDialog({ trigger, onConfirm }: AddPaymentItemDialo
             </div>
           </div>
 
-          {/* Info alert */}
           {showNotice && (
             <div className="mb-[var(--layout-space-loose)]">
               <Alert
                 variant="info"
                 title="注意事項"
-                description="自 2026/12/31 起「國內出差」、「現金獎金」、「QIF」、「銀行自動扣款」已移至首頁/專區，如有需求請前往專區請款。"
+                description='自 2026/12/31 起「國內出差」、「現金獎金」、「QIF」、「銀行自動扣款」已移至首頁/專區，如有需求請前往專區請款。'
                 onDismiss={() => setShowNotice(false)}
               />
             </div>
@@ -97,39 +204,50 @@ export function AddPaymentItemDialog({ trigger, onConfirm }: AddPaymentItemDialo
             <div className="grid grid-cols-2 gap-[var(--layout-space-loose)]">
               <Field>
                 <FieldLabel required>分類</FieldLabel>
-                <Select options={CATEGORY_OPTIONS} placeholder="請選擇" />
+                <Select
+                  options={CATEGORY_OPTIONS}
+                  value={category}
+                  onChange={handleCategoryChange}
+                  placeholder="請選擇"
+                />
               </Field>
               <Field>
                 <FieldLabel required>子分類</FieldLabel>
-                <Select options={SUB_CATEGORY_OPTIONS} placeholder="請選擇" />
+                <Select
+                  options={subCategoryOptions}
+                  value={subCategory}
+                  onChange={setSubCategory}
+                  placeholder="請選擇"
+                  disabled={!category}
+                />
               </Field>
             </div>
 
-            {/* 成本中心 ⓘ | 會計科目 ⓘ */}
+            {/* 成本中心 | 會計科目 */}
             <div className="grid grid-cols-2 gap-[var(--layout-space-loose)]">
               <Field>
-                <FieldLabel required>成本中心&nbsp;<InfoIcon /></FieldLabel>
-                <Input placeholder="輸入成本中心" />
+                <FieldLabel required>成本中心&nbsp;<InfoIcon tip="請填入所屬成本中心代碼" /></FieldLabel>
+                <Input placeholder="" />
               </Field>
               <Field>
-                <FieldLabel>會計科目&nbsp;<InfoIcon /></FieldLabel>
-                <Input placeholder="輸入會計科目" />
+                <FieldLabel>會計科目&nbsp;<InfoIcon tip="依分類自動帶入" /></FieldLabel>
+                <Input mode="readonly" value="" />
               </Field>
             </div>
 
-            {/* 總額 | 稅率 ⓘ | 稅額 */}
+            {/* 總額 | 稅率 | 稅額 */}
             <div className="grid grid-cols-3 gap-[var(--layout-space-loose)]">
               <Field>
                 <FieldLabel required>總額</FieldLabel>
                 <Input type="number" placeholder="填寫總額" />
               </Field>
               <Field>
-                <FieldLabel>稅率&nbsp;<InfoIcon /></FieldLabel>
+                <FieldLabel>稅率&nbsp;<InfoIcon tip="依憑證類型計算" /></FieldLabel>
                 <Select options={TAX_RATE_OPTIONS} placeholder="請選擇" />
               </Field>
               <Field>
                 <FieldLabel>稅額</FieldLabel>
-                <Input type="number" placeholder="0" />
+                <Input type="number" mode="readonly" value="" />
               </Field>
             </div>
 
@@ -150,7 +268,7 @@ export function AddPaymentItemDialog({ trigger, onConfirm }: AddPaymentItemDialo
             {hasContract === 'yes' && (
               <div className="flex flex-col gap-[var(--layout-space-tight)]">
                 {contractIds.map((id, idx) => (
-                  <div key={idx} className="flex items-center gap-[var(--layout-space-tight)]">
+                  <div key={idx} className="flex items-end gap-[var(--layout-space-tight)]">
                     <Field className="flex-1">
                       {idx === 0 && <FieldLabel required>合約編號</FieldLabel>}
                       <Input
@@ -171,7 +289,6 @@ export function AddPaymentItemDialog({ trigger, onConfirm }: AddPaymentItemDialo
                         startIcon={Trash2}
                         aria-label="移除合約"
                         onClick={() => removeContract(idx)}
-                        className="mt-[var(--layout-space-tight)]"
                       />
                     )}
                   </div>
