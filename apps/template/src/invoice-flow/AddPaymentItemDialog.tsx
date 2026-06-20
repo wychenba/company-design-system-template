@@ -122,6 +122,22 @@ const TAX_RATE_OPTIONS = [
   { value: 'exempt', label: '免稅' },
 ]
 
+const CATEGORY_ACCOUNT_MAP: Record<string, string> = {
+  '維修及購買零配件': '631100 維修費',
+  '維修及購買零配件（公司產品）': '631100 維修費',
+  '小型工具/物品、電腦/手機週邊、辦公室用品': '632200 辦公用品費',
+  '贈、郵快遞費': '633100 郵電費',
+  '文具用品、印刷、書報雜誌/資料庫、軟體': '632100 文具印刷費',
+  '外部研討會/跨組織學習之研討會、宣導活動': '641100 訓練費',
+  '訓練/招募/JDP/國內JOS': '641100 訓練費',
+  '品片光罩等連接器/機器設備/辦公室傢俱/辦公室裝潢': '151000 固定資產',
+  '雜支/打印/廣告公布置': '699900 雜支',
+  '廣告費': '651000 廣告費',
+  'Legal專用': '661000 法律費用',
+  '健康中心/JERG@tsmc等員工關懷': '671000 員工福利費',
+  '專業費用/專區': '681000 專業服務費',
+}
+
 function InfoIcon({ tip }: { tip?: string }) {
   return (
     <span title={tip} className="inline-flex items-center">
@@ -138,6 +154,14 @@ export function AddPaymentItemDialog({ trigger, onConfirm }: AddPaymentItemDialo
   const [contractIds, setContractIds] = useState([''])
   const [noContractReason, setNoContractReason] = useState('')
   const [showNotice, setShowNotice] = useState(true)
+  const [totalAmount, setTotalAmount] = useState('')
+  const [taxRate, setTaxRate] = useState('0')
+
+  const accountingSubject = category ? (CATEGORY_ACCOUNT_MAP[category] ?? '') : ''
+  const taxAmount = totalAmount && taxRate && taxRate !== 'exempt'
+    ? Math.round(parseFloat(totalAmount) * parseFloat(taxRate) / 100)
+    : 0
+  const taxAmountDisplay = totalAmount ? String(taxAmount) : ''
 
   const subCategoryOptions = category
     ? (SUBCATEGORY_MAP[category] ?? []).map((v) => ({ value: v, label: v }))
@@ -231,7 +255,7 @@ export function AddPaymentItemDialog({ trigger, onConfirm }: AddPaymentItemDialo
               </Field>
               <Field>
                 <FieldLabel>會計科目&nbsp;<InfoIcon tip="依分類自動帶入" /></FieldLabel>
-                <Input mode="readonly" value="" />
+                <Input mode="readonly" value={accountingSubject} />
               </Field>
             </div>
 
@@ -239,15 +263,15 @@ export function AddPaymentItemDialog({ trigger, onConfirm }: AddPaymentItemDialo
             <div className="grid grid-cols-3 gap-[var(--layout-space-loose)]">
               <Field>
                 <FieldLabel required>總額</FieldLabel>
-                <Input type="number" placeholder="填寫總額" />
+                <Input type="number" placeholder="填寫總額" value={totalAmount} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTotalAmount(e.target.value)} />
               </Field>
               <Field>
                 <FieldLabel>稅率&nbsp;<InfoIcon tip="依憑證類型計算" /></FieldLabel>
-                <Select options={TAX_RATE_OPTIONS} placeholder="請選擇" />
+                <Select options={TAX_RATE_OPTIONS} value={taxRate} onChange={setTaxRate} placeholder="請選擇" />
               </Field>
               <Field>
                 <FieldLabel>稅額</FieldLabel>
-                <Input type="number" mode="readonly" value="" />
+                <Input type="number" mode="readonly" value={taxAmountDisplay} />
               </Field>
             </div>
 
