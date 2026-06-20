@@ -56,13 +56,16 @@ interface AttachmentRow {
   fileName: string
 }
 
-function SectionCard({ title, children }: { title: string; children: React.ReactNode }) {
+function Card({ children }: { children: React.ReactNode }) {
   return (
     <div className="bg-surface rounded-lg px-[var(--layout-space-loose)] py-[var(--layout-space-tight)] flex flex-col gap-[var(--layout-space-tight)]">
-      <h2 className="text-h4 font-medium text-fg">{title}</h2>
       {children}
     </div>
   )
+}
+
+function CardTitle({ children }: { children: React.ReactNode }) {
+  return <h2 className="text-h4 font-medium text-fg">{children}</h2>
 }
 
 function EmptyState({ text }: { text: string }) {
@@ -73,30 +76,19 @@ function EmptyState({ text }: { text: string }) {
   )
 }
 
-// Line items table columns: 序號/分類子分類/成本中心/會計科目/總額/稅率/稅額/是否提供合約編號/合約編號/actions
+// line-items table: 序號/分類子分類/成本中心/會計科目/總額/稅率/稅額/是否提供合約編號/合約編號/actions
 const LINE_ITEM_COLS = '40px minmax(160px,1fr) 88px 128px 72px 56px 56px 100px minmax(120px,1fr) 72px'
 const ATTACH_COLS = '160px 1fr 240px 80px'
 
-function LineItemsTable({ items, onEdit, onDelete }: {
-  items: PaymentItem[]
-  onEdit: (id: string) => void
-  onDelete: (id: string) => void
-}) {
+function LineItemsTable({ items, onDelete }: { items: PaymentItem[]; onDelete: (id: string) => void }) {
   return (
     <div className="border border-divider rounded overflow-hidden bg-surface">
       <div className="overflow-x-auto">
         <div style={{ display: 'grid', gridTemplateColumns: LINE_ITEM_COLS, minWidth: 900 }}
           className="bg-surface-raised border-b border-divider text-caption text-fg-secondary font-medium">
-          <div className="p-[var(--layout-space-tight)]">序號</div>
-          <div className="p-[var(--layout-space-tight)]">分類/子分類</div>
-          <div className="p-[var(--layout-space-tight)]">成本中心</div>
-          <div className="p-[var(--layout-space-tight)]">會計科目</div>
-          <div className="p-[var(--layout-space-tight)] text-right">總額</div>
-          <div className="p-[var(--layout-space-tight)] text-right">稅率</div>
-          <div className="p-[var(--layout-space-tight)] text-right">稅額</div>
-          <div className="p-[var(--layout-space-tight)]">是否提供合約編號</div>
-          <div className="p-[var(--layout-space-tight)]">合約編號/無合約原因</div>
-          <div className="p-[var(--layout-space-tight)]" />
+          {['序號','分類/子分類','成本中心','會計科目','總額','稅率','稅額','是否提供合約編號','合約編號/無合約原因',''].map((h, i) => (
+            <div key={i} className={`p-[var(--layout-space-tight)] ${i >= 4 && i <= 6 ? 'text-right' : ''}`}>{h}</div>
+          ))}
         </div>
         {items.map((item, i) => (
           <div key={item.id}
@@ -122,7 +114,7 @@ function LineItemsTable({ items, onEdit, onDelete }: {
             <div className="p-[var(--layout-space-tight)] flex items-center">{item.contractRequired}</div>
             <div className="p-[var(--layout-space-tight)] flex items-center text-fg-secondary">{item.contractNumber || '-'}</div>
             <div className="p-[var(--layout-space-tight)] flex items-center justify-center gap-[var(--layout-space-tight)]">
-              <Button variant="text" size="sm" iconOnly startIcon={Pencil} aria-label="編輯" onClick={() => onEdit(item.id)} />
+              <Button variant="text" size="sm" iconOnly startIcon={Pencil} aria-label="編輯" />
               <Button variant="text" size="sm" iconOnly startIcon={Trash2} aria-label="刪除" onClick={() => onDelete(item.id)} />
             </div>
           </div>
@@ -132,18 +124,14 @@ function LineItemsTable({ items, onEdit, onDelete }: {
   )
 }
 
-function AttachmentTable({ attachments, onDelete }: {
-  attachments: AttachmentRow[]
-  onDelete: (id: string) => void
-}) {
+function AttachmentTable({ attachments, onDelete }: { attachments: AttachmentRow[]; onDelete: (id: string) => void }) {
   return (
     <div className="border border-divider rounded overflow-hidden bg-surface overflow-x-auto">
       <div style={{ display: 'grid', gridTemplateColumns: ATTACH_COLS, minWidth: 680 }}
         className="bg-surface-raised border-b border-divider text-caption text-fg-secondary font-medium">
-        <div className="p-[var(--layout-space-tight)]">類型</div>
-        <div className="p-[var(--layout-space-tight)]">描述</div>
-        <div className="p-[var(--layout-space-tight)]">附件</div>
-        <div className="p-[var(--layout-space-tight)]" />
+        {['類型','描述','附件',''].map((h, i) => (
+          <div key={i} className="p-[var(--layout-space-tight)]">{h}</div>
+        ))}
       </div>
       {attachments.map((att) => (
         <div key={att.id}
@@ -182,7 +170,7 @@ export function ApplicationPage({ onBack }: ApplicationPageProps) {
       {
         id: `INV-${n}`,
         displayId: `PAGE2605250001-${n}`,
-        type: '電子統一發票',
+        type: '電子統一發票 (25)',
         voucherNumber: '',
         amount: 0,
         taxAmount: 0,
@@ -250,10 +238,13 @@ export function ApplicationPage({ onBack }: ApplicationPageProps) {
     ])
   }
 
+  const hasInvoices = invoices.length > 0
+
   return (
     <AppLayout activeMenu="暫存申請單">
       <div className="flex flex-col h-full">
-        {/* Breadcrumb + title row */}
+
+        {/* Page header */}
         <div className="bg-surface border-b border-divider px-[var(--layout-space-loose)] py-[var(--layout-space-tight)]">
           <div className="flex items-center gap-[var(--layout-space-tight)] mb-[var(--layout-space-tight)]">
             <button onClick={onBack} className="text-body text-fg-secondary hover:text-fg transition-colors">
@@ -272,7 +263,8 @@ export function ApplicationPage({ onBack }: ApplicationPageProps) {
           <div className="w-full max-w-[960px] mx-auto flex flex-col gap-[var(--layout-space-loose)]">
 
             {/* 付款資訊 */}
-            <SectionCard title="付款資訊">
+            <Card>
+              <CardTitle>付款資訊</CardTitle>
               <div className="grid grid-cols-2 gap-[var(--layout-space-loose)]">
                 <Field>
                   <FieldLabel>公司代號</FieldLabel>
@@ -294,22 +286,50 @@ export function ApplicationPage({ onBack }: ApplicationPageProps) {
                 <FieldLabel required>申請原因</FieldLabel>
                 <Textarea placeholder="填寫申請原因，最多 250 字" rows={4} maxLength={250} />
               </Field>
-            </SectionCard>
+            </Card>
 
-            {/* 請款資訊 */}
-            <SectionCard title="請款資訊">
-              <div>
-                <AddInvoiceDialog
-                  trigger={<Button variant="tertiary" size="sm" startIcon={Plus}>新增請款</Button>}
-                  payeeType={payeeType === 'employee' ? 'employee' : 'vendor'}
-                  onConfirm={addInvoice}
-                />
-              </div>
-
-              {invoices.length === 0 ? (
-                <EmptyState text="沒有任何資料" />
-              ) : (
+            {/* ── State 0: 無發票 — 請款資訊 + 檢附憑證/證明 同一 card ── */}
+            {!hasInvoices && (
+              <Card>
                 <div className="flex flex-col gap-[var(--layout-space-tight)]">
+                  <CardTitle>請款資訊</CardTitle>
+                  <div>
+                    <AddInvoiceDialog
+                      trigger={<Button variant="tertiary" size="sm" startIcon={Plus}>新增請款</Button>}
+                      payeeType={payeeType === 'employee' ? 'employee' : 'vendor'}
+                      onConfirm={addInvoice}
+                    />
+                  </div>
+                  <EmptyState text="沒有任何資料" />
+                </div>
+
+                <div className="flex flex-col gap-[var(--layout-space-tight)] mt-[var(--layout-space-tight)]">
+                  <CardTitle>檢附憑證 / 證明</CardTitle>
+                  <div>
+                    <AddAttachmentDialog
+                      trigger={<Button variant="tertiary" size="sm" startIcon={Plus}>新增附件</Button>}
+                      onConfirm={addAttachment}
+                    />
+                  </div>
+                  <EmptyState text="沒有任何資料" />
+                </div>
+              </Card>
+            )}
+
+            {/* ── State 1+: 有發票 — 各自獨立 card ── */}
+            {hasInvoices && (
+              <>
+                {/* 請款資訊 card */}
+                <Card>
+                  <CardTitle>請款資訊</CardTitle>
+                  <div>
+                    <AddInvoiceDialog
+                      trigger={<Button variant="tertiary" size="sm" startIcon={Plus}>新增請款</Button>}
+                      payeeType={payeeType === 'employee' ? 'employee' : 'vendor'}
+                      onConfirm={addInvoice}
+                    />
+                  </div>
+
                   {invoices.map((inv) => (
                     <div key={inv.id} className="border border-divider rounded overflow-hidden bg-surface">
                       {/* Invoice card header */}
@@ -360,7 +380,7 @@ export function ApplicationPage({ onBack }: ApplicationPageProps) {
                           <div className="bg-surface-sunken p-[var(--layout-space-tight)]">
                             <div className="flex items-center gap-[var(--layout-space-tight)] mb-[var(--layout-space-tight)]">
                               <div className="flex items-center gap-[var(--layout-space-tight)] text-body font-medium text-fg">
-                                <AlignLeft size={16} className="text-fg-secondary" />
+                                <AlignLeft size={16} className="text-fg-secondary shrink-0" />
                                 付款細項：{inv.items.length} 項
                               </div>
                             </div>
@@ -376,7 +396,6 @@ export function ApplicationPage({ onBack }: ApplicationPageProps) {
                             ) : (
                               <LineItemsTable
                                 items={inv.items}
-                                onEdit={() => {}}
                                 onDelete={(itemId) => deletePaymentItem(inv.id, itemId)}
                               />
                             )}
@@ -385,30 +404,32 @@ export function ApplicationPage({ onBack }: ApplicationPageProps) {
                       )}
                     </div>
                   ))}
-                </div>
-              )}
-            </SectionCard>
+                </Card>
 
-            {/* 檢附憑證 / 證明 */}
-            <SectionCard title="檢附憑證 / 證明">
-              <div>
-                <AddAttachmentDialog
-                  trigger={<Button variant="tertiary" size="sm" startIcon={Plus}>新增附件</Button>}
-                  onConfirm={addAttachment}
-                />
-              </div>
-              {attachments.length === 0 ? (
-                <EmptyState text="沒有任何資料" />
-              ) : (
-                <AttachmentTable
-                  attachments={attachments}
-                  onDelete={(id) => setAttachments((prev) => prev.filter((a) => a.id !== id))}
-                />
-              )}
-            </SectionCard>
+                {/* 檢附憑證 / 證明 card */}
+                <Card>
+                  <CardTitle>檢附憑證 / 證明</CardTitle>
+                  <div>
+                    <AddAttachmentDialog
+                      trigger={<Button variant="tertiary" size="sm" startIcon={Plus}>新增附件</Button>}
+                      onConfirm={addAttachment}
+                    />
+                  </div>
+                  {attachments.length === 0 ? (
+                    <EmptyState text="沒有任何資料" />
+                  ) : (
+                    <AttachmentTable
+                      attachments={attachments}
+                      onDelete={(id) => setAttachments((prev) => prev.filter((a) => a.id !== id))}
+                    />
+                  )}
+                </Card>
+              </>
+            )}
 
             {/* 補充資訊 */}
-            <SectionCard title="補充資訊">
+            <Card>
+              <CardTitle>補充資訊</CardTitle>
               {showNotice && (
                 <Alert
                   variant="info"
@@ -441,11 +462,12 @@ export function ApplicationPage({ onBack }: ApplicationPageProps) {
                 </Field>
                 <div />
               </div>
-            </SectionCard>
+            </Card>
+
           </div>
         </div>
 
-        {/* Footer actions */}
+        {/* Footer */}
         <div className="bg-surface border-t border-divider flex items-center justify-end gap-[var(--layout-space-tight)] px-[var(--layout-space-loose)] py-[var(--layout-space-loose)]">
           <Button variant="secondary" danger size="sm" onClick={onBack}>取消申請</Button>
           <Button variant="tertiary" size="sm">存成草稿</Button>
@@ -453,6 +475,7 @@ export function ApplicationPage({ onBack }: ApplicationPageProps) {
             trigger={<Button variant="primary" size="sm">送出預覽</Button>}
           />
         </div>
+
       </div>
     </AppLayout>
   )
