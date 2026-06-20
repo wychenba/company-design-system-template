@@ -5,6 +5,8 @@ import {
 import { Plus, ArrowUpFromLine, Calendar, Pencil, Copy, Trash2, ChevronDown, ChevronUp, AlignLeft, Paperclip } from 'lucide-react'
 import { AppLayout } from './AppLayout'
 import { AddInvoiceDialog } from './AddInvoiceDialog'
+import { EditInvoiceDialog } from './EditInvoiceDialog'
+import { DeleteInvoiceDialog } from './DeleteInvoiceDialog'
 import { AddPaymentItemDialog } from './AddPaymentItemDialog'
 import { AddAttachmentDialog, type NewAttachment } from './AddAttachmentDialog'
 import { SubmittedDialog } from './SubmittedDialog'
@@ -351,9 +353,21 @@ export function ApplicationPage({ onBack }: ApplicationPageProps) {
                           </div>
                         </div>
                         <div className="flex items-center gap-[var(--layout-space-tight)] shrink-0">
-                          <Button variant="tertiary" size="sm" iconOnly startIcon={Pencil} aria-label="編輯" />
-                          <Button variant="tertiary" size="sm" iconOnly startIcon={Copy} aria-label="複製" />
-                          <Button variant="tertiary" size="sm" iconOnly startIcon={Trash2} aria-label="刪除" onClick={() => deleteInvoice(inv.id)} />
+                          <EditInvoiceDialog
+                            trigger={<Button variant="tertiary" size="sm" iconOnly startIcon={Pencil} aria-label="編輯" />}
+                            payeeType={payeeType === 'employee' ? 'employee' : 'vendor'}
+                            initialData={inv}
+                          />
+                          <AddInvoiceDialog
+                            trigger={<Button variant="tertiary" size="sm" iconOnly startIcon={Copy} aria-label="複製" />}
+                            payeeType={payeeType === 'employee' ? 'employee' : 'vendor'}
+                            onConfirm={addInvoice}
+                          />
+                          <DeleteInvoiceDialog
+                            trigger={<Button variant="tertiary" size="sm" iconOnly startIcon={Trash2} aria-label="刪除" />}
+                            displayId={inv.displayId}
+                            onConfirm={() => deleteInvoice(inv.id)}
+                          />
                         </div>
                       </div>
 
