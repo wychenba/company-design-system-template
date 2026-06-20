@@ -7,6 +7,7 @@ import { AppLayout } from './AppLayout'
 import { AddInvoiceDialog } from './AddInvoiceDialog'
 import { AddPaymentItemDialog } from './AddPaymentItemDialog'
 import { AddAttachmentDialog, type NewAttachment } from './AddAttachmentDialog'
+import { SubmittedDialog } from './SubmittedDialog'
 
 interface ApplicationPageProps {
   onBack: () => void
@@ -274,7 +275,9 @@ export function ApplicationPage({ onBack }: ApplicationPageProps) {
         <div className="bg-surface border-t border-divider flex items-center justify-end gap-[var(--layout-space-tight)] px-[var(--layout-space-loose)] py-[var(--layout-space-loose)]">
           <Button variant="secondary" danger size="sm" onClick={onBack}>取消申請</Button>
           <Button variant="tertiary" size="sm">存成草稿</Button>
-          <Button variant="primary" size="sm">送出預覽</Button>
+          <SubmittedDialog
+            trigger={<Button variant="primary" size="sm">送出預覽</Button>}
+          />
         </div>
       </div>
     </AppLayout>
