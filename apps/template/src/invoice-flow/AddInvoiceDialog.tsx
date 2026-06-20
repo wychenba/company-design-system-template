@@ -50,8 +50,15 @@ export function AddInvoiceDialog({ trigger, payeeType = 'employee', onConfirm }:
   const [currency, setCurrency] = useState('TWD')
   const [invoiceDate, setInvoiceDate] = useState('')
   const [usePartial, setUsePartial] = useState(false)
+  const [pretaxAmount, setPretaxAmount] = useState('')
+  const [taxAmount2, setTaxAmount2] = useState('')
 
   const isEmployee = payeeType === 'employee'
+
+  const exchangeRate = currency === 'TWD' ? 1 : currency === 'USD' ? 32.5 : currency === 'EUR' ? 35.2 : currency === 'JPY' ? 0.22 : 1
+  const exchangeRateUpdated = '2026/06/20 09:00'
+  const afterTaxAmount = pretaxAmount ? (parseFloat(pretaxAmount) + (parseFloat(taxAmount2) || 0)) : null
+  const localAfterTax = afterTaxAmount != null ? (afterTaxAmount * exchangeRate) : null
 
   function handleConfirm() {
     onConfirm?.()
@@ -119,11 +126,11 @@ export function AddInvoiceDialog({ trigger, payeeType = 'employee', onConfirm }:
             <div className="grid grid-cols-2 gap-[var(--layout-space-loose)]">
               <Field>
                 <FieldLabel required>合計金額（未稅）</FieldLabel>
-                <Input type="number" placeholder="" />
+                <Input type="number" placeholder="" value={pretaxAmount} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPretaxAmount(e.target.value)} />
               </Field>
               <Field>
                 <FieldLabel>稅額&nbsp;<InfoIcon tip="依憑證類型自動計算" /></FieldLabel>
-                <Input type="number" placeholder="" />
+                <Input type="number" placeholder="" value={taxAmount2} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTaxAmount2(e.target.value)} />
               </Field>
             </div>
 
@@ -131,16 +138,19 @@ export function AddInvoiceDialog({ trigger, payeeType = 'employee', onConfirm }:
             <div className="flex border border-divider rounded bg-surface-raised px-[var(--layout-space-loose)] py-[var(--layout-space-tight)] gap-[var(--layout-space-loose)]">
               <div className="flex-1 flex flex-col gap-[var(--layout-space-tight)]">
                 <span className="text-caption text-fg-secondary">稅後金額</span>
-                <span className="text-body font-medium text-fg">-</span>
+                <span className="text-body font-medium text-fg">
+                  {afterTaxAmount != null ? afterTaxAmount.toLocaleString() : '-'}
+                </span>
                 <span className="text-caption text-fg-secondary flex items-center gap-[var(--layout-space-tight)]">
-                  當地稅後金額&nbsp;<InfoIcon tip="以TWD計算的稅後金額" />&nbsp;<span>-</span>
+                  當地稅後金額&nbsp;<InfoIcon tip="以TWD計算的稅後金額" />&nbsp;
+                  <span>{localAfterTax != null ? localAfterTax.toLocaleString(undefined, { maximumFractionDigits: 2 }) : '-'}</span>
                 </span>
               </div>
               <div className="w-px self-stretch bg-divider shrink-0" />
               <div className="flex-1 flex flex-col gap-[var(--layout-space-tight)]">
                 <span className="text-caption text-fg-secondary">匯率</span>
-                <span className="text-body font-medium text-fg">-</span>
-                <span className="text-caption text-fg-muted">更新時間 -</span>
+                <span className="text-body font-medium text-fg">{exchangeRate}</span>
+                <span className="text-caption text-fg-muted">更新時間 {exchangeRateUpdated}</span>
               </div>
             </div>
 
