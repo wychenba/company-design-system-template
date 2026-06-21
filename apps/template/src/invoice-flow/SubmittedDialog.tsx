@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import {
   Dialog, DialogTrigger, DialogContent, DialogHeader, DialogBody, DialogFooter, DialogTitle,
-  Button,
+  Button, Textarea,
 } from '@qijenchen/design-system'
 import { ChevronDown, FileText, Plus, GripVertical, Trash2 } from 'lucide-react'
 import { showToast } from './useToast'
@@ -51,7 +51,7 @@ interface SubmittedDialogProps {
 
 function InfoCell({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex-1 flex flex-col" style={{ gap: 3 }}>
+    <div className="flex-1 flex flex-col" style={{ gap: 4 /* @layout-space-magic-ok: intra-element label/value micro-stack */ }}>
       <span className="text-caption text-fg-secondary">{label}</span>
       <span className="text-body font-medium text-fg">{value}</span>
     </div>
@@ -94,7 +94,7 @@ function SectionCard({
           <span className="text-h4 font-semibold text-fg">{title}</span>
           <span
             className="flex items-center whitespace-nowrap text-body font-semibold text-fg-secondary"
-            style={{ gap: 8 }}
+            style={{ gap: 'var(--layout-space-tight)' }}
           >
             <span>{open ? '收合資訊' : '更多資訊'}</span>
             <ChevronDown
@@ -121,7 +121,7 @@ function InvoiceItemRow({ inv }: { inv: InvoiceRow }) {
         type="button"
         aria-expanded={open}
         className="w-full flex items-center cursor-pointer hover:bg-surface-raised bg-transparent border-0 text-left"
-        style={{ gap: 12, padding: '14px 16px' }}
+        style={{ gap: 'var(--layout-space-tight)', padding: 'var(--layout-space-tight) var(--layout-space-loose)' }}
         onClick={() => setOpen((v) => !v)}
       >
         <ChevronDown
@@ -154,7 +154,7 @@ function InvoiceItemRow({ inv }: { inv: InvoiceRow }) {
               <div
                 key={i}
                 className={`flex-1 flex flex-col ${i > 0 ? 'pl-[var(--layout-space-loose)] border-l border-divider ml-[var(--layout-space-loose)]' : ''}`}
-                style={{ gap: 3 }}
+                style={{ gap: 4 /* @layout-space-magic-ok: intra-element label/value micro-stack */ }}
               >
                 <span className="text-caption text-fg-secondary">{cell.label}</span>
                 <span className="text-body font-medium text-fg">{cell.value}</span>
@@ -163,7 +163,7 @@ function InvoiceItemRow({ inv }: { inv: InvoiceRow }) {
           </div>
 
           {/* Line items label */}
-          <div className="flex items-center py-[var(--layout-space-tight)] text-caption text-fg-secondary" style={{ gap: 6 }}>
+          <div className="flex items-center py-[var(--layout-space-tight)] text-caption text-fg-secondary" style={{ gap: 6 /* @layout-space-magic-ok: icon-text inline pair */ }}>
             <FileText size={14} className="text-fg-muted" />
             付款細項：<span className="font-semibold text-fg">{inv.items.length}</span> 項
           </div>
@@ -293,7 +293,7 @@ export function SubmittedDialog({
                     <div className="px-[var(--layout-space-tight)] py-[var(--layout-space-tight)]">{att.type}</div>
                     <div className="px-[var(--layout-space-tight)] py-[var(--layout-space-tight)] text-fg-secondary">{att.description || '-'}</div>
                     <div className="px-[var(--layout-space-tight)] py-[var(--layout-space-tight)]">
-                      <span className="flex items-center text-primary" style={{ gap: 4 }}>
+                      <span className="flex items-center text-primary" style={{ gap: 4 /* @layout-space-magic-ok: icon-text inline pair */ }}>
                         <FileText size={12} />
                         {att.fileName}
                       </span>
@@ -369,12 +369,11 @@ export function SubmittedDialog({
             <SectionCard title="簽核補充說明" nonCollapsible>
               <div className="px-[var(--layout-space-loose)] pb-[var(--layout-space-tight)]">
                 <p className="text-body text-fg mb-[var(--layout-space-tight)]">您可以填寫簽核補充說明，協助下一階段簽核人員快速完成審核</p>
-                <textarea
-                  className="w-full border border-divider rounded px-[var(--layout-space-tight)] py-[var(--layout-space-tight)] text-body text-fg bg-surface resize-none focus:outline-none"
-                  style={{ height: 120 }}
+                <Textarea
+                  rows={5}
                   placeholder="請填寫補充說明"
                   value={remark}
-                  onChange={(e) => setRemark(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setRemark(e.target.value)}
                 />
               </div>
             </SectionCard>

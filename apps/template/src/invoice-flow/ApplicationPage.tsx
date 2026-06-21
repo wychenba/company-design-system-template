@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import {
-  Button, Field, FieldLabel, Input, Select, Textarea, Alert, Checkbox, Tag,
+  Button, Field, FieldLabel, Input, Select, Textarea, Alert, Checkbox, Tag, Empty,
 } from '@qijenchen/design-system'
 import { Plus, ArrowUpFromLine, Calendar, Pencil, Copy, Trash2, ChevronDown, ChevronUp, AlignLeft, Paperclip, AlertTriangle, CheckCircle2 } from 'lucide-react'
 import { AppLayout } from './AppLayout'
@@ -119,8 +119,8 @@ function IncomeStatusBadge({ status }: { status: IncomeStatus }) {
 
 function EmptyState({ text }: { text: string }) {
   return (
-    <div className="border border-divider rounded flex items-center justify-center py-[var(--layout-space-loose)]">
-      <p className="text-body text-fg-secondary">{text}</p>
+    <div className="border border-divider rounded">
+      <Empty description={text} />
     </div>
   )
 }
