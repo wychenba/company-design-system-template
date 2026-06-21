@@ -101,7 +101,7 @@ export function AddInvoiceDialog({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
-      <DialogContent maxWidth={720}>
+      <DialogContent maxWidth={720} autoHeight>
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
         </DialogHeader>

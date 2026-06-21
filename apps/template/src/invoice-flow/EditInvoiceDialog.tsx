@@ -78,7 +78,7 @@ export function EditInvoiceDialog({ trigger, payeeType = 'employee', initialData
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
-      <DialogContent maxWidth={720}>
+      <DialogContent maxWidth={720} autoHeight>
         <DialogHeader>
           <DialogTitle>編輯發票</DialogTitle>
         </DialogHeader>

@@ -22,7 +22,7 @@ export function DeleteInvoiceDialog({ trigger, displayId, onConfirm }: DeleteInv
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
-      <DialogContent maxWidth={480}>
+      <DialogContent maxWidth={480} autoHeight>
         <DialogHeader>
           <DialogTitle>是否刪除 {displayId}</DialogTitle>
         </DialogHeader>

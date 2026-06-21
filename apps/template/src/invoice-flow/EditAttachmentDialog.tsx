@@ -81,7 +81,7 @@ export function EditAttachmentDialog({
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
-      <DialogContent maxWidth={480}>
+      <DialogContent maxWidth={480} autoHeight>
         <DialogHeader>
           <DialogTitle>編輯附件</DialogTitle>
         </DialogHeader>

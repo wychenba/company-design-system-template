@@ -63,7 +63,7 @@ export function IncomeQuestionnaireDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent maxWidth={560}>
+      <DialogContent maxWidth={560} autoHeight>
         <DialogHeader>
           <DialogTitle>{initial ? '編輯問券' : '所得問券'}</DialogTitle>
         </DialogHeader>

@@ -74,7 +74,7 @@ export function AddAttachmentDialog({ trigger, onConfirm }: AddAttachmentDialogP
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
-      <DialogContent maxWidth={480}>
+      <DialogContent maxWidth={480} autoHeight>
         <DialogHeader>
           <DialogTitle>新增附件</DialogTitle>
         </DialogHeader>

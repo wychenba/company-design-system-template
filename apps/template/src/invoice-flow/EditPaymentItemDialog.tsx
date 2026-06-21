@@ -142,7 +142,7 @@ export function EditPaymentItemDialog({ trigger, initialData, onConfirm }: EditP
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
-      <DialogContent maxWidth={720}>
+      <DialogContent maxWidth={720} autoHeight>
         <DialogHeader>
           <DialogTitle>編輯付款細項</DialogTitle>
         </DialogHeader>

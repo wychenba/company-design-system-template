@@ -17,7 +17,7 @@ export function SubmitSuccessDialog({
 }: SubmitSuccessDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent maxWidth={480}>
+      <DialogContent maxWidth={480} autoHeight>
         <DialogHeader>
           <DialogTitle>申請已送出</DialogTitle>
         </DialogHeader>

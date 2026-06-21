@@ -14,7 +14,7 @@ export function CancelApplicationDialog({ trigger, onConfirm }: CancelApplicatio
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
-      <DialogContent maxWidth={480}>
+      <DialogContent maxWidth={480} autoHeight>
         <DialogHeader>
           <DialogTitle>是否取消申請</DialogTitle>
         </DialogHeader>

@@ -70,7 +70,7 @@ export function BatchImportDialog({ trigger, onImported }: BatchImportDialogProp
       <DialogTrigger asChild>{trigger}</DialogTrigger>
 
       {step === 'error' ? (
-        <DialogContent maxWidth={480}>
+        <DialogContent maxWidth={480} autoHeight>
           <DialogHeader>
             <DialogTitle>檔案格式不符</DialogTitle>
           </DialogHeader>
@@ -85,7 +85,7 @@ export function BatchImportDialog({ trigger, onImported }: BatchImportDialogProp
           </DialogFooter>
         </DialogContent>
       ) : step === 'importing' ? (
-        <DialogContent maxWidth={560}>
+        <DialogContent maxWidth={560} autoHeight>
           <DialogHeader>
             <DialogTitle>批次匯入 Excel 付款細項</DialogTitle>
           </DialogHeader>
@@ -104,7 +104,7 @@ export function BatchImportDialog({ trigger, onImported }: BatchImportDialogProp
           </DialogFooter>
         </DialogContent>
       ) : (
-        <DialogContent maxWidth={560}>
+        <DialogContent maxWidth={560} autoHeight>
           <DialogHeader>
             <DialogTitle>批次匯入 Excel 付款細項</DialogTitle>
           </DialogHeader>

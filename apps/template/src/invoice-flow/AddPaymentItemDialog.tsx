@@ -211,7 +211,7 @@ export function AddPaymentItemDialog({ trigger, onConfirm }: AddPaymentItemDialo
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
-      <DialogContent maxWidth={720}>
+      <DialogContent maxWidth={720} autoHeight>
         <DialogHeader>
           <DialogTitle>新增付款細項</DialogTitle>
         </DialogHeader>

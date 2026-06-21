@@ -239,7 +239,7 @@ export function SubmittedDialog({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
-      <DialogContent maxWidth={960}>
+      <DialogContent maxWidth={960} autoHeight>
         <DialogHeader>
           <DialogTitle>申請單預覽</DialogTitle>
         </DialogHeader>
