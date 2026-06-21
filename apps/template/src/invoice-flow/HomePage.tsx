@@ -1,7 +1,8 @@
-import { Button, Tag, Tabs, TabsList, TabsTrigger, Separator, DataTable } from '@qijenchen/design-system'
+import { Button, Tag, Tabs, TabsList, TabsTrigger, Separator, DataTable, DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '@qijenchen/design-system'
 import { createColumnHelper } from '@tanstack/react-table'
 import { Plus, Download, Info, PenLine, Trash2, ChevronDown } from 'lucide-react'
 import { AppLayout } from './AppLayout'
+import { showToast } from './useToast'
 
 interface DraftRow {
   id: string
@@ -72,9 +73,20 @@ export function HomePage({ onNewApplication }: HomePageProps) {
           {/* Section header */}
           <div className="flex items-center gap-[var(--layout-space-tight)] mb-[var(--layout-space-loose)]">
             <span className="flex-1 text-h4 font-medium text-fg">一般暫存申請</span>
-            <Button variant="primary" size="sm" startIcon={Plus} endIcon={ChevronDown} onClick={onNewApplication}>
-              新增
-            </Button>
+            <div className="flex items-center" style={{ gap: 1 }}>
+              <Button variant="primary" size="sm" startIcon={Plus} onClick={onNewApplication}>
+                新增
+              </Button>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="primary" size="sm" iconOnly startIcon={ChevronDown} aria-label="展開新增選單" />
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem onSelect={onNewApplication}>單筆申請</DropdownMenuItem>
+                  <DropdownMenuItem onSelect={() => showToast('importPaymentItems')}>Excel 匯入申請</DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
             <Separator orientation="vertical" style={{ height: 24 }} />
             <Button variant="tertiary" size="sm" startIcon={Download}>
               下載 Excel 範本
