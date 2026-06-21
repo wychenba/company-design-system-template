@@ -11,6 +11,7 @@ const TOAST_MESSAGES = {
   incomeQuestionnaire: { success: '所得問券已完成', error: '問券送出失敗' },
   notImplemented: { success: '此階段功能尚未開啟', error: '此階段功能尚未開啟' },
   featureReady: { success: '此功能已經開發', error: '此功能已經開發' },
+  deleteReviewer: { success: '已刪除審核人員', error: '刪除審核人員失敗' },
 }
 
 export function showToast(key: keyof typeof TOAST_MESSAGES, type: 'success' | 'error' = 'success') {

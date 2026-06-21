@@ -303,7 +303,7 @@ export function SubmittedDialog({
               <div className="px-[var(--layout-space-loose)] py-[var(--layout-space-loose)]">
                 <div className="flex items-center justify-between mb-[var(--layout-space-tight)]">
                   <span className="text-body text-fg">您可以依照需求新增審核人員。</span>
-                  <Button variant="tertiary" size="sm" startIcon={Plus}>新增審核人員</Button>
+                  <Button variant="tertiary" size="sm" startIcon={Plus} onClick={() => showToast('featureReady')}>新增審核人員</Button>
                 </div>
                 <div className="border border-divider rounded overflow-hidden">
                   <div
@@ -344,8 +344,11 @@ export function SubmittedDialog({
                       <div className="px-[var(--layout-space-tight)] py-[var(--layout-space-tight)]">
                         {r.deletable && (
                           <button
+                            type="button"
+                            aria-label="刪除審核人員"
                             className="border border-divider rounded bg-surface flex items-center justify-center text-fg-secondary hover:bg-surface-raised cursor-pointer"
                             style={{ width: 28, height: 28 }}
+                            onClick={() => showToast('deleteReviewer')}
                           >
                             <Trash2 size={12} />
                           </button>
