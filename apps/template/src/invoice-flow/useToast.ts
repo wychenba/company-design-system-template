@@ -10,10 +10,11 @@ const TOAST_MESSAGES = {
   saveDraft: { success: '已存成草稿', error: '存草稿失敗' },
   incomeQuestionnaire: { success: '所得問券已完成', error: '問券送出失敗' },
   notImplemented: { success: '此階段功能尚未開啟', error: '此階段功能尚未開啟' },
+  featureReady: { success: '此功能已經開發', error: '此功能已經開發' },
 }
 
 export function showToast(key: keyof typeof TOAST_MESSAGES, type: 'success' | 'error' = 'success') {
   const msg = TOAST_MESSAGES[key]
-  const variant = key === 'notImplemented' ? 'info' : (type === 'success' ? 'success' : 'error')
+  const variant = (key === 'notImplemented' || key === 'featureReady') ? 'info' : (type === 'success' ? 'success' : 'error')
   toast({ variant, title: msg[type] })
 }

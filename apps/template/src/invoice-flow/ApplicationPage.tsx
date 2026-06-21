@@ -400,7 +400,7 @@ export function ApplicationPage({ onBack }: ApplicationPageProps) {
           </div>
           <div className="flex items-center gap-[var(--layout-space-loose)]">
             <h1 className="text-h3 font-medium text-fg flex-1">一般項目申請單</h1>
-            <Button variant="tertiary" size="sm" startIcon={ArrowUpFromLine}>批次匯入申請</Button>
+            <Button variant="tertiary" size="sm" startIcon={ArrowUpFromLine} onClick={() => showToast('featureReady')}>批次匯入申請</Button>
           </div>
         </div>
 
