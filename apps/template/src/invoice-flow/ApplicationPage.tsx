@@ -14,6 +14,8 @@ import { DeletePaymentItemDialog } from './DeletePaymentItemDialog'
 import { AddAttachmentDialog, type NewAttachment } from './AddAttachmentDialog'
 import { BatchImportDialog } from './BatchImportDialog'
 import { SubmittedDialog } from './SubmittedDialog'
+import { SubmitSuccessDialog } from './SubmitSuccessDialog'
+import { showToast } from './useToast'
 
 interface ApplicationPageProps {
   onBack: () => void
@@ -200,6 +202,7 @@ export function ApplicationPage({ onBack }: ApplicationPageProps) {
   const [useUrgent, setUseUrgent] = useState(false)
   const [invoices, setInvoices] = useState<InvoiceRow[]>([])
   const [attachments, setAttachments] = useState<AttachmentRow[]>([])
+  const [submitSuccessOpen, setSubmitSuccessOpen] = useState(false)
 
   function addInvoice() {
     const n = invoices.length + 1
@@ -254,6 +257,7 @@ export function ApplicationPage({ onBack }: ApplicationPageProps) {
           : inv,
       ),
     )
+    showToast('addPaymentItem')
   }
 
   function editPaymentItem(invoiceId: string, itemId: string, data: Partial<PaymentItem>) {
@@ -264,6 +268,7 @@ export function ApplicationPage({ onBack }: ApplicationPageProps) {
           : inv,
       ),
     )
+    showToast('editPaymentItem')
   }
 
   function deletePaymentItem(invoiceId: string, itemId: string) {
@@ -276,6 +281,7 @@ export function ApplicationPage({ onBack }: ApplicationPageProps) {
 
   function editAttachment(id: string, updated: { type: string; description: string; fileName: string }) {
     setAttachments((prev) => prev.map((a) => a.id === id ? { ...a, ...updated } : a))
+    showToast('editAttachment')
   }
 
   function addAttachment(newOnes: NewAttachment[]) {
@@ -288,6 +294,7 @@ export function ApplicationPage({ onBack }: ApplicationPageProps) {
         fileName: a.name,
       })),
     ])
+    showToast('addAttachment')
   }
 
   const hasInvoices = invoices.length > 0
@@ -547,13 +554,18 @@ export function ApplicationPage({ onBack }: ApplicationPageProps) {
         {/* Footer */}
         <div className="bg-surface border-t border-divider flex items-center justify-end gap-[var(--layout-space-tight)] px-[var(--layout-space-loose)] py-[var(--layout-space-loose)]">
           <Button variant="secondary" danger size="sm" onClick={onBack}>取消申請</Button>
-          <Button variant="tertiary" size="sm">存成草稿</Button>
+          <Button variant="tertiary" size="sm" onClick={() => showToast('saveDraft')}>存成草稿</Button>
           <SubmittedDialog
             trigger={<Button variant="primary" size="sm">送出預覽</Button>}
             company={company}
             payee={payeeType === 'employee' ? '林問宜 (023156)' : '沈淮民 (Y_123136)'}
             invoices={invoices}
             attachments={attachments}
+            onSubmit={() => setSubmitSuccessOpen(true)}
+          />
+          <SubmitSuccessDialog
+            open={submitSuccessOpen}
+            onOpenChange={setSubmitSuccessOpen}
           />
         </div>
 

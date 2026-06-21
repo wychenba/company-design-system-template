@@ -1,0 +1,15 @@
+import { toast } from '@qijenchen/design-system'
+
+const TOAST_MESSAGES = {
+  addPaymentItem: { success: '付款細項已新增', error: '新增付款細項失敗' },
+  importPaymentItems: { success: '批次匯入完成', error: '批次匯入失敗' },
+  editPaymentItem: { success: '付款細項已更新', error: '更新付款細項失敗' },
+  editAttachment: { success: '附件已更新', error: '更新附件失敗' },
+  addAttachment: { success: '附件已上傳', error: '上傳失敗' },
+  saveDraft: { success: '已存成草稿', error: '存草稿失敗' },
+}
+
+export function showToast(key: keyof typeof TOAST_MESSAGES, type: 'success' | 'error' = 'success') {
+  const msg = TOAST_MESSAGES[key]
+  toast({ variant: type === 'success' ? 'success' : 'error', title: msg[type] })
+}

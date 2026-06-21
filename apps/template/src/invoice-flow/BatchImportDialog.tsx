@@ -3,8 +3,8 @@ import {
   Dialog, DialogTrigger, DialogContent, DialogHeader, DialogBody, DialogFooter, DialogTitle,
   Button, FileUpload, FileItem, CircularProgress,
 } from '@qijenchen/design-system'
-import { toast } from '@qijenchen/design-system'
 import { X } from 'lucide-react'
+import { showToast } from './useToast'
 import type { ReactNode } from 'react'
 
 interface BatchImportDialogProps {
@@ -57,7 +57,7 @@ export function BatchImportDialog({ trigger, onImported }: BatchImportDialogProp
       if (success) {
         setOpen(false)
         reset()
-        toast({ variant: 'success', title: '批次匯入成功', description: '付款細項已匯入完成。' })
+        showToast('importPaymentItems')
         onImported?.()
       } else {
         setStep('error')
