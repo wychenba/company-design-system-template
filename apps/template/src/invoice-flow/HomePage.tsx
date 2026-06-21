@@ -79,7 +79,7 @@ export function HomePage({ onNewApplication, onEditApplication }: HomePageProps)
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                       <DropdownMenuItem onSelect={onNewApplication}>單筆申請</DropdownMenuItem>
-                      <DropdownMenuItem onSelect={() => showToast('importPaymentItems')}>Excel 匯入申請</DropdownMenuItem>
+                      <DropdownMenuItem onSelect={() => showToast('featureReady')}>Excel 匯入申請</DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </div>
