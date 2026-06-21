@@ -31,6 +31,7 @@ export interface ApplicationInitialData {
 interface ApplicationPageProps {
   onBack: () => void
   initialData?: ApplicationInitialData
+  onGoToIncomeList?: () => void
 }
 
 const PAYEE_OPTIONS = [
@@ -250,7 +251,7 @@ function AttachmentTable({ attachments, onEdit, onDelete }: {
   )
 }
 
-export function ApplicationPage({ onBack, initialData }: ApplicationPageProps) {
+export function ApplicationPage({ onBack, initialData, onGoToIncomeList }: ApplicationPageProps) {
   const [company, setCompany] = useState(initialData?.company ?? 'TA01')
   const [payeeType, setPayeeType] = useState<string>(initialData?.payeeType ?? 'employee')
   const [reason, setReason] = useState(initialData?.reason ?? '')
@@ -764,6 +765,7 @@ export function ApplicationPage({ onBack, initialData }: ApplicationPageProps) {
           <SubmitSuccessDialog
             open={submitSuccessOpen}
             onOpenChange={setSubmitSuccessOpen}
+            onGoToIncomeList={onGoToIncomeList}
           />
         </div>
 

@@ -1,0 +1,149 @@
+import {
+  Button, Tag, Alert,
+} from '@qijenchen/design-system'
+import { TriangleAlert, CircleCheck } from 'lucide-react'
+import { AppLayout } from './AppLayout'
+import { showToast } from './useToast'
+
+type FillStatus = 'unfilled' | 'filled'
+
+interface IncomeListRow {
+  applicationId: string
+  serialNo: string
+  company: string
+  status: FillStatus
+  payeeType: string
+  payee: string
+  invoiceNo: string
+  currency: string
+  total: string
+}
+
+const STUB_ROWS: IncomeListRow[] = [
+  {
+    applicationId: 'PAE20260525001',
+    serialNo: 'PAGE2605250001-1',
+    company: 'TA01',
+    status: 'unfilled',
+    payeeType: '員工',
+    payee: '林問宜 (023156)',
+    invoiceNo: 'BD28114045',
+    currency: 'TWD',
+    total: '1,600',
+  },
+  {
+    applicationId: '',
+    serialNo: 'PAGE2605250001-2',
+    company: 'TA01',
+    status: 'unfilled',
+    payeeType: '員工',
+    payee: '林問宜 (023156)',
+    invoiceNo: 'BD28114045',
+    currency: 'TWD',
+    total: '1,600',
+  },
+  {
+    applicationId: 'PAE20260525002',
+    serialNo: 'PAGE2605250002-1',
+    company: 'TA01',
+    status: 'filled',
+    payeeType: '員工',
+    payee: '林問宜 (023156)',
+    invoiceNo: 'BD28114045',
+    currency: 'TWD',
+    total: '1,600',
+  },
+]
+
+const COL_TEMPLATE = '160px 200px 100px 140px 100px 180px 130px 80px 80px 100px'
+const HEADERS = ['單號', '流水號', '公司代號', '填寫狀態', '收款對象', '收款人 / 廠商', '發票號碼', '幣別', '總額', '']
+
+const unfilledCount = STUB_ROWS.filter((r) => r.status === 'unfilled').length
+
+export function IncomeListPage() {
+  return (
+    <AppLayout activeMenu="所得人清單">
+      <div className="flex flex-col h-full">
+        <div className="bg-surface border-b border-divider px-[var(--layout-space-loose)] py-[var(--layout-space-loose)]">
+          <h1 className="text-h3 font-medium text-fg">所得人清單</h1>
+        </div>
+
+        <div className="flex-1 overflow-auto p-[var(--layout-space-loose)] flex flex-col gap-[var(--layout-space-loose)]">
+          {unfilledCount > 0 && (
+            <Alert
+              variant="warning"
+              title="所得清單待填寫"
+              description={`您尚有 ${unfilledCount} 筆所得人清單待填寫。`}
+            />
+          )}
+
+          <div className="overflow-x-auto rounded border border-divider">
+            <div style={{ minWidth: 1200 }}>
+              {/* Header */}
+              <div
+                style={{ display: 'grid', gridTemplateColumns: COL_TEMPLATE }}
+                className="bg-surface-raised border-b border-divider"
+              >
+                {HEADERS.map((h, i) => (
+                  <div key={i} className="p-[var(--layout-space-tight)] text-body text-fg">
+                    {h}
+                  </div>
+                ))}
+              </div>
+
+              {/* Rows */}
+              {STUB_ROWS.map((row, idx) => (
+                <div
+                  key={row.serialNo}
+                  style={{ display: 'grid', gridTemplateColumns: COL_TEMPLATE }}
+                  className="border-b border-divider last:border-b-0 hover:bg-surface-raised"
+                >
+                  <div className="flex items-center p-[var(--layout-space-tight)] text-body text-fg" style={{ minHeight: 56 }}>
+                    {row.applicationId}
+                  </div>
+                  <div className="flex items-center p-[var(--layout-space-tight)] text-body text-fg" style={{ minHeight: 56 }}>
+                    {row.serialNo}
+                  </div>
+                  <div className="flex items-center p-[var(--layout-space-tight)] text-body text-fg" style={{ minHeight: 56 }}>
+                    {row.company}
+                  </div>
+                  <div className="flex items-center p-[var(--layout-space-tight)]" style={{ minHeight: 56 }}>
+                    {row.status === 'unfilled' ? (
+                      <Tag color="yellow" size="sm" icon={TriangleAlert}>尚未填寫</Tag>
+                    ) : (
+                      <Tag color="green" size="sm" icon={CircleCheck}>填寫完成</Tag>
+                    )}
+                  </div>
+                  <div className="flex items-center p-[var(--layout-space-tight)] text-body text-fg" style={{ minHeight: 56 }}>
+                    {row.payeeType}
+                  </div>
+                  <div className="flex items-center p-[var(--layout-space-tight)] text-body text-fg" style={{ minHeight: 56 }}>
+                    {row.payee}
+                  </div>
+                  <div className="flex items-center p-[var(--layout-space-tight)] text-body text-fg" style={{ minHeight: 56 }}>
+                    {row.invoiceNo}
+                  </div>
+                  <div className="flex items-center p-[var(--layout-space-tight)] text-body text-fg" style={{ minHeight: 56 }}>
+                    {row.currency}
+                  </div>
+                  <div className="flex items-center p-[var(--layout-space-tight)] text-body text-fg" style={{ minHeight: 56 }}>
+                    {row.total}
+                  </div>
+                  <div className="flex items-center justify-end p-[var(--layout-space-tight)]" style={{ minHeight: 56 }}>
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      onClick={() => showToast('notImplemented')}
+                    >
+                      {row.status === 'unfilled' ? '填寫清單' : '編輯清單'}
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </AppLayout>
+  )
+}

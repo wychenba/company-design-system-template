@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import { HomePage, type DraftRow } from './HomePage'
 import { ApplicationPage, type ApplicationInitialData, type InvoiceRow, type PaymentItem } from './ApplicationPage'
+import { IncomeListPage } from './IncomeListPage'
 
-export type AppView = 'home' | 'application'
+export type AppView = 'home' | 'application' | 'incomeList'
 
 // Fake line items seeded into the first invoice when editing an existing draft,
 // so the prototype shows table data flowing through (matches Figma 104-59258).
@@ -89,7 +90,14 @@ export default function InvoiceFlow() {
         />
       )}
       {view === 'application' && (
-        <ApplicationPage onBack={() => setView('home')} initialData={initialData} />
+        <ApplicationPage
+          onBack={() => setView('home')}
+          initialData={initialData}
+          onGoToIncomeList={() => setView('incomeList')}
+        />
+      )}
+      {view === 'incomeList' && (
+        <IncomeListPage />
       )}
     </div>
   )

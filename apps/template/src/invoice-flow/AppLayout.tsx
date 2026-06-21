@@ -10,7 +10,7 @@ import {
 } from '@qijenchen/design-system'
 import { ChromeHeader } from '@qijenchen/design-system/patterns/header-canonical'
 import {
-  Home, FileText, FileInput, ClipboardList,
+  Home, FileText, FileInput, ClipboardList, Users,
   FileSearch, ClipboardCheck, BookOpen, Megaphone,
   Building2, Globe, ChevronDown, User, Settings, LogOut, type LucideIcon,
 } from 'lucide-react'
@@ -34,6 +34,7 @@ const MENU_SECTIONS: {
       { id: '暫存申請單', label: '暫存申請單', icon: FileText },
       { id: '批次匯入紀錄', label: '批次匯入紀錄', icon: FileInput },
       { id: '我的工作清單', label: '我的工作清單', icon: ClipboardList },
+      { id: '所得人清單', label: '所得人清單', icon: Users },
     ],
   },
   {
