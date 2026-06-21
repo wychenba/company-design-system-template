@@ -9,7 +9,10 @@ import { EditInvoiceDialog } from './EditInvoiceDialog'
 import { DeleteInvoiceDialog } from './DeleteInvoiceDialog'
 import { EditAttachmentDialog } from './EditAttachmentDialog'
 import { AddPaymentItemDialog } from './AddPaymentItemDialog'
+import { EditPaymentItemDialog } from './EditPaymentItemDialog'
+import { DeletePaymentItemDialog } from './DeletePaymentItemDialog'
 import { AddAttachmentDialog, type NewAttachment } from './AddAttachmentDialog'
+import { BatchImportDialog } from './BatchImportDialog'
 import { SubmittedDialog } from './SubmittedDialog'
 
 interface ApplicationPageProps {
@@ -84,6 +87,17 @@ const LINE_ITEM_COLS = '40px minmax(160px,1fr) 88px 128px 72px 56px 56px 100px m
 const ATTACH_COLS = '160px 1fr 240px 80px'
 
 function LineItemsTable({ items, onDelete }: { items: PaymentItem[]; onDelete: (id: string) => void }) {
+  const itemToData = (item: PaymentItem) => ({
+    category: item.category,
+    subCategory: item.subCategory,
+    costCenter: item.costCenter,
+    account: item.account,
+    amount: item.amount,
+    taxRate: item.taxRate,
+    taxAmount: item.taxAmount,
+    contractRequired: item.contractRequired,
+    contractNumber: item.contractNumber,
+  })
   return (
     <div className="border border-divider rounded overflow-hidden bg-surface">
       <div className="overflow-x-auto">
@@ -117,8 +131,14 @@ function LineItemsTable({ items, onDelete }: { items: PaymentItem[]; onDelete: (
             <div className="p-[var(--layout-space-tight)] flex items-center">{item.contractRequired}</div>
             <div className="p-[var(--layout-space-tight)] flex items-center text-fg-secondary">{item.contractNumber || '-'}</div>
             <div className="p-[var(--layout-space-tight)] flex items-center justify-center gap-[var(--layout-space-tight)]">
-              <Button variant="text" size="sm" iconOnly startIcon={Pencil} aria-label="編輯" />
-              <Button variant="text" size="sm" iconOnly startIcon={Trash2} aria-label="刪除" onClick={() => onDelete(item.id)} />
+              <EditPaymentItemDialog
+                trigger={<Button variant="text" size="sm" iconOnly startIcon={Pencil} aria-label="編輯" />}
+                initialData={itemToData(item)}
+              />
+              <DeletePaymentItemDialog
+                trigger={<Button variant="text" size="sm" iconOnly startIcon={Trash2} aria-label="刪除" />}
+                onConfirm={() => onDelete(item.id)}
+              />
             </div>
           </div>
         ))}
@@ -422,7 +442,10 @@ export function ApplicationPage({ onBack }: ApplicationPageProps) {
                               </div>
                             </div>
                             <div className="flex items-center gap-[var(--layout-space-tight)] mb-[var(--layout-space-tight)]">
-                              <Button variant="tertiary" size="sm">批次匯入</Button>
+                              <BatchImportDialog
+                                trigger={<Button variant="tertiary" size="sm">批次匯入</Button>}
+                                onImported={() => addPaymentItem(inv.id)}
+                              />
                               <AddPaymentItemDialog
                                 trigger={<Button variant="tertiary" size="sm" startIcon={Plus}>新增細項</Button>}
                                 onConfirm={() => addPaymentItem(inv.id)}
@@ -511,6 +534,10 @@ export function ApplicationPage({ onBack }: ApplicationPageProps) {
           <Button variant="tertiary" size="sm">存成草稿</Button>
           <SubmittedDialog
             trigger={<Button variant="primary" size="sm">送出預覽</Button>}
+            company={company}
+            payee={payeeType === 'employee' ? '林問宜 (023156)' : '沈淮民 (Y_123136)'}
+            invoices={invoices}
+            attachments={attachments}
           />
         </div>
 

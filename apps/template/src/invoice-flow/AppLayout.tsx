@@ -4,7 +4,7 @@ import {
   AppShell,
   Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel,
   SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarProvider, SidebarTrigger,
-  Button, Avatar, Separator,
+  Button, Avatar, Separator, Toaster,
   DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuGroup,
   DropdownMenuLabel, DropdownMenuItem,
 } from '@qijenchen/design-system'
@@ -141,6 +141,7 @@ export function AppLayout({ children, activeMenu }: AppLayoutProps) {
       >
         {children}
       </AppShell>
+      <Toaster position="bottom-right" />
     </SidebarProvider>
   )
 }
