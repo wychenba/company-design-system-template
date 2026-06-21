@@ -15,6 +15,7 @@ import { AddAttachmentDialog, type NewAttachment } from './AddAttachmentDialog'
 import { BatchImportDialog } from './BatchImportDialog'
 import { SubmittedDialog } from './SubmittedDialog'
 import { SubmitSuccessDialog } from './SubmitSuccessDialog'
+import { CancelApplicationDialog } from './CancelApplicationDialog'
 import { showToast } from './useToast'
 
 interface ApplicationPageProps {
@@ -577,7 +578,10 @@ export function ApplicationPage({ onBack }: ApplicationPageProps) {
 
         {/* Footer */}
         <div className="bg-surface border-t border-divider flex items-center justify-end gap-[var(--layout-space-tight)] px-[var(--layout-space-loose)] py-[var(--layout-space-loose)]">
-          <Button variant="secondary" danger size="sm" onClick={onBack}>取消申請</Button>
+          <CancelApplicationDialog
+            trigger={<Button variant="secondary" danger size="sm">取消申請</Button>}
+            onConfirm={onBack}
+          />
           <Button variant="tertiary" size="sm" onClick={() => showToast('saveDraft')}>存成草稿</Button>
           <SubmittedDialog
             trigger={<Button variant="primary" size="sm">送出預覽</Button>}
