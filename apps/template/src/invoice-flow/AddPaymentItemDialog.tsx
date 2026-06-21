@@ -343,7 +343,7 @@ export function AddPaymentItemDialog({ trigger, onConfirm }: AddPaymentItemDialo
                     )}
                   </div>
                 ))}
-                <Button variant="tertiary" size="sm" startIcon={Plus} onClick={addContract}>
+                <Button variant="tertiary" size="sm" startIcon={Plus} onClick={addContract} className="self-start">
                   新增合約編號
                 </Button>
               </div>

@@ -223,7 +223,7 @@ export function EditPaymentItemDialog({ trigger, initialData, onConfirm }: EditP
                     )}
                   </div>
                 ))}
-                <Button variant="tertiary" size="sm" startIcon={Plus} onClick={addContract}>新增合約編號</Button>
+                <Button variant="tertiary" size="sm" startIcon={Plus} onClick={addContract} className="self-start">新增合約編號</Button>
               </div>
             )}
 
