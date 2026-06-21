@@ -131,7 +131,7 @@ function EmptyState({ text }: { text: string }) {
 
 // line-items table: 序號/分類子分類/成本中心/會計科目/總額/稅率/稅額/是否提供合約編號/合約編號/actions
 const LINE_ITEM_COLS = '40px minmax(160px,1fr) 88px 128px 72px 56px 56px 100px minmax(120px,1fr) 72px'
-const ATTACH_COLS = '160px 1fr 240px 80px'
+const ATTACH_COLS = '160px 1fr 360px 80px'
 
 function LineItemsTable({ items, onDelete, onEdit }: {
   items: PaymentItem[]
