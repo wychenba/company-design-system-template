@@ -409,10 +409,6 @@ export function ApplicationPage({ onBack, initialData }: ApplicationPageProps) {
 
   const hasInvoices = invoices.length > 0
 
-  // Stat bar summary (top of form)
-  const totalAmount = invoices.reduce((sum, inv) => sum + inv.amount, 0)
-  const unfilledQuestionnaireCount = invoices.filter((inv) => inv.incomeStatus === 'unfilled').length
-
   const questionnaireInvoice = invoices.find((inv) => inv.id === questionnaireInvoiceId) ?? null
   const questionnaireInitial: IncomeAnswer | undefined =
     questionnaireInvoice && questionnaireInvoice.incomeType
@@ -466,30 +462,6 @@ export function ApplicationPage({ onBack, initialData }: ApplicationPageProps) {
         {/* Form content */}
         <div className="flex-1 overflow-auto bg-surface-sunken p-[var(--layout-space-loose)]">
           <div className="w-full max-w-[960px] mx-auto flex flex-col gap-[var(--layout-space-loose)]">
-
-            {/* Stat bar — 總計金額 / 請款發票 / 所得判斷 */}
-            <Card>
-              <div className="flex gap-0">
-                {[
-                  { label: '總計金額', value: `TWD ${totalAmount.toLocaleString()}` },
-                  { label: '請款發票', value: `${invoices.length} 張` },
-                  {
-                    label: '所得判斷',
-                    value: unfilledQuestionnaireCount > 0
-                      ? `${unfilledQuestionnaireCount} 待填`
-                      : invoices.length > 0 ? '已完成' : '—',
-                  },
-                ].map((col, i, arr) => (
-                  <div
-                    key={col.label}
-                    className={`flex-1 flex flex-col gap-[var(--layout-space-tight)] pr-[var(--layout-space-loose)] ${i < arr.length - 1 ? 'border-r border-divider mr-[var(--layout-space-loose)]' : ''}`}
-                  >
-                    <div className="text-caption text-fg-secondary">{col.label}</div>
-                    <div className="text-h4 font-medium text-fg">{col.value}</div>
-                  </div>
-                ))}
-              </div>
-            </Card>
 
             {/* 付款資訊 */}
             <Card>
