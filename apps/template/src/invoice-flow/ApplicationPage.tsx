@@ -4,7 +4,7 @@ import {
 } from '@qijenchen/design-system'
 import { Plus, ArrowUpFromLine, Calendar, Pencil, Copy, Trash2, ChevronDown, ChevronUp, AlignLeft, Paperclip, AlertTriangle, CheckCircle2 } from 'lucide-react'
 import { AppLayout } from './AppLayout'
-import { AddInvoiceDialog } from './AddInvoiceDialog'
+import { AddInvoiceDialog, VOUCHER_TYPES } from './AddInvoiceDialog'
 import { EditInvoiceDialog } from './EditInvoiceDialog'
 import { DeleteInvoiceDialog } from './DeleteInvoiceDialog'
 import { EditAttachmentDialog } from './EditAttachmentDialog'
@@ -274,6 +274,35 @@ export function ApplicationPage({ onBack }: ApplicationPageProps) {
     setInvoices((prev) => prev.filter((inv) => inv.id !== id))
   }
 
+  function copyInvoice(sourceId: string) {
+    setInvoices((prev) => {
+      const source = prev.find((inv) => inv.id === sourceId)
+      if (!source) return prev
+      const n = prev.length + 1
+      const newId = `INV-${n}`
+      const clonedItems: PaymentItem[] = source.items.map((it, i) => ({
+        ...it,
+        id: `${newId}-ITEM-${i + 1}`,
+        amount: 0,
+        taxAmount: 0,
+      }))
+      const cloned: InvoiceRow = {
+        ...source,
+        id: newId,
+        displayId: `PAGE2605250001-${n}`,
+        voucherNumber: '',
+        amount: 0,
+        taxAmount: 0,
+        expanded: true,
+        items: clonedItems,
+        incomeStatus: deriveIncomeRequirement(clonedItems),
+        incomeType: undefined,
+        incomeTypeLabel: undefined,
+      }
+      return [...prev, cloned]
+    })
+  }
+
   function addPaymentItem(invoiceId: string, overrides?: { category?: string; subCategory?: string }) {
     setInvoices((prev) =>
       prev.map((inv) => {
@@ -540,7 +569,13 @@ export function ApplicationPage({ onBack }: ApplicationPageProps) {
                           <AddInvoiceDialog
                             trigger={<Button variant="tertiary" size="sm" iconOnly startIcon={Copy} aria-label="複製" />}
                             payeeType={payeeType === 'employee' ? 'employee' : 'vendor'}
-                            onConfirm={addInvoice}
+                            title="複製發票"
+                            confirmLabel="複製"
+                            initialData={{
+                              voucherType: VOUCHER_TYPES.find((o) => o.label === inv.type)?.value,
+                              currency: 'TWD',
+                            }}
+                            onConfirm={() => copyInvoice(inv.id)}
                           />
                           <DeleteInvoiceDialog
                             trigger={<Button variant="tertiary" size="sm" iconOnly startIcon={Trash2} aria-label="刪除" />}

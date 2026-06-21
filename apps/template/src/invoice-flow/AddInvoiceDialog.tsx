@@ -6,13 +6,21 @@ import {
 import { Info } from 'lucide-react'
 import type { ReactNode } from 'react'
 
+interface InitialInvoiceData {
+  voucherType?: string // value from VOUCHER_TYPES
+  currency?: string
+}
+
 interface AddInvoiceDialogProps {
   trigger: ReactNode
   payeeType?: 'employee' | 'vendor'
+  initialData?: InitialInvoiceData
+  title?: string
+  confirmLabel?: string
   onConfirm?: () => void
 }
 
-const VOUCHER_TYPES = [
+export const VOUCHER_TYPES = [
   { value: 'e-invoice-25', label: '電子統一發票 (25)' },
   { value: 'paper-invoice', label: '紙本統一發票' },
   { value: 'receipt-26', label: '統一發票收據 (26)' },
@@ -44,10 +52,17 @@ function InfoIcon({ tip }: { tip?: string }) {
   )
 }
 
-export function AddInvoiceDialog({ trigger, payeeType = 'employee', onConfirm }: AddInvoiceDialogProps) {
+export function AddInvoiceDialog({
+  trigger,
+  payeeType = 'employee',
+  initialData,
+  title = '新增發票',
+  confirmLabel = '新增',
+  onConfirm,
+}: AddInvoiceDialogProps) {
   const [open, setOpen] = useState(false)
-  const [voucherType, setVoucherType] = useState('')
-  const [currency, setCurrency] = useState('TWD')
+  const [voucherType, setVoucherType] = useState(initialData?.voucherType ?? '')
+  const [currency, setCurrency] = useState(initialData?.currency ?? 'TWD')
   const [invoiceDate, setInvoiceDate] = useState('')
   const [usePartial, setUsePartial] = useState(false)
   const [pretaxAmount, setPretaxAmount] = useState('')
@@ -70,7 +85,7 @@ export function AddInvoiceDialog({ trigger, payeeType = 'employee', onConfirm }:
       <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent maxWidth={720}>
         <DialogHeader>
-          <DialogTitle>新增發票</DialogTitle>
+          <DialogTitle>{title}</DialogTitle>
         </DialogHeader>
 
         <DialogBody>
@@ -206,7 +221,7 @@ export function AddInvoiceDialog({ trigger, payeeType = 'employee', onConfirm }:
 
         <DialogFooter>
           <Button variant="tertiary" onClick={() => setOpen(false)}>取消</Button>
-          <Button variant="primary" onClick={handleConfirm}>新增</Button>
+          <Button variant="primary" onClick={handleConfirm}>{confirmLabel}</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
