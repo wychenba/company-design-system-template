@@ -111,7 +111,15 @@ export function BatchImportDialog({ trigger, onImported }: BatchImportDialogProp
           <DialogBody>
             <div className="flex flex-col gap-[var(--layout-space-loose)]">
               <p className="text-body text-fg">
-                請先下載「<span className="text-primary cursor-pointer hover:underline">Excel 付款細項範本</span>」，填寫完成後到此匯入檔案。
+                請先下載「
+                <button
+                  type="button"
+                  className="bg-transparent border-0 p-0 text-primary cursor-pointer hover:underline"
+                  onClick={() => showToast('notImplemented')}
+                >
+                  Excel 付款細項範本
+                </button>
+                」，填寫完成後到此匯入檔案。
               </p>
               <FileUpload
                 multiple={false}

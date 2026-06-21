@@ -4,6 +4,7 @@ import {
   Button,
 } from '@qijenchen/design-system'
 import { ChevronDown, FileText, Plus, GripVertical, Trash2 } from 'lucide-react'
+import { showToast } from './useToast'
 import type { ReactNode } from 'react'
 
 interface PaymentItem {
@@ -322,7 +323,16 @@ export function SubmittedDialog({
                       style={{ gridTemplateColumns: REVIEWER_COLS }}
                     >
                       <div className="px-[var(--layout-space-tight)] py-[var(--layout-space-tight)] text-fg-muted">
-                        {r.draggable && <GripVertical size={14} />}
+                        {r.draggable && (
+                          <button
+                            type="button"
+                            aria-label="拖曳調整順序"
+                            className="flex items-center justify-center bg-transparent border-0 cursor-pointer text-fg-muted hover:text-fg"
+                            onClick={() => showToast('notImplemented')}
+                          >
+                            <GripVertical size={14} />
+                          </button>
+                        )}
                       </div>
                       <div className="px-[var(--layout-space-tight)] py-[var(--layout-space-tight)]">{r.role}</div>
                       <div className="px-[var(--layout-space-tight)] py-[var(--layout-space-tight)]">{r.owner}</div>

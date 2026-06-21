@@ -81,7 +81,7 @@ export function HomePage({ onNewApplication }: HomePageProps) {
                   </DropdownMenu>
                 </div>
                 <Separator orientation="vertical" style={{ height: 24 }} />
-                <Button variant="tertiary" size="sm" startIcon={Download}>
+                <Button variant="tertiary" size="sm" startIcon={Download} onClick={() => showToast('notImplemented')}>
                   下載 Excel 範本
                 </Button>
               </div>

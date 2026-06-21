@@ -14,6 +14,7 @@ import {
   FileSearch, ClipboardCheck, BookOpen, Megaphone,
   Building2, Globe, ChevronDown, User, Settings, LogOut, type LucideIcon,
 } from 'lucide-react'
+import { showToast } from './useToast'
 
 interface AppLayoutProps {
   children: ReactNode
@@ -88,10 +89,10 @@ function GlobalHeader() {
           </div>
           <span className="text-body-lg font-medium text-fg whitespace-nowrap">RFC/PettyCash</span>
         </div>
-        <Button variant="text" size="sm" startIcon={Building2} endIcon={ChevronDown}>HQ</Button>
+        <Button variant="text" size="sm" startIcon={Building2} endIcon={ChevronDown} onClick={() => showToast('notImplemented')}>HQ</Button>
       </div>
       <div className="flex items-center gap-[var(--layout-space-loose)]">
-        <Button variant="tertiary" size="sm" startIcon={BookOpen}>使用手冊</Button>
+        <Button variant="tertiary" size="sm" startIcon={BookOpen} onClick={() => showToast('notImplemented')}>使用手冊</Button>
         <Separator orientation="vertical" style={{ height: 24 }} />
         <Button variant="tertiary" size="sm" startIcon={Globe} endIcon={ChevronDown}>繁體中文</Button>
         <AccountMenu />
