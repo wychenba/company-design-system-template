@@ -120,7 +120,7 @@ function IncomeStatusBadge({ status }: { status: IncomeStatus }) {
 
 function EmptyState({ text }: { text: string }) {
   return (
-    <div className="border border-divider rounded">
+    <div className="border border-divider rounded flex items-center justify-center" style={{ height: 125 }}>
       <Empty description={text} />
     </div>
   )
