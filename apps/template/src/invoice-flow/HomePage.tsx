@@ -94,9 +94,18 @@ export function HomePage({ onNewApplication, onEditApplication }: HomePageProps)
                     style={{ display: 'grid', gridTemplateColumns: COL_TEMPLATE }}
                     className="bg-surface-raised border-b border-divider"
                   >
-                    {HEADERS.map((h, i) => (
-                      <div key={i} className="p-[var(--layout-space-tight)] text-body text-fg">{h}</div>
-                    ))}
+                    {HEADERS.map((h, i) => {
+                      const isLast = i === HEADERS.length - 1
+                      return (
+                        <div
+                          key={i}
+                          className={`p-[var(--layout-space-tight)] text-body text-fg ${isLast ? 'bg-surface-raised border-l border-divider' : ''}`}
+                          style={isLast ? { position: 'sticky', right: 0, zIndex: 1 } : undefined}
+                        >
+                          {h}
+                        </div>
+                      )
+                    })}
                   </div>
 
                   {/* Rows */}
@@ -108,7 +117,7 @@ export function HomePage({ onNewApplication, onEditApplication }: HomePageProps)
                     <div
                       key={row.id}
                       style={{ display: 'grid', gridTemplateColumns: COL_TEMPLATE }}
-                      className="border-b border-divider last:border-b-0 hover:bg-surface-raised"
+                      className="group border-b border-divider last:border-b-0 hover:bg-surface-raised"
                     >
                       <div className="flex flex-col items-start justify-center gap-[var(--layout-space-tight)] p-[var(--layout-space-tight)]" style={{ minHeight: 56 }}>
                         <span className="text-body text-fg">{row.id}</span>
@@ -123,7 +132,10 @@ export function HomePage({ onNewApplication, onEditApplication }: HomePageProps)
                       <div className="flex items-center p-[var(--layout-space-tight)] text-body text-fg" style={{ minHeight: 56 }}>{row.total}</div>
                       <div className="flex items-center p-[var(--layout-space-tight)] text-body text-fg-secondary" style={{ minHeight: 56 }}>{row.urgentDate}</div>
                       <div className="flex items-center p-[var(--layout-space-tight)] text-body text-fg-secondary" style={{ minHeight: 56 }}>{row.reason}</div>
-                      <div className="flex items-center justify-center gap-[var(--layout-space-tight)] p-[var(--layout-space-tight)]" style={{ minHeight: 56 }}>
+                      <div
+                        className="flex items-center justify-center gap-[var(--layout-space-tight)] p-[var(--layout-space-tight)] bg-surface border-l border-divider group-hover:bg-surface-raised"
+                        style={{ minHeight: 56, position: 'sticky', right: 0, zIndex: 1 }}
+                      >
                         <Button variant="text" size="xs" iconOnly startIcon={Info} aria-label="查看詳情" />
                         <Button variant="text" size="xs" iconOnly startIcon={PenLine} aria-label="編輯" onClick={() => onEditApplication(row)} />
                         <DeleteConfirmDialog
