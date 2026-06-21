@@ -69,20 +69,17 @@ export function HomePage({ onNewApplication, onEditApplication }: HomePageProps)
               {/* Section header */}
               <div className="flex items-center gap-[var(--layout-space-tight)] mb-[var(--layout-space-loose)]">
                 <span className="flex-1 text-h4 font-medium text-fg">一般暫存申請</span>
-                <div className="flex items-center" style={{ gap: 1 }}>
-                  <Button variant="primary" size="sm" startIcon={Plus} onClick={onNewApplication}>
-                    新增
-                  </Button>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="primary" size="sm" iconOnly startIcon={ChevronDown} aria-label="展開新增選單" />
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem onSelect={onNewApplication}>單筆申請</DropdownMenuItem>
-                      <DropdownMenuItem onSelect={() => showToast('featureReady')}>Excel 匯入申請</DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </div>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="primary" size="sm" startIcon={Plus} endIcon={ChevronDown}>
+                      新增
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem onSelect={onNewApplication}>單筆申請</DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => showToast('featureReady')}>Excel 匯入申請</DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
                 <Separator orientation="vertical" style={{ height: 24 }} />
                 <Button variant="tertiary" size="sm" startIcon={Download} onClick={() => showToast('notImplemented')}>
                   下載 Excel 範本
