@@ -54,8 +54,9 @@ function InfoIcon({ tip }: { tip?: string }) {
 }
 
 export function EditInvoiceDialog({ trigger, payeeType = 'employee', initialData, onConfirm }: EditInvoiceDialogProps) {
+  const initialVoucherType = VOUCHER_TYPES.find((o) => o.label === initialData?.type)?.value ?? 'e-invoice-25'
   const [open, setOpen] = useState(false)
-  const [voucherType, setVoucherType] = useState('e-invoice-25')
+  const [voucherType, setVoucherType] = useState(initialVoucherType)
   const [currency, setCurrency] = useState('TWD')
   const [invoiceDate, setInvoiceDate] = useState(initialData?.date ?? '')
   const [usePartial, setUsePartial] = useState(false)
