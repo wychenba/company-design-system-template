@@ -346,17 +346,16 @@ export function SubmittedDialog({
                       <div className="px-[var(--layout-space-tight)] py-[var(--layout-space-tight)] text-fg-muted">-</div>
                       <div className="px-[var(--layout-space-tight)] py-[var(--layout-space-tight)] text-fg-muted">-</div>
                       <div className="px-[var(--layout-space-tight)] py-[var(--layout-space-tight)]">{r.date}</div>
-                      <div className="px-[var(--layout-space-tight)] py-[var(--layout-space-tight)]">
+                      <div className="px-[var(--layout-space-tight)] py-[var(--layout-space-tight)] flex items-center justify-center">
                         {r.deletable && (
-                          <button
-                            type="button"
+                          <Button
+                            variant="text"
+                            size="xs"
+                            iconOnly
+                            startIcon={Trash2}
                             aria-label="刪除審核人員"
-                            className="border border-divider rounded bg-surface flex items-center justify-center text-fg-secondary hover:bg-surface-raised cursor-pointer"
-                            style={{ width: 28, height: 28 }}
                             onClick={() => showToast('deleteReviewer')}
-                          >
-                            <Trash2 size={12} />
-                          </button>
+                          />
                         )}
                       </div>
                     </div>
