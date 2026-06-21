@@ -231,7 +231,7 @@ export function ApplicationPage({ onBack }: ApplicationPageProps) {
     setInvoices((prev) => prev.filter((inv) => inv.id !== id))
   }
 
-  function addPaymentItem(invoiceId: string) {
+  function addPaymentItem(invoiceId: string, overrides?: { category?: string; subCategory?: string }) {
     setInvoices((prev) =>
       prev.map((inv) =>
         inv.id === invoiceId
@@ -241,8 +241,8 @@ export function ApplicationPage({ onBack }: ApplicationPageProps) {
                 ...inv.items,
                 {
                   id: `${invoiceId}-ITEM-${inv.items.length + 1}`,
-                  category: '小型工具/物品、電腦/手機週邊',
-                  subCategory: '電子標準化軟體',
+                  category: overrides?.category || '小型工具/物品、電腦/手機週邊',
+                  subCategory: overrides?.subCategory || '電子標準化軟體',
                   costCenter: '00690',
                   account: '613000',
                   accountName: '會議相關費用',
@@ -299,6 +299,27 @@ export function ApplicationPage({ onBack }: ApplicationPageProps) {
   }
 
   const hasInvoices = invoices.length > 0
+
+  const allItems = invoices.flatMap((inv) => inv.items)
+  const attachmentNotices: { key: string; text: string }[] = []
+  if (allItems.some((it) => it.category === '外部研討會/跨組織學習之研討會、宣導活動')) {
+    attachmentNotices.push({ key: 'poster', text: '外部研討會/跨組織學習之研討會、宣導活動需在附件提供海報。' })
+  }
+  if (allItems.some((it) => it.category === '廣告費')) {
+    attachmentNotices.push({ key: 'pr', text: '廣告費需在附件提供企業公共關係處 (PR) 核准的信件。' })
+  }
+
+  const attachmentNoticeNode = attachmentNotices.length > 0 ? (
+    <Alert
+      variant="info"
+      title="附件提醒"
+      description={
+        <ul className="list-disc pl-[var(--layout-space-loose)] flex flex-col gap-[var(--layout-space-tight)]">
+          {attachmentNotices.map((n) => <li key={n.key}>{n.text}</li>)}
+        </ul>
+      }
+    />
+  ) : null
 
   return (
     <AppLayout activeMenu="暫存申請單">
@@ -365,6 +386,7 @@ export function ApplicationPage({ onBack }: ApplicationPageProps) {
 
                 <div className="flex flex-col gap-[var(--layout-space-tight)] mt-[var(--layout-space-tight)]">
                   <CardTitle>檢附憑證 / 證明</CardTitle>
+                  {attachmentNoticeNode}
                   <div>
                     <AddAttachmentDialog
                       trigger={<Button variant="tertiary" size="sm" startIcon={Plus}>新增附件</Button>}
@@ -471,7 +493,7 @@ export function ApplicationPage({ onBack }: ApplicationPageProps) {
                               />
                               <AddPaymentItemDialog
                                 trigger={<Button variant="tertiary" size="sm" startIcon={Plus}>新增細項</Button>}
-                                onConfirm={() => addPaymentItem(inv.id)}
+                                onConfirm={(data) => addPaymentItem(inv.id, data)}
                               />
                             </div>
                             {inv.items.length === 0 ? (
@@ -493,6 +515,7 @@ export function ApplicationPage({ onBack }: ApplicationPageProps) {
                 {/* 檢附憑證 / 證明 card */}
                 <Card>
                   <CardTitle>檢附憑證 / 證明</CardTitle>
+                  {attachmentNoticeNode}
                   <div>
                     <AddAttachmentDialog
                       trigger={<Button variant="tertiary" size="sm" startIcon={Plus}>新增附件</Button>}

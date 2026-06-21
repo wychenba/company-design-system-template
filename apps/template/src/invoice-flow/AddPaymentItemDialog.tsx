@@ -8,7 +8,7 @@ import type { ReactNode } from 'react'
 
 interface AddPaymentItemDialogProps {
   trigger: ReactNode
-  onConfirm?: () => void
+  onConfirm?: (data?: { category: string; subCategory: string }) => void
 }
 
 const CATEGORY_OPTIONS = [
@@ -181,7 +181,7 @@ export function AddPaymentItemDialog({ trigger, onConfirm }: AddPaymentItemDialo
   }
 
   function handleConfirm() {
-    onConfirm?.()
+    onConfirm?.({ category, subCategory })
     setOpen(false)
   }
 
