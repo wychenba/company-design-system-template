@@ -73,14 +73,14 @@ export function IncomeQuestionnaireDialog({
             {natureOption ? (
               <Alert
                 variant={isExempt ? 'success' : 'warning'}
-                title={isExempt ? '不需認列所得' : '依問券推算結果'}
+                title={isExempt ? '不需認列所得' : '需認列所得'}
                 description={
                   <div className="flex flex-col gap-[var(--layout-space-tight)]">
-                    <div>收入類型：<span className="font-medium">{natureOption.incomeLabel}</span></div>
+                    <div>推薦收入類型：<span className="font-medium">{natureOption.incomeLabel}</span></div>
                     <div>
-                      所得人名單：
+                      所得人清單：
                       <span className="font-medium">
-                        {isExempt ? '無須填寫' : '請於下方所得人清單填寫'}
+                        {isExempt ? '無須填寫' : '請於所得人清單填寫資訊'}
                       </span>
                     </div>
                   </div>
