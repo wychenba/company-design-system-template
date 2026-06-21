@@ -28,7 +28,7 @@ export function SubmitSuccessDialog({
         </DialogBody>
         <DialogFooter>
           <Button variant="tertiary" onClick={() => onOpenChange(false)}>取消</Button>
-          <Button variant="primary" onClick={() => { onGoToIncomeList?.(); onOpenChange(false) }}>
+          <Button variant="primary" onClick={onGoToIncomeList}>
             前往所得人清單
           </Button>
         </DialogFooter>
