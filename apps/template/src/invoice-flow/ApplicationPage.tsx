@@ -86,7 +86,11 @@ function EmptyState({ text }: { text: string }) {
 const LINE_ITEM_COLS = '40px minmax(160px,1fr) 88px 128px 72px 56px 56px 100px minmax(120px,1fr) 72px'
 const ATTACH_COLS = '160px 1fr 240px 80px'
 
-function LineItemsTable({ items, onDelete }: { items: PaymentItem[]; onDelete: (id: string) => void }) {
+function LineItemsTable({ items, onDelete, onEdit }: {
+  items: PaymentItem[]
+  onDelete: (id: string) => void
+  onEdit: (id: string, data: { category: string; subCategory: string; costCenter: string; account: string; amount: number; taxRate: number; taxAmount: number; contractRequired: string; contractNumber: string }) => void
+}) {
   const itemToData = (item: PaymentItem) => ({
     category: item.category,
     subCategory: item.subCategory,
@@ -134,6 +138,7 @@ function LineItemsTable({ items, onDelete }: { items: PaymentItem[]; onDelete: (
               <EditPaymentItemDialog
                 trigger={<Button variant="text" size="sm" iconOnly startIcon={Pencil} aria-label="編輯" />}
                 initialData={itemToData(item)}
+                onConfirm={(data) => onEdit(item.id, data)}
               />
               <DeletePaymentItemDialog
                 trigger={<Button variant="text" size="sm" iconOnly startIcon={Trash2} aria-label="刪除" />}
@@ -246,6 +251,16 @@ export function ApplicationPage({ onBack }: ApplicationPageProps) {
                 },
               ],
             }
+          : inv,
+      ),
+    )
+  }
+
+  function editPaymentItem(invoiceId: string, itemId: string, data: Partial<PaymentItem>) {
+    setInvoices((prev) =>
+      prev.map((inv) =>
+        inv.id === invoiceId
+          ? { ...inv, items: inv.items.map((it) => it.id === itemId ? { ...it, ...data } : it) }
           : inv,
       ),
     )
@@ -457,6 +472,7 @@ export function ApplicationPage({ onBack }: ApplicationPageProps) {
                               <LineItemsTable
                                 items={inv.items}
                                 onDelete={(itemId) => deletePaymentItem(inv.id, itemId)}
+                                onEdit={(itemId, data) => editPaymentItem(inv.id, itemId, data)}
                               />
                             )}
                           </div>

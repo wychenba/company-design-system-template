@@ -21,7 +21,7 @@ interface PaymentItemData {
 interface EditPaymentItemDialogProps {
   trigger: ReactNode
   initialData?: PaymentItemData
-  onConfirm?: () => void
+  onConfirm?: (data: PaymentItemData) => void
 }
 
 const CATEGORY_OPTIONS = [
@@ -125,7 +125,17 @@ export function EditPaymentItemDialog({ trigger, initialData, onConfirm }: EditP
   }
 
   function handleConfirm() {
-    onConfirm?.()
+    onConfirm?.({
+      category,
+      subCategory,
+      costCenter,
+      account: accountingSubject,
+      amount: parseFloat(totalAmount) || 0,
+      taxRate: taxRate === 'exempt' ? 0 : parseFloat(taxRate) || 0,
+      taxAmount,
+      contractRequired: hasContract === 'yes' ? '是' : '無須提供',
+      contractNumber: hasContract === 'yes' ? contractIds.join(', ') : noContractReason,
+    })
     setOpen(false)
   }
 
