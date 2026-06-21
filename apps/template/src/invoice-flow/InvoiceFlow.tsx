@@ -2,8 +2,9 @@ import { useState } from 'react'
 import { HomePage, type DraftRow } from './HomePage'
 import { ApplicationPage, type ApplicationInitialData, type InvoiceRow, type PaymentItem } from './ApplicationPage'
 import { IncomeListPage } from './IncomeListPage'
+import { IncomeListDetailPage, type IncomeListDetail } from './IncomeListDetailPage'
 
-export type AppView = 'home' | 'application' | 'incomeList'
+export type AppView = 'home' | 'application' | 'incomeList' | 'incomeListDetail'
 
 // Fake line items seeded into the first invoice when editing an existing draft,
 // so the prototype shows table data flowing through (matches Figma 104-59258).
@@ -85,6 +86,7 @@ export default function InvoiceFlow() {
     return 'home'
   })
   const [initialData, setInitialData] = useState<ApplicationInitialData | undefined>(undefined)
+  const [incomeDetail, setIncomeDetail] = useState<IncomeListDetail | undefined>(undefined)
 
   return (
     <div className="min-h-screen min-w-[1200px] bg-surface-sunken">
@@ -102,7 +104,10 @@ export default function InvoiceFlow() {
         />
       )}
       {view === 'incomeList' && (
-        <IncomeListPage />
+        <IncomeListPage onOpenDetail={(d) => { setIncomeDetail(d); setView('incomeListDetail') }} />
+      )}
+      {view === 'incomeListDetail' && incomeDetail && (
+        <IncomeListDetailPage detail={incomeDetail} onBack={() => setView('incomeList')} />
       )}
     </div>
   )

@@ -3,7 +3,7 @@ import {
 } from '@qijenchen/design-system'
 import { TriangleAlert, CircleCheck } from 'lucide-react'
 import { AppLayout } from './AppLayout'
-import { showToast } from './useToast'
+import type { IncomeListDetail } from './IncomeListDetailPage'
 
 type FillStatus = 'unfilled' | 'filled'
 
@@ -17,9 +17,10 @@ interface IncomeListRow {
   invoiceNo: string
   currency: string
   total: string
+  incomeType: string
 }
 
-const STUB_ROWS: IncomeListRow[] = [
+export const STUB_ROWS: IncomeListRow[] = [
   {
     applicationId: 'PAE20260525001',
     serialNo: 'PAGE2605250001-1',
@@ -30,6 +31,7 @@ const STUB_ROWS: IncomeListRow[] = [
     invoiceNo: 'BD28114045',
     currency: 'TWD',
     total: '1,600',
+    incomeType: '50',
   },
   {
     applicationId: '',
@@ -41,6 +43,7 @@ const STUB_ROWS: IncomeListRow[] = [
     invoiceNo: 'BD28114045',
     currency: 'TWD',
     total: '1,600',
+    incomeType: '50',
   },
   {
     applicationId: 'PAE20260525002',
@@ -52,6 +55,7 @@ const STUB_ROWS: IncomeListRow[] = [
     invoiceNo: 'BD28114045',
     currency: 'TWD',
     total: '1,600',
+    incomeType: '50',
   },
 ]
 
@@ -60,7 +64,24 @@ const HEADERS = ['單號', '流水號', '公司代號', '填寫狀態', '收款�
 
 const unfilledCount = STUB_ROWS.filter((r) => r.status === 'unfilled').length
 
-export function IncomeListPage() {
+interface IncomeListPageProps {
+  onOpenDetail?: (detail: IncomeListDetail) => void
+}
+
+export function IncomeListPage({ onOpenDetail }: IncomeListPageProps = {}) {
+  function openDetail(row: IncomeListRow) {
+    onOpenDetail?.({
+      serialNo: row.serialNo,
+      company: row.company,
+      payeeType: row.payeeType,
+      payee: row.payee,
+      invoiceNo: row.invoiceNo,
+      currency: row.currency,
+      total: row.total,
+      incomeType: row.incomeType,
+    })
+  }
+
   return (
     <AppLayout activeMenu="所得人清單">
       <div className="flex flex-col h-full">
@@ -79,7 +100,6 @@ export function IncomeListPage() {
 
           <div className="overflow-x-auto rounded border border-divider">
             <div style={{ minWidth: 1200 }}>
-              {/* Header */}
               <div
                 style={{ display: 'grid', gridTemplateColumns: COL_TEMPLATE }}
                 className="bg-surface-raised border-b border-divider"
@@ -91,8 +111,7 @@ export function IncomeListPage() {
                 ))}
               </div>
 
-              {/* Rows */}
-              {STUB_ROWS.map((row, idx) => (
+              {STUB_ROWS.map((row) => (
                 <div
                   key={row.serialNo}
                   style={{ display: 'grid', gridTemplateColumns: COL_TEMPLATE }}
@@ -133,7 +152,7 @@ export function IncomeListPage() {
                     <Button
                       variant="secondary"
                       size="sm"
-                      onClick={() => showToast('notImplemented')}
+                      onClick={() => openDetail(row)}
                     >
                       {row.status === 'unfilled' ? '填寫清單' : '編輯清單'}
                     </Button>
