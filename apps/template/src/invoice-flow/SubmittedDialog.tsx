@@ -73,25 +73,28 @@ function SectionCard({
 
   return (
     <div className="border border-divider rounded-lg bg-surface overflow-hidden flex-shrink-0">
-      <div
-        className={[
-          'flex items-center justify-between px-[var(--layout-space-loose)]',
-          nonCollapsible ? '' : 'cursor-pointer hover:bg-surface-raised',
-        ].join(' ')}
-        style={nonCollapsible
-          ? { height: 56 }
-          : open
+      {nonCollapsible ? (
+        <div
+          className="flex items-center justify-between px-[var(--layout-space-loose)]"
+          style={{ height: 56 }}
+        >
+          <span className="text-h4 font-semibold text-fg">{title}</span>
+        </div>
+      ) : (
+        <button
+          type="button"
+          aria-expanded={open}
+          className="w-full flex items-center justify-between px-[var(--layout-space-loose)] bg-transparent border-0 cursor-pointer hover:bg-surface-raised text-left"
+          style={open
             ? { minHeight: 56, paddingTop: 16, paddingBottom: 16 }
             : { height: 64 }
-        }
-        onClick={nonCollapsible ? undefined : () => setOpen((v) => !v)}
-      >
-        <span className="text-h4 font-semibold text-fg">{title}</span>
-        {!nonCollapsible && (
-          <button
-            className="flex items-center bg-transparent border-0 cursor-pointer whitespace-nowrap text-body font-semibold text-fg-secondary"
+          }
+          onClick={() => setOpen((v) => !v)}
+        >
+          <span className="text-h4 font-semibold text-fg">{title}</span>
+          <span
+            className="flex items-center whitespace-nowrap text-body font-semibold text-fg-secondary"
             style={{ gap: 8 }}
-            tabIndex={-1}
           >
             <span>{open ? '收合資訊' : '更多資訊'}</span>
             <ChevronDown
@@ -99,9 +102,9 @@ function SectionCard({
               className="transition-transform duration-200"
               style={{ transform: open ? 'rotate(180deg)' : 'rotate(0deg)' }}
             />
-          </button>
-        )}
-      </div>
+          </span>
+        </button>
+      )}
       {open && <div className="border-t border-divider">{children}</div>}
     </div>
   )
@@ -114,8 +117,10 @@ function InvoiceItemRow({ inv }: { inv: InvoiceRow }) {
 
   return (
     <div className="border border-divider rounded-lg overflow-hidden flex-shrink-0">
-      <div
-        className="flex items-center cursor-pointer hover:bg-surface-raised"
+      <button
+        type="button"
+        aria-expanded={open}
+        className="w-full flex items-center cursor-pointer hover:bg-surface-raised bg-transparent border-0 text-left"
         style={{ gap: 12, padding: '14px 16px' }}
         onClick={() => setOpen((v) => !v)}
       >
@@ -133,7 +138,7 @@ function InvoiceItemRow({ inv }: { inv: InvoiceRow }) {
             收款人：{inv.payee}｜日期：{inv.date}
           </div>
         </div>
-      </div>
+      </button>
 
       {open && (
         <div className="border-t border-divider px-[var(--layout-space-loose)] pb-[var(--layout-space-loose)]">

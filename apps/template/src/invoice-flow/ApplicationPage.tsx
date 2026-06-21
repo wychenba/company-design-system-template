@@ -215,10 +215,14 @@ function AttachmentTable({ attachments, onEdit, onDelete }: {
           <div className="p-[var(--layout-space-tight)] flex items-center text-body text-fg">{att.type}</div>
           <div className="p-[var(--layout-space-tight)] flex items-center text-body text-fg-secondary">{att.description || '-'}</div>
           <div className="p-[var(--layout-space-tight)] flex items-center">
-            <span className="inline-flex items-center gap-[var(--layout-space-tight)] text-primary text-body truncate cursor-pointer hover:underline">
+            <button
+              type="button"
+              className="inline-flex items-center gap-[var(--layout-space-tight)] text-primary text-body truncate cursor-pointer hover:underline bg-transparent border-0 p-0"
+              onClick={() => showToast('notImplemented')}
+            >
               <Paperclip size={14} className="shrink-0" />
               <span className="truncate">{att.fileName}</span>
-            </span>
+            </button>
           </div>
           <div className="p-[var(--layout-space-tight)] flex items-center gap-[var(--layout-space-tight)]">
             <EditAttachmentDialog
