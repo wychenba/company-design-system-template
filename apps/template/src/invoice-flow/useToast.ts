@@ -8,6 +8,7 @@ const TOAST_MESSAGES = {
   editAttachment: { success: '附件已更新', error: '更新附件失敗' },
   addAttachment: { success: '附件已上傳', error: '上傳失敗' },
   saveDraft: { success: '已存成草稿', error: '存草稿失敗' },
+  incomeQuestionnaire: { success: '所得問券已完成', error: '問券送出失敗' },
 }
 
 export function showToast(key: keyof typeof TOAST_MESSAGES, type: 'success' | 'error' = 'success') {

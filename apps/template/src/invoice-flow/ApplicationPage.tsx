@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import {
-  Button, Field, FieldLabel, Input, Select, Textarea, Alert, Checkbox,
+  Button, Field, FieldLabel, Input, Select, Textarea, Alert, Checkbox, Tag,
 } from '@qijenchen/design-system'
-import { Plus, ArrowUpFromLine, Calendar, Pencil, Copy, Trash2, ChevronDown, ChevronUp, AlignLeft, Paperclip } from 'lucide-react'
+import { Plus, ArrowUpFromLine, Calendar, Pencil, Copy, Trash2, ChevronDown, ChevronUp, AlignLeft, Paperclip, AlertTriangle, CheckCircle2 } from 'lucide-react'
 import { AppLayout } from './AppLayout'
 import { AddInvoiceDialog } from './AddInvoiceDialog'
 import { EditInvoiceDialog } from './EditInvoiceDialog'
@@ -16,6 +16,7 @@ import { BatchImportDialog } from './BatchImportDialog'
 import { SubmittedDialog } from './SubmittedDialog'
 import { SubmitSuccessDialog } from './SubmitSuccessDialog'
 import { CancelApplicationDialog } from './CancelApplicationDialog'
+import { IncomeQuestionnaireDialog, type IncomeAnswer } from './IncomeQuestionnaireDialog'
 import { showToast } from './useToast'
 
 interface ApplicationPageProps {
@@ -45,6 +46,8 @@ interface PaymentItem {
   contractNumber: string
 }
 
+type IncomeStatus = 'unfilled' | 'filled' | 'notRequired'
+
 interface InvoiceRow {
   id: string
   displayId: string
@@ -56,6 +59,24 @@ interface InvoiceRow {
   date: string
   expanded: boolean
   items: PaymentItem[]
+  incomeStatus: IncomeStatus
+  incomeType?: string
+  incomeTypeLabel?: string
+}
+
+// Categories that do NOT require income questionnaire (small office supplies,
+// internal training, etc). Anything else needs the questionnaire to determine
+// 收入類型 / 所得認列.
+const NO_QUESTIONNAIRE_CATEGORIES = new Set<string>([
+  '小型工具/物品、電腦/手機週邊、辦公室用品',
+  '文具用品、印刷、書報雜誌/資料庫、軟體',
+  '贈、郵快遞費',
+])
+
+function deriveIncomeRequirement(items: PaymentItem[]): IncomeStatus {
+  if (items.length === 0) return 'notRequired'
+  const needsQuestionnaire = items.some((it) => !NO_QUESTIONNAIRE_CATEGORIES.has(it.category))
+  return needsQuestionnaire ? 'unfilled' : 'notRequired'
 }
 
 interface AttachmentRow {
@@ -75,6 +96,16 @@ function Card({ children }: { children: React.ReactNode }) {
 
 function CardTitle({ children }: { children: React.ReactNode }) {
   return <h2 className="text-h4 font-medium text-fg">{children}</h2>
+}
+
+function IncomeStatusBadge({ status }: { status: IncomeStatus }) {
+  if (status === 'filled') {
+    return <Tag color="green" size="sm" icon={CheckCircle2}>已認列所得</Tag>
+  }
+  if (status === 'unfilled') {
+    return <Tag color="yellow" size="sm" icon={AlertTriangle}>未填寫問券</Tag>
+  }
+  return <Tag color="neutral" size="sm">不需填寫</Tag>
 }
 
 function EmptyState({ text }: { text: string }) {
@@ -204,6 +235,7 @@ export function ApplicationPage({ onBack }: ApplicationPageProps) {
   const [invoices, setInvoices] = useState<InvoiceRow[]>([])
   const [attachments, setAttachments] = useState<AttachmentRow[]>([])
   const [submitSuccessOpen, setSubmitSuccessOpen] = useState(false)
+  const [questionnaireInvoiceId, setQuestionnaireInvoiceId] = useState<string | null>(null)
 
   function addInvoice() {
     const n = invoices.length + 1
@@ -220,8 +252,18 @@ export function ApplicationPage({ onBack }: ApplicationPageProps) {
         date: '2026/06/19',
         expanded: false,
         items: [],
+        incomeStatus: 'notRequired',
       },
     ])
+  }
+
+  function applyItemsUpdate(inv: InvoiceRow, items: PaymentItem[]): InvoiceRow {
+    // Re-derive income requirement when items change. Preserve answered
+    // questionnaire — only reset to 'unfilled' if requirement appeared while
+    // currently 'notRequired'.
+    const need = deriveIncomeRequirement(items)
+    if (inv.incomeStatus === 'filled') return { ...inv, items }
+    return { ...inv, items, incomeStatus: need }
   }
 
   function toggleExpand(id: string) {
@@ -234,29 +276,23 @@ export function ApplicationPage({ onBack }: ApplicationPageProps) {
 
   function addPaymentItem(invoiceId: string, overrides?: { category?: string; subCategory?: string }) {
     setInvoices((prev) =>
-      prev.map((inv) =>
-        inv.id === invoiceId
-          ? {
-              ...inv,
-              items: [
-                ...inv.items,
-                {
-                  id: `${invoiceId}-ITEM-${inv.items.length + 1}`,
-                  category: overrides?.category || '小型工具/物品、電腦/手機週邊',
-                  subCategory: overrides?.subCategory || '電子標準化軟體',
-                  costCenter: '00690',
-                  account: '613000',
-                  accountName: '會議相關費用',
-                  amount: 1000,
-                  taxRate: 0,
-                  taxAmount: 0,
-                  contractRequired: '無須提供',
-                  contractNumber: '',
-                },
-              ],
-            }
-          : inv,
-      ),
+      prev.map((inv) => {
+        if (inv.id !== invoiceId) return inv
+        const newItem: PaymentItem = {
+          id: `${invoiceId}-ITEM-${inv.items.length + 1}`,
+          category: overrides?.category || '小型工具/物品、電腦/手機週邊',
+          subCategory: overrides?.subCategory || '電子標準化軟體',
+          costCenter: '00690',
+          account: '613000',
+          accountName: '會議相關費用',
+          amount: 1000,
+          taxRate: 0,
+          taxAmount: 0,
+          contractRequired: '無須提供',
+          contractNumber: '',
+        }
+        return applyItemsUpdate(inv, [...inv.items, newItem])
+      }),
     )
     showToast('addPaymentItem')
   }
@@ -265,7 +301,7 @@ export function ApplicationPage({ onBack }: ApplicationPageProps) {
     setInvoices((prev) =>
       prev.map((inv) =>
         inv.id === invoiceId
-          ? { ...inv, items: inv.items.map((it) => it.id === itemId ? { ...it, ...data } : it) }
+          ? applyItemsUpdate(inv, inv.items.map((it) => it.id === itemId ? { ...it, ...data } : it))
           : inv,
       ),
     )
@@ -275,10 +311,23 @@ export function ApplicationPage({ onBack }: ApplicationPageProps) {
   function deletePaymentItem(invoiceId: string, itemId: string) {
     setInvoices((prev) =>
       prev.map((inv) =>
-        inv.id === invoiceId ? { ...inv, items: inv.items.filter((it) => it.id !== itemId) } : inv,
+        inv.id === invoiceId
+          ? applyItemsUpdate(inv, inv.items.filter((it) => it.id !== itemId))
+          : inv,
       ),
     )
     showToast('deletePaymentItem')
+  }
+
+  function answerQuestionnaire(invoiceId: string, answer: IncomeAnswer) {
+    setInvoices((prev) =>
+      prev.map((inv) =>
+        inv.id === invoiceId
+          ? { ...inv, incomeStatus: 'filled', incomeType: answer.incomeType, incomeTypeLabel: answer.incomeTypeLabel }
+          : inv,
+      ),
+    )
+    showToast('incomeQuestionnaire')
   }
 
   function editAttachment(id: string, updated: { type: string; description: string; fileName: string }) {
@@ -300,6 +349,16 @@ export function ApplicationPage({ onBack }: ApplicationPageProps) {
   }
 
   const hasInvoices = invoices.length > 0
+
+  // Stat bar summary (top of form)
+  const totalAmount = invoices.reduce((sum, inv) => sum + inv.amount, 0)
+  const unfilledQuestionnaireCount = invoices.filter((inv) => inv.incomeStatus === 'unfilled').length
+
+  const questionnaireInvoice = invoices.find((inv) => inv.id === questionnaireInvoiceId) ?? null
+  const questionnaireInitial: IncomeAnswer | undefined =
+    questionnaireInvoice && questionnaireInvoice.incomeType
+      ? { incomeType: questionnaireInvoice.incomeType, incomeTypeLabel: questionnaireInvoice.incomeTypeLabel ?? '' }
+      : undefined
 
   const allItems = invoices.flatMap((inv) => inv.items)
   const attachmentNotices: { key: string; text: string }[] = []
@@ -343,6 +402,30 @@ export function ApplicationPage({ onBack }: ApplicationPageProps) {
         {/* Form content */}
         <div className="flex-1 overflow-auto bg-surface-sunken p-[var(--layout-space-loose)]">
           <div className="w-full max-w-[960px] mx-auto flex flex-col gap-[var(--layout-space-loose)]">
+
+            {/* Stat bar — 總計金額 / 請款發票 / 所得判斷 */}
+            <Card>
+              <div className="flex gap-0">
+                {[
+                  { label: '總計金額', value: `TWD ${totalAmount.toLocaleString()}` },
+                  { label: '請款發票', value: `${invoices.length} 張` },
+                  {
+                    label: '所得判斷',
+                    value: unfilledQuestionnaireCount > 0
+                      ? `${unfilledQuestionnaireCount} 待填`
+                      : invoices.length > 0 ? '已完成' : '—',
+                  },
+                ].map((col, i, arr) => (
+                  <div
+                    key={col.label}
+                    className={`flex-1 flex flex-col gap-[var(--layout-space-tight)] pr-[var(--layout-space-loose)] ${i < arr.length - 1 ? 'border-r border-divider mr-[var(--layout-space-loose)]' : ''}`}
+                  >
+                    <div className="text-caption text-fg-secondary">{col.label}</div>
+                    <div className="text-h4 font-medium text-fg">{col.value}</div>
+                  </div>
+                ))}
+              </div>
+            </Card>
 
             {/* 付款資訊 */}
             <Card>
@@ -437,8 +520,10 @@ export function ApplicationPage({ onBack }: ApplicationPageProps) {
                             <span className="text-body font-medium text-fg">{inv.displayId}</span>
                             <span className="text-body font-medium text-fg shrink-0">TWD {inv.amount.toLocaleString()}</span>
                           </div>
-                          <div className="text-caption text-fg-secondary">
-                            收款人：{inv.payee}｜日期：{inv.date}
+                          <div className="flex items-center gap-[var(--layout-space-tight)] text-caption text-fg-secondary">
+                            <span>收款人：{inv.payee}｜日期：{inv.date}</span>
+                            <span>｜所得判斷：</span>
+                            <IncomeStatusBadge status={inv.incomeStatus} />
                           </div>
                         </div>
                         <div className="flex items-center gap-[var(--layout-space-tight)] shrink-0">
@@ -466,18 +551,52 @@ export function ApplicationPage({ onBack }: ApplicationPageProps) {
                           {/* Invoice details row */}
                           <div className="flex gap-0 px-[var(--layout-space-tight)] py-[var(--layout-space-tight)] border-b border-divider">
                             {[
-                              { label: '憑證類型', value: inv.type || '電子統一發票 (25)' },
-                              { label: '發票號碼', value: inv.voucherNumber || '—' },
-                              { label: '合計金額（未稅）', value: `TWD ${inv.amount.toLocaleString()}` },
-                              { label: '稅額', value: String(inv.taxAmount) },
+                              { key: 'type', label: '憑證類型', value: <span className="text-body text-fg">{inv.type || '電子統一發票 (25)'}</span> },
+                              { key: 'voucher', label: '發票號碼', value: <span className="text-body text-fg">{inv.voucherNumber || '—'}</span> },
+                              { key: 'amount', label: '合計金額（未稅）', value: <span className="text-body text-fg">TWD {inv.amount.toLocaleString()}</span> },
+                              { key: 'tax', label: '稅額', value: <span className="text-body text-fg">{inv.taxAmount}</span> },
+                              {
+                                key: 'income',
+                                label: '收入類型',
+                                value: inv.incomeStatus === 'filled' && inv.incomeType ? (
+                                  <span className="flex items-center gap-[var(--layout-space-tight)]">
+                                    <span className="text-body text-fg">{inv.incomeType}</span>
+                                    <button
+                                      type="button"
+                                      className="text-body text-primary hover:underline"
+                                      onClick={() => setQuestionnaireInvoiceId(inv.id)}
+                                    >
+                                      編輯問券
+                                    </button>
+                                  </span>
+                                ) : (
+                                  <span className="text-body text-fg-secondary">—</span>
+                                ),
+                              },
                             ].map((col, i, arr) => (
-                              <div key={col.label}
+                              <div key={col.key}
                                 className={`flex-1 flex flex-col gap-[var(--layout-space-tight)] pr-[var(--layout-space-tight)] ${i < arr.length - 1 ? 'border-r border-divider mr-[var(--layout-space-tight)]' : ''}`}>
                                 <div className="text-caption text-fg-secondary">{col.label}</div>
-                                <div className="text-body text-fg">{col.value}</div>
+                                <div>{col.value}</div>
                               </div>
                             ))}
                           </div>
+
+                          {/* Income questionnaire alert (only when unfilled) */}
+                          {inv.incomeStatus === 'unfilled' && (
+                            <div className="px-[var(--layout-space-tight)] pt-[var(--layout-space-tight)]">
+                              <Alert
+                                variant="warning"
+                                title="所得問券待填寫"
+                                description="此發票須完成所得判斷，請填寫問券確認收入類型是否需要認列。"
+                                endContent={
+                                  <Button variant="tertiary" size="sm" onClick={() => setQuestionnaireInvoiceId(inv.id)}>
+                                    填寫問券
+                                  </Button>
+                                }
+                              />
+                            </div>
+                          )}
 
                           {/* Line items section */}
                           <div className="bg-surface-sunken p-[var(--layout-space-tight)]">
@@ -596,6 +715,16 @@ export function ApplicationPage({ onBack }: ApplicationPageProps) {
             onOpenChange={setSubmitSuccessOpen}
           />
         </div>
+
+        <IncomeQuestionnaireDialog
+          open={questionnaireInvoiceId !== null}
+          onOpenChange={(o) => { if (!o) setQuestionnaireInvoiceId(null) }}
+          initial={questionnaireInitial}
+          onConfirm={(answer) => {
+            if (questionnaireInvoiceId) answerQuestionnaire(questionnaireInvoiceId, answer)
+            setQuestionnaireInvoiceId(null)
+          }}
+        />
 
       </div>
     </AppLayout>
