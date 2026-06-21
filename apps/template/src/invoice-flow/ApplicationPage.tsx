@@ -7,6 +7,7 @@ import { AppLayout } from './AppLayout'
 import { AddInvoiceDialog, VOUCHER_TYPES } from './AddInvoiceDialog'
 import { EditInvoiceDialog } from './EditInvoiceDialog'
 import { DeleteInvoiceDialog } from './DeleteInvoiceDialog'
+import { DeleteConfirmDialog } from './DeleteConfirmDialog'
 import { EditAttachmentDialog } from './EditAttachmentDialog'
 import { AddPaymentItemDialog } from './AddPaymentItemDialog'
 import { EditPaymentItemDialog } from './EditPaymentItemDialog'
@@ -232,7 +233,13 @@ function AttachmentTable({ attachments, onEdit, onDelete }: {
               initialFileName={att.fileName}
               onConfirm={(updated) => onEdit(att.id, updated)}
             />
-            <Button variant="text" size="sm" iconOnly startIcon={Trash2} aria-label="刪除" onClick={() => onDelete(att.id)} />
+            <DeleteConfirmDialog
+              trigger={<Button variant="text" size="sm" iconOnly startIcon={Trash2} aria-label="刪除" />}
+              title="是否刪除附件"
+              description={`刪除後將無法復原，「${att.fileName}」會從附件清單移除，確定要刪除嗎？`}
+              confirmLabel="刪除附件"
+              onConfirm={() => onDelete(att.id)}
+            />
           </div>
         </div>
       ))}
@@ -287,6 +294,12 @@ export function ApplicationPage({ onBack, initialData }: ApplicationPageProps) {
 
   function deleteInvoice(id: string) {
     setInvoices((prev) => prev.filter((inv) => inv.id !== id))
+    showToast('deleteInvoice')
+  }
+
+  function deleteAttachment(id: string) {
+    setAttachments((prev) => prev.filter((a) => a.id !== id))
+    showToast('deleteAttachment')
   }
 
   function copyInvoice(sourceId: string) {
@@ -538,7 +551,7 @@ export function ApplicationPage({ onBack, initialData }: ApplicationPageProps) {
                     <AttachmentTable
                       attachments={attachments}
                       onEdit={editAttachment}
-                      onDelete={(id) => setAttachments((prev) => prev.filter((a) => a.id !== id))}
+                      onDelete={deleteAttachment}
                     />
                   )}
                 </div>
@@ -709,7 +722,7 @@ export function ApplicationPage({ onBack, initialData }: ApplicationPageProps) {
                     <AttachmentTable
                       attachments={attachments}
                       onEdit={editAttachment}
-                      onDelete={(id) => setAttachments((prev) => prev.filter((a) => a.id !== id))}
+                      onDelete={deleteAttachment}
                     />
                   )}
                 </Card>

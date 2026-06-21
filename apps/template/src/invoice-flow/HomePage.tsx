@@ -5,6 +5,7 @@ import {
 } from '@qijenchen/design-system'
 import { Plus, Download, Info, PenLine, Trash2, ChevronDown } from 'lucide-react'
 import { AppLayout } from './AppLayout'
+import { DeleteConfirmDialog } from './DeleteConfirmDialog'
 import { showToast } from './useToast'
 
 type TabId = 'general' | 'bonus' | 'travel'
@@ -43,6 +44,7 @@ export function HomePage({ onNewApplication, onEditApplication }: HomePageProps)
 
   function deleteRow(id: string) {
     setRows((prev) => prev.filter((r) => r.id !== id))
+    showToast('deleteApplication')
   }
 
   return (
@@ -127,7 +129,13 @@ export function HomePage({ onNewApplication, onEditApplication }: HomePageProps)
                       <div className="flex items-center justify-center gap-[var(--layout-space-tight)] p-[var(--layout-space-tight)]" style={{ minHeight: 56 }}>
                         <Button variant="text" size="xs" iconOnly startIcon={Info} aria-label="查看詳情" />
                         <Button variant="text" size="xs" iconOnly startIcon={PenLine} aria-label="編輯" onClick={() => onEditApplication(row)} />
-                        <Button variant="text" size="xs" iconOnly startIcon={Trash2} aria-label="刪除" onClick={() => deleteRow(row.id)} />
+                        <DeleteConfirmDialog
+                          trigger={<Button variant="text" size="xs" iconOnly startIcon={Trash2} aria-label="刪除" />}
+                          title={`是否刪除 ${row.id}`}
+                          description="刪除後將無法復原，此筆暫存申請單會從清單移除，確定要刪除嗎？"
+                          confirmLabel="刪除申請單"
+                          onConfirm={() => deleteRow(row.id)}
+                        />
                       </div>
                     </div>
                   ))}
