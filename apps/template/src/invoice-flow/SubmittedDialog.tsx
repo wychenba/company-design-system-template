@@ -240,7 +240,7 @@ export function SubmittedDialog({
         </DialogHeader>
 
         <DialogBody className="bg-surface-raised">
-          <div className="flex flex-col gap-[var(--layout-space-loose)]">
+          <div className="flex flex-col gap-[var(--layout-space-loose)] px-[var(--layout-space-loose)] py-[var(--layout-space-loose)]">
 
             {/* ① 基本資訊 */}
             <SectionCard title="基本資訊" defaultOpen={false}>
