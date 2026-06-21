@@ -79,14 +79,14 @@ function SectionCard({
           nonCollapsible ? '' : 'cursor-pointer hover:bg-surface-raised',
         ].join(' ')}
         style={nonCollapsible
-          ? { height: 60 }
+          ? { height: 56 }
           : open
-            ? { minHeight: 58, paddingTop: 18, paddingBottom: 18 }
-            : { height: 84 }
+            ? { minHeight: 56, paddingTop: 16, paddingBottom: 16 }
+            : { height: 64 }
         }
         onClick={nonCollapsible ? undefined : () => setOpen((v) => !v)}
       >
-        <span className="text-h3 font-semibold text-fg">{title}</span>
+        <span className="text-h4 font-semibold text-fg">{title}</span>
         {!nonCollapsible && (
           <button
             className="flex items-center bg-transparent border-0 cursor-pointer whitespace-nowrap text-body font-semibold text-fg-secondary"
@@ -366,7 +366,7 @@ export function SubmittedDialog({
                 <p className="text-body text-fg mb-[var(--layout-space-tight)]">您可以填寫簽核補充說明，協助下一階段簽核人員快速完成審核</p>
                 <textarea
                   className="w-full border border-divider rounded px-[var(--layout-space-tight)] py-[var(--layout-space-tight)] text-body text-fg bg-surface resize-none focus:outline-none"
-                  style={{ height: 64 }}
+                  style={{ height: 120 }}
                   placeholder="請填寫補充說明"
                   value={remark}
                   onChange={(e) => setRemark(e.target.value)}
