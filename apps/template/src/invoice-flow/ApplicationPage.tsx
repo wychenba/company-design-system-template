@@ -277,6 +277,7 @@ export function ApplicationPage({ onBack }: ApplicationPageProps) {
         inv.id === invoiceId ? { ...inv, items: inv.items.filter((it) => it.id !== itemId) } : inv,
       ),
     )
+    showToast('deletePaymentItem')
   }
 
   function editAttachment(id: string, updated: { type: string; description: string; fileName: string }) {
