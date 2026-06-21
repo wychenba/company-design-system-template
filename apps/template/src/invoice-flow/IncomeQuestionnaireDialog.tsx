@@ -7,6 +7,8 @@ import {
 export interface IncomeAnswer {
   incomeType: string
   incomeTypeLabel: string
+  payeeKindLabel: string
+  natureLabel: string
 }
 
 interface IncomeQuestionnaireDialogProps {
@@ -25,8 +27,8 @@ const PAYEE_OPTIONS = [
 
 const NATURE_OPTIONS = [
   { value: 'salary', label: '薪資、獎金、補貼', incomeType: '50', incomeLabel: '50 薪資所得' },
-  { value: 'professional', label: '專職技術人員自負盈虧 (如：律師)', incomeType: '9A', incomeLabel: '9A 執行業務' },
-  { value: 'other', label: '顧問費/講師費/攝影師費 等勞務費用', incomeType: '92', incomeLabel: '92 其他所得' },
+  { value: 'professional', label: '專職技術人員自負盈虧 (如：律師)', incomeType: '9A', incomeLabel: '9A 執行業務所得' },
+  { value: 'service', label: '顧問費/講師費/攝影師費 等勞務費用', incomeType: '92', incomeLabel: '92 其他所得' },
   { value: 'exempt', label: '實報實銷 (差旅/交通/住宿)、免列所得', incomeType: '00', incomeLabel: '00 免列所得' },
 ]
 
@@ -38,33 +40,59 @@ export function IncomeQuestionnaireDialog({
 
   useEffect(() => {
     if (open) {
-      setPayeeKind(initial ? 'domestic-individual' : '')
+      setPayeeKind('')
       setNature('')
     }
-  }, [open, initial])
+  }, [open])
+
+  const natureOption = NATURE_OPTIONS.find((o) => o.value === nature)
+  const payeeOption = PAYEE_OPTIONS.find((o) => o.value === payeeKind)
+  const isExempt = natureOption?.incomeType === '00'
+  const canConfirm = payeeKind !== '' && nature !== ''
 
   function handleConfirm() {
-    const found = NATURE_OPTIONS.find((o) => o.value === nature)
-    if (!found) return
-    onConfirm({ incomeType: found.incomeType, incomeTypeLabel: found.incomeLabel })
+    if (!natureOption || !payeeOption) return
+    onConfirm({
+      incomeType: natureOption.incomeType,
+      incomeTypeLabel: natureOption.incomeLabel,
+      payeeKindLabel: payeeOption.label,
+      natureLabel: natureOption.label,
+    })
     onOpenChange(false)
   }
-
-  const canConfirm = payeeKind !== '' && nature !== ''
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent maxWidth={560}>
         <DialogHeader>
-          <DialogTitle>所得問券</DialogTitle>
+          <DialogTitle>{initial ? '編輯問券' : '所得問券'}</DialogTitle>
         </DialogHeader>
         <DialogBody>
           <div className="flex flex-col gap-[var(--layout-space-loose)]">
-            <Alert
-              variant="info"
-              title="填寫說明"
-              description="請依實際付款對象與所得性質填寫，系統將依此判斷收入類型及代扣稅額。"
-            />
+            {/* Result preview — appears once both questions answered */}
+            {natureOption ? (
+              <Alert
+                variant={isExempt ? 'success' : 'warning'}
+                title={isExempt ? '不需認列所得' : '依問券推算結果'}
+                description={
+                  <div className="flex flex-col gap-[var(--layout-space-tight)]">
+                    <div>收入類型：<span className="font-medium">{natureOption.incomeLabel}</span></div>
+                    <div>
+                      所得人名單：
+                      <span className="font-medium">
+                        {isExempt ? '無須填寫' : '請於下方所得人清單填寫'}
+                      </span>
+                    </div>
+                  </div>
+                }
+              />
+            ) : (
+              <Alert
+                variant="info"
+                title="填寫說明"
+                description="請依實際付款對象與所得性質填寫，系統將依此判斷收入類型及代扣稅額。"
+              />
+            )}
 
             <Field>
               <FieldLabel required>1. 付款對象類別</FieldLabel>

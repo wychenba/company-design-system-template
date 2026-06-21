@@ -357,7 +357,12 @@ export function ApplicationPage({ onBack }: ApplicationPageProps) {
   const questionnaireInvoice = invoices.find((inv) => inv.id === questionnaireInvoiceId) ?? null
   const questionnaireInitial: IncomeAnswer | undefined =
     questionnaireInvoice && questionnaireInvoice.incomeType
-      ? { incomeType: questionnaireInvoice.incomeType, incomeTypeLabel: questionnaireInvoice.incomeTypeLabel ?? '' }
+      ? {
+          incomeType: questionnaireInvoice.incomeType,
+          incomeTypeLabel: questionnaireInvoice.incomeTypeLabel ?? '',
+          payeeKindLabel: '',
+          natureLabel: '',
+        }
       : undefined
 
   const allItems = invoices.flatMap((inv) => inv.items)
