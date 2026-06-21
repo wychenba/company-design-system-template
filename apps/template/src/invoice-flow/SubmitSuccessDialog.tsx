@@ -28,9 +28,11 @@ export function SubmitSuccessDialog({
         </DialogBody>
         <DialogFooter>
           <Button variant="tertiary" onClick={() => onOpenChange(false)}>取消</Button>
-          <Button variant="primary" onClick={() => window.open('?view=incomeList', '_blank')}>
+          <a href="?view=incomeList" target="_blank" rel="noopener noreferrer">
+            <Button variant="primary">
             前往所得人清單
-          </Button>
+            </Button>
+          </a>
         </DialogFooter>
       </DialogContent>
     </Dialog>
