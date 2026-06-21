@@ -228,8 +228,14 @@ export function SubmittedDialog({
 }: SubmittedDialogProps) {
   const [open, setOpen] = useState(false)
   const [remark, setRemark] = useState('')
+  const [reviewers, setReviewers] = useState(STUB_REVIEWERS)
 
   const today = new Date().toLocaleDateString('zh-TW', { year: 'numeric', month: 'numeric', day: 'numeric' })
+
+  function deleteReviewer(index: number) {
+    setReviewers((prev) => prev.filter((_, i) => i !== index))
+    showToast('deleteReviewer')
+  }
 
   function handleSubmit() {
     onSubmit?.()
@@ -321,7 +327,7 @@ export function SubmittedDialog({
                     ))}
                     <div className="px-[var(--layout-space-tight)] py-[var(--layout-space-tight)]" />
                   </div>
-                  {STUB_REVIEWERS.map((r, i) => (
+                  {reviewers.map((r, i) => (
                     <div
                       key={i}
                       className="grid border-b border-divider last:border-b-0 text-body text-fg hover:bg-surface-raised items-center"
@@ -354,7 +360,7 @@ export function SubmittedDialog({
                             iconOnly
                             startIcon={Trash2}
                             aria-label="刪除審核人員"
-                            onClick={() => showToast('deleteReviewer')}
+                            onClick={() => deleteReviewer(i)}
                           />
                         )}
                       </div>
