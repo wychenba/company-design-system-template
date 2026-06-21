@@ -11,13 +11,22 @@ interface InitialInvoiceData {
   currency?: string
 }
 
+export interface NewInvoiceData {
+  voucherType: string // label
+  voucherNumber: string
+  currency: string
+  date: string
+  pretaxAmount: number
+  taxAmount: number
+}
+
 interface AddInvoiceDialogProps {
   trigger: ReactNode
   payeeType?: 'employee' | 'vendor'
   initialData?: InitialInvoiceData
   title?: string
   confirmLabel?: string
-  onConfirm?: () => void
+  onConfirm?: (data: NewInvoiceData) => void
 }
 
 export const VOUCHER_TYPES = [
@@ -62,6 +71,7 @@ export function AddInvoiceDialog({
 }: AddInvoiceDialogProps) {
   const [open, setOpen] = useState(false)
   const [voucherType, setVoucherType] = useState(initialData?.voucherType ?? '')
+  const [voucherNumber, setVoucherNumber] = useState('')
   const [currency, setCurrency] = useState(initialData?.currency ?? 'TWD')
   const [invoiceDate, setInvoiceDate] = useState('')
   const [usePartial, setUsePartial] = useState(false)
@@ -76,7 +86,15 @@ export function AddInvoiceDialog({
   const localAfterTax = afterTaxAmount != null ? (afterTaxAmount * exchangeRate) : null
 
   function handleConfirm() {
-    onConfirm?.()
+    const voucherLabel = VOUCHER_TYPES.find((o) => o.value === voucherType)?.label ?? ''
+    onConfirm?.({
+      voucherType: voucherLabel,
+      voucherNumber,
+      currency,
+      date: invoiceDate,
+      pretaxAmount: parseFloat(pretaxAmount) || 0,
+      taxAmount: parseFloat(taxAmount2) || 0,
+    })
     setOpen(false)
   }
 
@@ -124,7 +142,11 @@ export function AddInvoiceDialog({
               </Field>
               <Field>
                 <FieldLabel>發票號碼</FieldLabel>
-                <Input placeholder="填寫發票號碼" />
+                <Input
+                  placeholder="填寫發票號碼"
+                  value={voucherNumber}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setVoucherNumber(e.target.value)}
+                />
               </Field>
             </div>
 

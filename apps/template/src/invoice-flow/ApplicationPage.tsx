@@ -4,12 +4,12 @@ import {
 } from '@qijenchen/design-system'
 import { Plus, ArrowUpFromLine, Calendar, Pencil, Copy, Trash2, ChevronDown, ChevronUp, AlignLeft, Paperclip, AlertTriangle, CheckCircle2 } from 'lucide-react'
 import { AppLayout } from './AppLayout'
-import { AddInvoiceDialog, VOUCHER_TYPES } from './AddInvoiceDialog'
+import { AddInvoiceDialog, VOUCHER_TYPES, type NewInvoiceData } from './AddInvoiceDialog'
 import { EditInvoiceDialog } from './EditInvoiceDialog'
 import { DeleteInvoiceDialog } from './DeleteInvoiceDialog'
 import { DeleteConfirmDialog } from './DeleteConfirmDialog'
 import { EditAttachmentDialog } from './EditAttachmentDialog'
-import { AddPaymentItemDialog } from './AddPaymentItemDialog'
+import { AddPaymentItemDialog, type NewPaymentItemData } from './AddPaymentItemDialog'
 import { EditPaymentItemDialog } from './EditPaymentItemDialog'
 import { DeletePaymentItemDialog } from './DeletePaymentItemDialog'
 import { AddAttachmentDialog, type NewAttachment } from './AddAttachmentDialog'
@@ -259,19 +259,19 @@ export function ApplicationPage({ onBack, initialData }: ApplicationPageProps) {
   const [submitSuccessOpen, setSubmitSuccessOpen] = useState(false)
   const [questionnaireInvoiceId, setQuestionnaireInvoiceId] = useState<string | null>(null)
 
-  function addInvoice() {
+  function addInvoice(data?: NewInvoiceData) {
     const n = invoices.length + 1
     setInvoices((prev) => [
       ...prev,
       {
         id: `INV-${n}`,
         displayId: `PAGE2605250001-${n}`,
-        type: '電子統一發票 (25)',
-        voucherNumber: '',
-        amount: 0,
-        taxAmount: 0,
-        payee: '林問宜 (023156)',
-        date: '2026/06/19',
+        type: data?.voucherType || '電子統一發票 (25)',
+        voucherNumber: data?.voucherNumber ?? '',
+        amount: data?.pretaxAmount ?? 0,
+        taxAmount: data?.taxAmount ?? 0,
+        payee: payeeType === 'employee' ? '林問宜 (023156)' : '沈淮民 (Y_123136)',
+        date: data?.date || '2026/06/19',
         expanded: false,
         items: [],
         incomeStatus: 'notRequired',
@@ -331,22 +331,24 @@ export function ApplicationPage({ onBack, initialData }: ApplicationPageProps) {
     })
   }
 
-  function addPaymentItem(invoiceId: string, overrides?: { category?: string; subCategory?: string }) {
+  function addPaymentItem(invoiceId: string, data?: Partial<NewPaymentItemData>) {
     setInvoices((prev) =>
       prev.map((inv) => {
         if (inv.id !== invoiceId) return inv
+        // Account code/name split: form gives "613000 會議相關費用"; persist code + name.
+        const [accountCode = '', ...accountNameParts] = (data?.account ?? '613000 會議相關費用').split(/\s+/)
         const newItem: PaymentItem = {
           id: `${invoiceId}-ITEM-${inv.items.length + 1}`,
-          category: overrides?.category || '小型工具/物品、電腦/手機週邊',
-          subCategory: overrides?.subCategory || '電子標準化軟體',
-          costCenter: '00690',
-          account: '613000',
-          accountName: '會議相關費用',
-          amount: 1000,
-          taxRate: 0,
-          taxAmount: 0,
-          contractRequired: '無須提供',
-          contractNumber: '',
+          category: data?.category || '小型工具/物品、電腦/手機週邊',
+          subCategory: data?.subCategory || '電子標準化軟體',
+          costCenter: data?.costCenter || '',
+          account: accountCode,
+          accountName: accountNameParts.join(' '),
+          amount: data?.amount ?? 0,
+          taxRate: data?.taxRate ?? 0,
+          taxAmount: data?.taxAmount ?? 0,
+          contractRequired: data?.contractRequired || '無須提供',
+          contractNumber: data?.contractNumber || '',
         }
         return applyItemsUpdate(inv, [...inv.items, newItem])
       }),

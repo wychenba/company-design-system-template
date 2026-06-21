@@ -6,9 +6,21 @@ import {
 import { Info, Plus, Trash2 } from 'lucide-react'
 import type { ReactNode } from 'react'
 
+export interface NewPaymentItemData {
+  category: string
+  subCategory: string
+  costCenter: string
+  account: string
+  amount: number
+  taxRate: number
+  taxAmount: number
+  contractRequired: string
+  contractNumber: string
+}
+
 interface AddPaymentItemDialogProps {
   trigger: ReactNode
-  onConfirm?: (data?: { category: string; subCategory: string }) => void
+  onConfirm?: (data: NewPaymentItemData) => void
 }
 
 const CATEGORY_OPTIONS = [
@@ -150,6 +162,7 @@ export function AddPaymentItemDialog({ trigger, onConfirm }: AddPaymentItemDialo
   const [open, setOpen] = useState(false)
   const [category, setCategory] = useState('')
   const [subCategory, setSubCategory] = useState('')
+  const [costCenter, setCostCenter] = useState('')
   const [hasContract, setHasContract] = useState<'yes' | 'no'>('yes')
   const [contractIds, setContractIds] = useState([''])
   const [noContractReason, setNoContractReason] = useState('')
@@ -181,7 +194,17 @@ export function AddPaymentItemDialog({ trigger, onConfirm }: AddPaymentItemDialo
   }
 
   function handleConfirm() {
-    onConfirm?.({ category, subCategory })
+    onConfirm?.({
+      category,
+      subCategory,
+      costCenter,
+      account: accountingSubject,
+      amount: parseFloat(totalAmount) || 0,
+      taxRate: taxRate === 'exempt' ? 0 : parseFloat(taxRate) || 0,
+      taxAmount,
+      contractRequired: hasContract === 'yes' ? '是' : '無須提供',
+      contractNumber: hasContract === 'yes' ? contractIds.join(', ') : noContractReason,
+    })
     setOpen(false)
   }
 
@@ -251,7 +274,10 @@ export function AddPaymentItemDialog({ trigger, onConfirm }: AddPaymentItemDialo
             <div className="grid grid-cols-2 gap-[var(--layout-space-loose)]">
               <Field>
                 <FieldLabel required>成本中心&nbsp;<InfoIcon tip="請填入所屬成本中心代碼" /></FieldLabel>
-                <Input placeholder="" />
+                <Input
+                  value={costCenter}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCostCenter(e.target.value)}
+                />
               </Field>
               <Field>
                 <FieldLabel>會計科目&nbsp;<InfoIcon tip="依分類自動帶入" /></FieldLabel>
