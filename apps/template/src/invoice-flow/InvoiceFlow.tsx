@@ -78,7 +78,12 @@ function rowToInitialData(row: DraftRow): ApplicationInitialData {
 }
 
 export default function InvoiceFlow() {
-  const [view, setView] = useState<AppView>('home')
+  const [view, setView] = useState<AppView>(() => {
+    const params = new URLSearchParams(window.location.search)
+    const v = params.get('view')
+    if (v === 'incomeList') return 'incomeList'
+    return 'home'
+  })
   const [initialData, setInitialData] = useState<ApplicationInitialData | undefined>(undefined)
 
   return (
