@@ -19,8 +19,17 @@ import { CancelApplicationDialog } from './CancelApplicationDialog'
 import { IncomeQuestionnaireDialog, type IncomeAnswer } from './IncomeQuestionnaireDialog'
 import { showToast } from './useToast'
 
+export interface ApplicationInitialData {
+  displayId?: string
+  company?: string
+  payeeType?: 'employee' | 'vendor'
+  reason?: string
+  invoices?: InvoiceRow[]
+}
+
 interface ApplicationPageProps {
   onBack: () => void
+  initialData?: ApplicationInitialData
 }
 
 const PAYEE_OPTIONS = [
@@ -32,7 +41,7 @@ const COMPANY_OPTIONS = [
   { value: 'TA01', label: 'TA01' },
 ]
 
-interface PaymentItem {
+export interface PaymentItem {
   id: string
   category: string
   subCategory: string
@@ -48,7 +57,7 @@ interface PaymentItem {
 
 type IncomeStatus = 'unfilled' | 'filled' | 'notRequired'
 
-interface InvoiceRow {
+export interface InvoiceRow {
   id: string
   displayId: string
   type: string
@@ -227,13 +236,15 @@ function AttachmentTable({ attachments, onEdit, onDelete }: {
   )
 }
 
-export function ApplicationPage({ onBack }: ApplicationPageProps) {
-  const [company, setCompany] = useState('TA01')
-  const [payeeType, setPayeeType] = useState('employee')
+export function ApplicationPage({ onBack, initialData }: ApplicationPageProps) {
+  const [company, setCompany] = useState(initialData?.company ?? 'TA01')
+  const [payeeType, setPayeeType] = useState<string>(initialData?.payeeType ?? 'employee')
+  const [reason, setReason] = useState(initialData?.reason ?? '')
   const [showNotice, setShowNotice] = useState(true)
   const [useUrgent, setUseUrgent] = useState(false)
-  const [invoices, setInvoices] = useState<InvoiceRow[]>([])
+  const [invoices, setInvoices] = useState<InvoiceRow[]>(initialData?.invoices ?? [])
   const [attachments, setAttachments] = useState<AttachmentRow[]>([])
+  const displayId = initialData?.displayId ?? 'PAE20260525001'
   const [submitSuccessOpen, setSubmitSuccessOpen] = useState(false)
   const [questionnaireInvoiceId, setQuestionnaireInvoiceId] = useState<string | null>(null)
 
@@ -428,7 +439,7 @@ export function ApplicationPage({ onBack }: ApplicationPageProps) {
             <span className="text-body text-fg-secondary">/</span>
           </div>
           <div className="flex items-center gap-[var(--layout-space-loose)]">
-            <h1 className="text-h3 font-medium text-fg flex-1">一般項目申請單</h1>
+            <h1 className="text-h3 font-medium text-fg flex-1">一般項目申請單 {displayId}</h1>
             <Button variant="tertiary" size="sm" startIcon={ArrowUpFromLine} onClick={() => showToast('featureReady')}>批次匯入申請</Button>
           </div>
         </div>
@@ -483,7 +494,13 @@ export function ApplicationPage({ onBack }: ApplicationPageProps) {
               </div>
               <Field>
                 <FieldLabel required>申請原因</FieldLabel>
-                <Textarea placeholder="填寫申請原因，最多 250 字" rows={4} maxLength={250} />
+                <Textarea
+                  placeholder="填寫申請原因，最多 250 字"
+                  rows={4}
+                  maxLength={250}
+                  value={reason}
+                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setReason(e.target.value)}
+                />
               </Field>
             </Card>
 

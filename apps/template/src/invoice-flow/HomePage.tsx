@@ -10,7 +10,7 @@ import { showToast } from './useToast'
 type TabId = 'general' | 'bonus' | 'travel'
 type DraftStatus = 'Default' | 'Processing'
 
-interface DraftRow {
+export interface DraftRow {
   id: string
   date: string
   company: string
@@ -34,9 +34,10 @@ const HEADERS = ['單號', '申請日期', '公司代號', '申請人', '收款�
 
 interface HomePageProps {
   onNewApplication: () => void
+  onEditApplication: (row: DraftRow) => void
 }
 
-export function HomePage({ onNewApplication }: HomePageProps) {
+export function HomePage({ onNewApplication, onEditApplication }: HomePageProps) {
   const [activeTab, setActiveTab] = useState<TabId>('general')
   const [rows, setRows] = useState<DraftRow[]>(DRAFT_ROWS)
 
@@ -125,7 +126,7 @@ export function HomePage({ onNewApplication }: HomePageProps) {
                       <div className="flex items-center p-[var(--layout-space-tight)] text-body text-fg-secondary" style={{ minHeight: 56 }}>{row.reason}</div>
                       <div className="flex items-center justify-center gap-[var(--layout-space-tight)] p-[var(--layout-space-tight)]" style={{ minHeight: 56 }}>
                         <Button variant="text" size="xs" iconOnly startIcon={Info} aria-label="查看詳情" />
-                        <Button variant="text" size="xs" iconOnly startIcon={PenLine} aria-label="編輯" onClick={onNewApplication} />
+                        <Button variant="text" size="xs" iconOnly startIcon={PenLine} aria-label="編輯" onClick={() => onEditApplication(row)} />
                         <Button variant="text" size="xs" iconOnly startIcon={Trash2} aria-label="刪除" onClick={() => deleteRow(row.id)} />
                       </div>
                     </div>
