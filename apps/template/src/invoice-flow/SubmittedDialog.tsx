@@ -242,7 +242,7 @@ export function SubmittedDialog({
           <div className="flex flex-col gap-[var(--layout-space-loose)]">
 
             {/* ① 基本資訊 */}
-            <SectionCard title="基本資訊">
+            <SectionCard title="基本資訊" defaultOpen={false}>
               <div className="flex gap-0 px-[var(--layout-space-loose)] py-[var(--layout-space-loose)]">
                 <InfoCell label="公司代碼" value={company} />
                 <div className="w-px self-stretch bg-divider shrink-0 mx-[var(--layout-space-loose)]" />
@@ -255,7 +255,7 @@ export function SubmittedDialog({
             </SectionCard>
 
             {/* ② 請款資訊 */}
-            <SectionCard title="請款資訊">
+            <SectionCard title="請款資訊" defaultOpen={false}>
               <div className="flex flex-col gap-[var(--layout-space-tight)] p-[var(--layout-space-tight)]">
                 {invoices.length === 0 ? (
                   <div className="text-body text-fg-secondary px-[var(--layout-space-tight)] py-[var(--layout-space-tight)]">無請款資訊</div>
@@ -266,7 +266,7 @@ export function SubmittedDialog({
             </SectionCard>
 
             {/* ③ 憑證附件資訊 */}
-            <SectionCard title="憑證附件資訊">
+            <SectionCard title="憑證附件資訊" defaultOpen={false}>
               <div className="m-[var(--layout-space-tight)] border border-divider rounded overflow-hidden">
                 <div
                   className="grid bg-surface-raised border-b border-divider text-caption text-fg-secondary font-medium"
