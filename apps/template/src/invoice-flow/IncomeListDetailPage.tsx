@@ -3,8 +3,9 @@ import {
   Button, Checkbox, Input, Select,
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogBody, DialogFooter,
   DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem,
+  Tooltip, TooltipTrigger, TooltipContent,
 } from '@qijenchen/design-system'
-import { Plus, ChevronDown, Download, Pencil, Trash2, FileSpreadsheet } from 'lucide-react'
+import { Plus, ChevronDown, Download, Pencil, Trash2, FileSpreadsheet, Info } from 'lucide-react'
 import { AppLayout } from './AppLayout'
 import { DeleteConfirmDialog } from './DeleteConfirmDialog'
 import { showToast } from './useToast'
@@ -389,7 +390,17 @@ function PayeeForm({
           <Input value={form.name} onChange={(e) => f('name')(e.target.value)} />
         </div>
         <div className="flex flex-col gap-[4px]">
-          <label className="text-caption text-fg">*受益人ID</label>
+          <label className="text-caption text-fg flex items-center gap-[4px]">
+            <span>*受益人ID</span>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button type="button" className="inline-flex items-center text-fg-secondary hover:text-fg bg-transparent border-0 p-0 cursor-help" aria-label="受益人ID 說明">
+                  <Info size={14} />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent>員工：員工工號 / 本國公司或機構：8 碼數字 / 本國個人：身分證字號 / 外國公司或機構：請聯繫會計 / 外國個人：系統計算</TooltipContent>
+            </Tooltip>
+          </label>
           <Input value={form.beneficiaryId} onChange={(e) => f('beneficiaryId')(e.target.value)} />
         </div>
       </div>
@@ -444,7 +455,17 @@ function PayeeForm({
         </div>
         <div className="w-px bg-divider" />
         <div className="flex-1 flex flex-col gap-[4px]">
-          <span className="text-caption text-fg-secondary">收入類型</span>
+          <span className="text-caption text-fg-secondary flex items-center gap-[4px]">
+            <span>收入類型</span>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button type="button" className="inline-flex items-center text-fg-secondary hover:text-fg bg-transparent border-0 p-0 cursor-help" aria-label="收入類型 說明">
+                  <Info size={14} />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent>欲調整收入類型請至暫存申請單編輯申請資訊</TooltipContent>
+            </Tooltip>
+          </span>
           <span className="text-body text-fg">{incomeType}</span>
         </div>
       </div>
