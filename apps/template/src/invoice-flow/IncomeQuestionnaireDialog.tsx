@@ -36,8 +36,6 @@ const PAYEE_OPTIONS: { value: string; label: string }[] = [
   { value: 'company-domestic-org', label: '公司 — 國內機關團體' },
   { value: 'company-domestic-firm', label: '公司 — 國內事務所 / 律師 / 會計師' },
   { value: 'company-overseas', label: '公司 — 國外公司' },
-  { value: 'gift-hospitality', label: '招待禮品 / 業務禮物' },
-  { value: 'gift-donation', label: '贈與禮物 / 紀念品' },
 ]
 
 const T = {
@@ -82,17 +80,6 @@ const NATURE_OPTIONS_BY_PAYEE: Record<string, NatureOption[]> = {
     { value: 'tech', label: '技術服務 / 客製化軟體', incomeTypes: [T.i92] },
     { value: 'royalty', label: '權利金 (專利、商標、著作權)', incomeTypes: [T.i53] },
     { value: 'product', label: '一般商品 / 電子或實體軟體授權', incomeTypes: [T.i00] },
-  ],
-  'gift-hospitality': [
-    { value: 'voucher', label: '禮券 / 商品券 / 提貨券', incomeTypes: [T.i50, T.i91, T.i97] },
-    { value: 'meal', label: '餐飲、咖啡、提貨、圖書、電影、住宿等票券', incomeTypes: [T.i00] },
-    { value: 'product', label: '商品禮物 / 紀念品', incomeTypes: [T.i00] },
-  ],
-  'gift-donation': [
-    { value: 'external', label: '外部交流 / 合作對象機關贈禮', incomeTypes: [T.i00] },
-    { value: 'ceremony', label: '婚喪喜慶、節慶禮物', incomeTypes: [T.i00] },
-    { value: 'colleague', label: '工作禮物 / 同仁伴手禮 (免列所得)', incomeTypes: [T.i00] },
-    { value: 'other', label: '其他贈與情況 (依金額判斷)', incomeTypes: [T.i50, T.i91, T.i97] },
   ],
 }
 
