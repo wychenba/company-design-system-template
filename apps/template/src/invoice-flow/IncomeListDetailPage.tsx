@@ -112,61 +112,78 @@ export function IncomeListDetailPage({ detail, onBack }: IncomeListDetailPagePro
               </div>
             </div>
 
-            <div className="overflow-x-auto rounded border border-divider bg-surface">
-              <div style={{ minWidth: 1400 }}>
-                {/* Header */}
-                <div
-                  className="bg-surface-raised border-b border-divider grid items-center"
-                  style={{ gridTemplateColumns: '40px 100px 120px 160px 100px 90px 110px 90px 90px 90px 110px 80px' }}
-                >
-                  <div className="p-[var(--layout-space-tight)]"></div>
-                  <div className="p-[var(--layout-space-tight)] text-body text-fg">類型</div>
-                  <div className="p-[var(--layout-space-tight)] text-body text-fg">居住者 / 非居住者</div>
-                  <div className="p-[var(--layout-space-tight)] text-body text-fg">受益人姓名<br />受益人 ID</div>
-                  <div className="p-[var(--layout-space-tight)] text-body text-fg">金額</div>
-                  <div className="p-[var(--layout-space-tight)] text-body text-fg">幣別</div>
-                  <div className="p-[var(--layout-space-tight)] text-body text-fg">收入類型</div>
-                  <div className="p-[var(--layout-space-tight)] text-body text-fg">代扣稅率</div>
-                  <div className="p-[var(--layout-space-tight)] text-body text-fg">代扣金額</div>
-                  <div className="p-[var(--layout-space-tight)] text-body text-fg">二代健保</div>
-                  <div className="p-[var(--layout-space-tight)] text-body text-fg">國籍<br />居留證號</div>
-                  <div className="p-[var(--layout-space-tight)]"></div>
-                </div>
+            {(() => {
+              const COLS = '40px 80px 110px 150px 90px 70px 90px 80px 80px 80px 100px 88px'
+              const STICKY_HEAD: React.CSSProperties = { position: 'sticky', right: 0, zIndex: 2, boxShadow: '-1px 0 0 0 var(--color-border-divider, #e5e7eb)' }
+              const STICKY_CELL_BASE: React.CSSProperties = { position: 'sticky', right: 0, zIndex: 1 }
+              return (
+                <div className="overflow-x-auto rounded border border-divider bg-surface">
+                  <div style={{ minWidth: 1140 }}>
+                    {/* Header */}
+                    <div
+                      className="bg-surface-raised border-b border-divider grid items-center"
+                      style={{ gridTemplateColumns: COLS }}
+                    >
+                      <div className="p-[var(--layout-space-tight)]"></div>
+                      <div className="p-[var(--layout-space-tight)] text-body text-fg">類型</div>
+                      <div className="p-[var(--layout-space-tight)] text-body text-fg">居住者 / 非居住者</div>
+                      <div className="p-[var(--layout-space-tight)] text-body text-fg">受益人姓名<br />受益人 ID</div>
+                      <div className="p-[var(--layout-space-tight)] text-body text-fg">金額</div>
+                      <div className="p-[var(--layout-space-tight)] text-body text-fg">幣別</div>
+                      <div className="p-[var(--layout-space-tight)] text-body text-fg">收入類型</div>
+                      <div className="p-[var(--layout-space-tight)] text-body text-fg">代扣稅率</div>
+                      <div className="p-[var(--layout-space-tight)] text-body text-fg">代扣金額</div>
+                      <div className="p-[var(--layout-space-tight)] text-body text-fg">二代健保</div>
+                      <div className="p-[var(--layout-space-tight)] text-body text-fg">國籍<br />居留證號</div>
+                      <div className="p-[var(--layout-space-tight)] bg-surface-raised" style={STICKY_HEAD}></div>
+                    </div>
 
-                {/* Rows */}
-                {rows.map((row) => (
-                  <div
-                    key={row.id}
-                    className="border-b border-divider last:border-b-0 grid items-start"
-                    style={{ gridTemplateColumns: '40px 100px 120px 160px 100px 90px 110px 90px 90px 90px 110px 80px', minHeight: 72 }}
-                  >
-                    <div className="flex items-center justify-center p-[var(--layout-space-tight)]" style={{ minHeight: 72 }}>
-                      <Checkbox checked={selected.has(row.id)} onCheckedChange={() => toggleSelect(row.id)} />
-                    </div>
-                    <div className="flex items-center p-[var(--layout-space-tight)] text-body text-fg" style={{ minHeight: 72 }}>{row.type}</div>
-                    <div className="flex items-center p-[var(--layout-space-tight)] text-body text-fg" style={{ minHeight: 72 }}>{row.resident}</div>
-                    <div className="flex flex-col justify-center p-[var(--layout-space-tight)] gap-[var(--layout-space-tight)]" style={{ minHeight: 72 }}>
-                      <span className="text-body text-fg">{row.name}</span>
-                      <span className="text-caption text-fg-secondary">{row.beneficiaryId}</span>
-                    </div>
-                    <div className="flex items-center p-[var(--layout-space-tight)] text-body text-fg" style={{ minHeight: 72 }}>{row.amount}</div>
-                    <div className="flex items-center p-[var(--layout-space-tight)] text-body text-fg" style={{ minHeight: 72 }}>{row.currency}</div>
-                    <div className="flex items-center p-[var(--layout-space-tight)] text-body text-fg" style={{ minHeight: 72 }}>{row.incomeType}</div>
-                    <div className="flex items-center p-[var(--layout-space-tight)] text-body text-fg" style={{ minHeight: 72 }}>{row.taxRate}</div>
-                    <div className="flex items-center p-[var(--layout-space-tight)] text-body text-fg" style={{ minHeight: 72 }}>{row.taxAmount}</div>
-                    <div className="flex items-center p-[var(--layout-space-tight)] text-body text-fg" style={{ minHeight: 72 }}>{row.nhi}</div>
-                    <div className="flex flex-col justify-center p-[var(--layout-space-tight)] gap-[var(--layout-space-tight)]" style={{ minHeight: 72 }}>
-                      <span className="text-body text-fg">{row.nationality}</span>
-                      <span className="text-caption text-fg-secondary">{row.residenceCert}</span>
-                    </div>
-                    <div className="flex items-center justify-center gap-[var(--layout-space-tight)] p-[var(--layout-space-tight)]" style={{ minHeight: 72 }}>
-                      <Button variant="text" size="xs" iconOnly startIcon={Pencil} aria-label="編輯" onClick={() => showToast('notImplemented')} />
-                      <Button variant="text" size="xs" iconOnly startIcon={Trash2} aria-label="刪除" onClick={() => deleteRow(row.id)} />
-                    </div>
+                    {/* Rows */}
+                    {rows.map((row, rowIdx) => {
+                      const isLastRow = rowIdx === rows.length - 1
+                      return (
+                        <div
+                          key={row.id}
+                          className={`group grid items-start bg-surface hover:bg-surface-raised ${isLastRow ? '' : 'border-b border-divider'}`}
+                          style={{ gridTemplateColumns: COLS, minHeight: 72 }}
+                        >
+                          <div className="flex items-center justify-center p-[var(--layout-space-tight)]" style={{ minHeight: 72 }}>
+                            <Checkbox checked={selected.has(row.id)} onCheckedChange={() => toggleSelect(row.id)} />
+                          </div>
+                          <div className="flex items-center p-[var(--layout-space-tight)] text-body text-fg" style={{ minHeight: 72 }}>{row.type}</div>
+                          <div className="flex items-center p-[var(--layout-space-tight)] text-body text-fg" style={{ minHeight: 72 }}>{row.resident}</div>
+                          <div className="flex flex-col justify-center p-[var(--layout-space-tight)] gap-[var(--layout-space-tight)]" style={{ minHeight: 72 }}>
+                            <span className="text-body text-fg">{row.name}</span>
+                            <span className="text-caption text-fg-secondary">{row.beneficiaryId}</span>
+                          </div>
+                          <div className="flex items-center p-[var(--layout-space-tight)] text-body text-fg" style={{ minHeight: 72 }}>{row.amount}</div>
+                          <div className="flex items-center p-[var(--layout-space-tight)] text-body text-fg" style={{ minHeight: 72 }}>{row.currency}</div>
+                          <div className="flex items-center p-[var(--layout-space-tight)] text-body text-fg" style={{ minHeight: 72 }}>{row.incomeType}</div>
+                          <div className="flex items-center p-[var(--layout-space-tight)] text-body text-fg" style={{ minHeight: 72 }}>{row.taxRate}</div>
+                          <div className="flex items-center p-[var(--layout-space-tight)] text-body text-fg" style={{ minHeight: 72 }}>{row.taxAmount}</div>
+                          <div className="flex items-center p-[var(--layout-space-tight)] text-body text-fg" style={{ minHeight: 72 }}>{row.nhi}</div>
+                          <div className="flex flex-col justify-center p-[var(--layout-space-tight)] gap-[var(--layout-space-tight)]" style={{ minHeight: 72 }}>
+                            <span className="text-body text-fg">{row.nationality}</span>
+                            <span className="text-caption text-fg-secondary">{row.residenceCert}</span>
+                          </div>
+                          <div
+                            className="flex items-center justify-center gap-[var(--layout-space-tight)] p-[var(--layout-space-tight)] bg-surface group-hover:bg-surface-raised"
+                            style={{
+                              ...STICKY_CELL_BASE,
+                              minHeight: 72,
+                              boxShadow: `-1px 0 0 0 var(--color-border-divider, #e5e7eb)${isLastRow ? '' : ', inset 0 -1px 0 0 var(--color-border-divider, #e5e7eb)'}`,
+                            }}
+                          >
+                            <Button variant="text" size="xs" iconOnly startIcon={Pencil} aria-label="編輯" onClick={() => showToast('notImplemented')} />
+                            <Button variant="text" size="xs" iconOnly startIcon={Trash2} aria-label="刪除" onClick={() => deleteRow(row.id)} />
+                          </div>
+                        </div>
+                      )
+                    })}
                   </div>
-                ))}
-              </div>
-            </div>
+                </div>
+              )
+            })()}
           </section>
         </div>
 
