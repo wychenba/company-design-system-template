@@ -98,67 +98,86 @@ export function IncomeListPage({ onOpenDetail }: IncomeListPageProps = {}) {
             />
           )}
 
-          <div className="overflow-x-auto rounded border border-divider">
+          <div className="overflow-x-auto rounded border border-divider bg-surface">
             <div style={{ minWidth: 1200 }}>
               <div
                 style={{ display: 'grid', gridTemplateColumns: COL_TEMPLATE }}
                 className="bg-surface-raised border-b border-divider"
               >
-                {HEADERS.map((h, i) => (
-                  <div key={i} className="p-[var(--layout-space-tight)] text-body text-fg">
-                    {h}
-                  </div>
-                ))}
+                {HEADERS.map((h, i) => {
+                  const isLast = i === HEADERS.length - 1
+                  return (
+                    <div
+                      key={i}
+                      className="p-[var(--layout-space-tight)] text-body text-fg bg-surface-raised"
+                      style={isLast ? { position: 'sticky', right: 0, zIndex: 2, boxShadow: '-1px 0 0 0 var(--color-border-divider, #e5e7eb)' } : undefined}
+                    >
+                      {h}
+                    </div>
+                  )
+                })}
               </div>
 
-              {STUB_ROWS.map((row) => (
-                <div
-                  key={row.serialNo}
-                  style={{ display: 'grid', gridTemplateColumns: COL_TEMPLATE }}
-                  className="border-b border-divider last:border-b-0 hover:bg-surface-raised"
-                >
-                  <div className="flex items-center p-[var(--layout-space-tight)] text-body text-fg" style={{ minHeight: 56 }}>
-                    {row.applicationId}
-                  </div>
-                  <div className="flex items-center p-[var(--layout-space-tight)] text-body text-fg" style={{ minHeight: 56 }}>
-                    {row.serialNo}
-                  </div>
-                  <div className="flex items-center p-[var(--layout-space-tight)] text-body text-fg" style={{ minHeight: 56 }}>
-                    {row.company}
-                  </div>
-                  <div className="flex items-center p-[var(--layout-space-tight)]" style={{ minHeight: 56 }}>
-                    {row.status === 'unfilled' ? (
-                      <Tag color="yellow" size="sm" icon={TriangleAlert}>尚未填寫</Tag>
-                    ) : (
-                      <Tag color="green" size="sm" icon={CircleCheck}>填寫完成</Tag>
-                    )}
-                  </div>
-                  <div className="flex items-center p-[var(--layout-space-tight)] text-body text-fg" style={{ minHeight: 56 }}>
-                    {row.payeeType}
-                  </div>
-                  <div className="flex items-center p-[var(--layout-space-tight)] text-body text-fg" style={{ minHeight: 56 }}>
-                    {row.payee}
-                  </div>
-                  <div className="flex items-center p-[var(--layout-space-tight)] text-body text-fg" style={{ minHeight: 56 }}>
-                    {row.invoiceNo}
-                  </div>
-                  <div className="flex items-center p-[var(--layout-space-tight)] text-body text-fg" style={{ minHeight: 56 }}>
-                    {row.currency}
-                  </div>
-                  <div className="flex items-center p-[var(--layout-space-tight)] text-body text-fg" style={{ minHeight: 56 }}>
-                    {row.total}
-                  </div>
-                  <div className="flex items-center justify-end p-[var(--layout-space-tight)]" style={{ minHeight: 56 }}>
-                    <Button
-                      variant="secondary"
-                      size="sm"
-                      onClick={() => openDetail(row)}
+              {STUB_ROWS.map((row, rowIdx) => {
+                const isLastRow = rowIdx === STUB_ROWS.length - 1
+                return (
+                  <div
+                    key={row.serialNo}
+                    style={{ display: 'grid', gridTemplateColumns: COL_TEMPLATE }}
+                    className={`group bg-surface hover:bg-surface-raised ${isLastRow ? '' : 'border-b border-divider'}`}
+                  >
+                    <div className="flex items-center p-[var(--layout-space-tight)] text-body text-fg" style={{ minHeight: 56 }}>
+                      {row.applicationId}
+                    </div>
+                    <div className="flex items-center p-[var(--layout-space-tight)] text-body text-fg" style={{ minHeight: 56 }}>
+                      {row.serialNo}
+                    </div>
+                    <div className="flex items-center p-[var(--layout-space-tight)] text-body text-fg" style={{ minHeight: 56 }}>
+                      {row.company}
+                    </div>
+                    <div className="flex items-center p-[var(--layout-space-tight)]" style={{ minHeight: 56 }}>
+                      {row.status === 'unfilled' ? (
+                        <Tag color="yellow" size="sm" icon={TriangleAlert}>尚未填寫</Tag>
+                      ) : (
+                        <Tag color="green" size="sm" icon={CircleCheck}>填寫完成</Tag>
+                      )}
+                    </div>
+                    <div className="flex items-center p-[var(--layout-space-tight)] text-body text-fg" style={{ minHeight: 56 }}>
+                      {row.payeeType}
+                    </div>
+                    <div className="flex items-center p-[var(--layout-space-tight)] text-body text-fg" style={{ minHeight: 56 }}>
+                      {row.payee}
+                    </div>
+                    <div className="flex items-center p-[var(--layout-space-tight)] text-body text-fg" style={{ minHeight: 56 }}>
+                      {row.invoiceNo}
+                    </div>
+                    <div className="flex items-center p-[var(--layout-space-tight)] text-body text-fg" style={{ minHeight: 56 }}>
+                      {row.currency}
+                    </div>
+                    <div className="flex items-center p-[var(--layout-space-tight)] text-body text-fg" style={{ minHeight: 56 }}>
+                      {row.total}
+                    </div>
+                    <div
+                      className="flex items-center justify-end p-[var(--layout-space-tight)] bg-surface group-hover:bg-surface-raised"
+                      style={{
+                        minHeight: 56,
+                        position: 'sticky',
+                        right: 0,
+                        zIndex: 1,
+                        boxShadow: `-1px 0 0 0 var(--color-border-divider, #e5e7eb)${isLastRow ? '' : ', inset 0 -1px 0 0 var(--color-border-divider, #e5e7eb)'}`,
+                      }}
                     >
-                      {row.status === 'unfilled' ? '填寫清單' : '編輯清單'}
-                    </Button>
+                      <Button
+                        variant="secondary"
+                        size="sm"
+                        onClick={() => openDetail(row)}
+                      >
+                        {row.status === 'unfilled' ? '填寫清單' : '編輯清單'}
+                      </Button>
+                    </div>
                   </div>
-                </div>
-              ))}
+                )
+              })}
             </div>
           </div>
         </div>
