@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogBody, DialogFooter,
-  Button, Field, FieldLabel, RadioGroup, RadioGroupItem, Alert, Select,
+  Button, Field, FieldLabel, RadioGroup, RadioGroupItem, Alert,
 } from '@qijenchen/design-system'
 import type { QuestionnaireRoute } from './questionnaireRouting'
 
@@ -279,15 +279,6 @@ export function IncomeQuestionnaireDialog({
                         <div>
                           收入類型建議：<span className="font-medium">{activeNatureOption.incomeTypes.map((t) => t.code).join('、')}</span>
                           ，系統預計推薦 <span className="font-medium">{selectedIncomeType.label}</span>（可前往發票編輯所得類型）。
-                        </div>
-                        <div className="flex items-center gap-[var(--layout-space-tight)]">
-                          <span className="shrink-0">調整為：</span>
-                          <Select
-                            size="sm"
-                            value={selectedIncomeType.code}
-                            options={activeNatureOption.incomeTypes.map((t) => ({ value: t.code, label: t.label }))}
-                            onChange={setIncomeTypeOverride}
-                          />
                         </div>
                         <div>備註：請於送出申請單前填寫<span className="text-primary cursor-pointer hover:underline">所得人清單</span></div>
                       </>
