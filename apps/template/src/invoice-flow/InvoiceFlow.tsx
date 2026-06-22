@@ -12,7 +12,7 @@ function buildMockItems(invoiceId: string): PaymentItem[] {
   return [
     {
       id: `${invoiceId}-ITEM-1`,
-      category: '小型工具/物品、電腦/手機週邊、辦公室用品',
+      category: '小型工具/物品、電腦/手機週邊、辦公室家具',
       subCategory: '電腦/手機週邊',
       costCenter: '00690',
       account: '613000',
@@ -25,8 +25,8 @@ function buildMockItems(invoiceId: string): PaymentItem[] {
     },
     {
       id: `${invoiceId}-ITEM-2`,
-      category: '小型工具/物品、電腦/手機週邊、辦公室用品',
-      subCategory: '辦公室用品',
+      category: '小型工具/物品、電腦/手機週邊、辦公室家具',
+      subCategory: '辦公室用品(標籤子/桌椅/儲物...等)',
       costCenter: '00690',
       account: '613000',
       accountName: '會議相關費用',
@@ -38,8 +38,8 @@ function buildMockItems(invoiceId: string): PaymentItem[] {
     },
     {
       id: `${invoiceId}-ITEM-3`,
-      category: '外部研討會/跨組織學習之研討會、宣導活動',
-      subCategory: '跨組織學習之研討會、宣導活動-場地費',
+      category: '外部研討會/跨組織舉辦之研討會、宣導活動',
+      subCategory: '跨組織舉辦之研討會、宣導活動-用品及其他費用',
       costCenter: '00690',
       account: '655540',
       accountName: '訓練費',

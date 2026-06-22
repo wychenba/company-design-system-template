@@ -80,26 +80,17 @@ export interface InvoiceRow {
 // Categories that do NOT require income questionnaire (small office supplies,
 // internal training, etc). Anything else needs the questionnaire to determine
 // 收入類型 / 所得認列.
-const NO_QUESTIONNAIRE_CATEGORIES = new Set<string>([
-  '小型工具/物品、電腦/手機週邊、辦公室用品',
-  '文具用品、印刷、書報雜誌/資料庫、軟體',
-  '贈、郵快遞費',
-])
 
 function deriveIncomeRequirement(items: PaymentItem[]): IncomeStatus {
   if (items.length === 0) return 'notRequired'
   // 'none' route skips questionnaire entirely; everything else (vendor/gift/tbd/direct) needs an answer.
-  const needsQuestionnaire = items.some((it) => {
-    if (NO_QUESTIONNAIRE_CATEGORIES.has(it.category)) return false
-    return getQuestionnaireRoute(it.category, it.subCategory) !== 'none'
-  })
+  const needsQuestionnaire = items.some((it) => getQuestionnaireRoute(it.category, it.subCategory) !== 'none')
   return needsQuestionnaire ? 'unfilled' : 'notRequired'
 }
 
 function pickInvoiceRoute(items: PaymentItem[]): QuestionnaireRoute {
   // Take the route of the first item that actually needs questionnaire interaction.
   for (const it of items) {
-    if (NO_QUESTIONNAIRE_CATEGORIES.has(it.category)) continue
     const route = getQuestionnaireRoute(it.category, it.subCategory)
     if (route !== 'none') return route
   }
@@ -360,7 +351,7 @@ export function ApplicationPage({ onBack, initialData, onGoToIncomeList, onNavig
         const newItem: PaymentItem = {
           id: `${invoiceId}-ITEM-${inv.items.length + 1}`,
           category: data?.category || '小型工具/物品、電腦/手機週邊',
-          subCategory: data?.subCategory || '電子標準化軟體',
+          subCategory: data?.subCategory || '電腦/手機週邊',
           costCenter: data?.costCenter || '',
           account: accountCode,
           accountName: accountNameParts.join(' '),
@@ -442,8 +433,8 @@ export function ApplicationPage({ onBack, initialData, onGoToIncomeList, onNavig
 
   const allItems = invoices.flatMap((inv) => inv.items)
   const attachmentNotices: { key: string; text: string }[] = []
-  if (allItems.some((it) => it.category === '外部研討會/跨組織學習之研討會、宣導活動')) {
-    attachmentNotices.push({ key: 'poster', text: '外部研討會/跨組織學習之研討會、宣導活動需在附件提供海報。' })
+  if (allItems.some((it) => it.category === '外部研討會/跨組織舉辦之研討會、宣導活動')) {
+    attachmentNotices.push({ key: 'poster', text: '外部研討會/跨組織舉辦之研討會、宣導活動需在附件提供海報。' })
   }
   if (allItems.some((it) => it.category === '廣告費')) {
     attachmentNotices.push({ key: 'pr', text: '廣告費需在附件提供企業公共關係處 (PR) 核准的信件。' })
