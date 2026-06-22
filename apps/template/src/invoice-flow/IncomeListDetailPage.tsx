@@ -232,7 +232,7 @@ export function IncomeListDetailPage({ detail, onBack, onNavigate }: IncomeListD
                 <div className="overflow-x-auto rounded border border-divider bg-surface">
                   <div style={{ minWidth: 1788 }}>
                     {/* Header */}
-                    <div className="bg-surface-raised border-b border-divider grid items-center" style={{ gridTemplateColumns: COLS }}>
+                    <div className="bg-surface-raised border-b border-divider grid items-center" style={{ gridTemplateColumns: COLS, minHeight: 56 }}>
                       <div className="p-[var(--layout-space-tight)]" />
                       <div className="p-[var(--layout-space-tight)] text-body text-fg">類型</div>
                       <div className="p-[var(--layout-space-tight)] text-body text-fg">居住者 / 非居住者</div>
