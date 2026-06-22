@@ -26,7 +26,7 @@ interface IncomeTypeOption {
 interface NatureOption {
   value: string
   label: string
-  // When multiple types available, first = most-used default per Figma 9919-62547
+  // First entry = most-used default per Figma 9919-62547
   incomeTypes: IncomeTypeOption[]
 }
 
@@ -41,45 +41,58 @@ const PAYEE_OPTIONS: { value: string; label: string }[] = [
 const T = {
   i50: { code: '50', label: '50 薪資所得' },
   i9A: { code: '9A', label: '9A 執行業務所得' },
+  i9B: { code: '9B', label: '9B 講演鐘點費' },
   i92: { code: '92', label: '92 其他所得' },
-  i00: { code: '00', label: '00 免列所得' },
-  i0B: { code: '0B', label: '0B 講演鐘點費' },
+  i97: { code: '97', label: '97 捐贈' },
   i91: { code: '91', label: '91 競技競賽機會中獎獎金' },
-  i97: { code: '97', label: '97 機會中獎' },
   i53: { code: '53', label: '53 權利金' },
+  i00: { code: '00', label: '00 免列所得' },
+  TBD: { code: 'TBD', label: '不判斷 (請依 TAMD 單位評估結果填寫)' },
 } as const
 
+// Spec C — 個人國內/國外 共用同一組性質
+const INDIVIDUAL_NATURE: NatureOption[] = [
+  { value: 'consult', label: '顧問費 / 講師費 / 攝影師費 等勞務費用', incomeTypes: [T.i50] },
+  { value: 'lecture', label: '演講費 (公開演講、開放全公司參加，附活動海報)', incomeTypes: [T.i9B] },
+  { value: 'professional', label: '專職技術人員自負盈虧 (如：律師)', incomeTypes: [T.i9A] },
+  { value: 'bonus', label: '工作表現獎勵外部廠商', incomeTypes: [T.i50] },
+  { value: 'expense-tw', label: '實報實銷 — 取得台灣廠商統一發票或收據 (差旅、交通、住宿)', incomeTypes: [T.i00] },
+  { value: 'expense-overseas', label: '實報實銷 — 取得國外廠商收據 (國外機票、住宿)', incomeTypes: [T.i50] },
+  { value: 'special', label: '特殊案例：依稅務部意見免列所得 (需附 apply reason 與核准信)', incomeTypes: [T.TBD] },
+]
+
 const NATURE_OPTIONS_BY_PAYEE: Record<string, NatureOption[]> = {
-  'individual-domestic': [
-    { value: 'consult', label: '顧問費 / 諮詢費 / 勞務性質報酬', incomeTypes: [T.i50] },
-    { value: 'lecture', label: '講演鐘點費 (含演講、教學)', incomeTypes: [T.i0B] },
-    { value: 'professional', label: '專業服務人員自負盈虧 (如：律師、醫師)', incomeTypes: [T.i9A] },
-    { value: 'bonus', label: '工作獎金 / 績效獎金', incomeTypes: [T.i50] },
-    { value: 'prize', label: '競技競賽 / 機會中獎', incomeTypes: [T.i50, T.i91, T.i97] },
-    { value: 'expense', label: '實報實銷 (交通、住宿、餐費)', incomeTypes: [T.i00] },
-    { value: 'special', label: '特殊案例：依稅務認定，免列所得 (需附說明)', incomeTypes: [T.i00] },
-  ],
-  'individual-overseas': [
-    { value: 'service', label: '勞務報酬 / 顧問費 (免二代健保)', incomeTypes: [T.i92] },
-    { value: 'royalty', label: '權利金', incomeTypes: [T.i53] },
-    { value: 'expense', label: '實報實銷', incomeTypes: [T.i00] },
-  ],
+  'individual-domestic': INDIVIDUAL_NATURE,
+  'individual-overseas': INDIVIDUAL_NATURE,
+
+  // Spec E — 國內機關團體
   'company-domestic-org': [
-    { value: 'product', label: '購買業務相關品牌品 / 免列所得', incomeTypes: [T.i00] },
-    { value: 'reimburse', label: '代墊款項 (住宿、餐費等)', incomeTypes: [T.i00] },
-    { value: 'consult', label: '顧問費 / 講師費等服務費用', incomeTypes: [T.i92] },
-    { value: 'professional', label: '顧客專業服務 / 自負盈虧業務', incomeTypes: [T.i9A] },
+    { value: 'product', label: '購買實體物品 (如：喜餅、月餅) — 免列所得', incomeTypes: [T.i00] },
+    { value: 'reimburse', label: '代墊費 (如：政府規費) — 免列所得', incomeTypes: [T.i00] },
+    { value: 'membership', label: '常年會員費 — 免列所得', incomeTypes: [T.i00] },
+    { value: 'consult', label: '顧問費 / 訓練費 / 研討會報名費等 — 列所得', incomeTypes: [T.i92] },
+    { value: 'donation', label: '捐贈 / 贊助 (如：香油錢) — 列所得', incomeTypes: [T.i97] },
   ],
+
+  // Spec F — 國內事務所
   'company-domestic-firm': [
-    { value: 'reimburse', label: '代墊款項 (住宿、餐費等)', incomeTypes: [T.i00] },
-    { value: 'service', label: '事務所提供之顧問 / 法律 / 會計服務', incomeTypes: [T.i9A] },
-    { value: 'exempt-firm', label: '事務所為 Tax Exempt 單位', incomeTypes: [T.i00] },
+    { value: 'reimburse', label: '代墊費 (如：政府規費) — 免列所得', incomeTypes: [T.i00] },
+    { value: 'service', label: '無形勞務 (如：律師公費) — 9A 執行業務', incomeTypes: [T.i9A] },
+    { value: 'mixed', label: '同時包含無形勞務及代墊費 (代墊費需填入 Tax Exempt 欄位)', incomeTypes: [T.i9A] },
   ],
+
+  // Spec J + K (flattened) — 國外公司
   'company-overseas': [
-    { value: 'cloud', label: '線上 / 雲端服務 (Cloud Service)', incomeTypes: [T.i92] },
-    { value: 'tech', label: '技術服務 / 客製化軟體', incomeTypes: [T.i92] },
-    { value: 'royalty', label: '權利金 (專利、商標、著作權)', incomeTypes: [T.i53] },
-    { value: 'product', label: '一般商品 / 電子或實體軟體授權', incomeTypes: [T.i00] },
+    { value: 'database', label: '線上資料庫查詢 (含電子書)：非雲端、非客製化、無雙方互動 — 免列所得', incomeTypes: [T.i00] },
+    { value: 'onsite', label: '來台提供服務 (顧問 / 訓練) — 有雙方互動', incomeTypes: [T.i92] },
+    { value: 'offshore', label: '勞務提供地在國外 — 需 TAMD 評估', incomeTypes: [T.TBD] },
+    { value: 'jdp', label: '共同研發費 (JDP) — 需 TAMD 評估', incomeTypes: [T.TBD] },
+    { value: 'shared-membership', label: '分攤會員費 — 需 TAMD 評估', incomeTypes: [T.TBD] },
+    { value: 'sw-custom', label: '電腦軟體 — TSMC 提需求、客製化軟體', incomeTypes: [T.i92] },
+    { value: 'sw-interactive', label: '電腦軟體 — 線上互動軟體 (如：Kahoot / Canva)', incomeTypes: [T.i92] },
+    { value: 'sw-cloud', label: '雲端服務 (cloud service)', incomeTypes: [T.i92] },
+    { value: 'sw-standard', label: '標準化軟體 (如：Adobe) — 提供產品規格型錄，免列所得', incomeTypes: [T.i00] },
+    { value: 'royalty', label: '專利權 / 權利金 (royalty / license / patent)', incomeTypes: [T.i53] },
   ],
 }
 
@@ -102,12 +115,12 @@ export function IncomeQuestionnaireDialog({
   const natureOptions = payeeKind ? NATURE_OPTIONS_BY_PAYEE[payeeKind] ?? [] : []
   const natureOption = natureOptions.find((o) => o.value === nature)
 
-  // Default to first (most-used) when option has 3 income types
   const selectedIncomeType = natureOption
     ? (natureOption.incomeTypes.find((t) => t.code === incomeTypeOverride) ?? natureOption.incomeTypes[0])
     : null
   const hasMultiple = (natureOption?.incomeTypes.length ?? 0) > 1
   const isExempt = selectedIncomeType?.code === '00'
+  const isTBD = selectedIncomeType?.code === 'TBD'
   const canConfirm = payeeKind !== '' && nature !== '' && selectedIncomeType !== null
 
   function handleConfirm() {
@@ -123,17 +136,16 @@ export function IncomeQuestionnaireDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent maxWidth={600} autoHeight>
+      <DialogContent maxWidth={640} autoHeight>
         <DialogHeader>
           <DialogTitle>{initial ? '編輯問券' : '所得問券'}</DialogTitle>
         </DialogHeader>
         <DialogBody>
           <div className="flex flex-col gap-[var(--layout-space-loose)]">
-            {/* Result preview */}
             {selectedIncomeType ? (
               <Alert
-                variant={isExempt ? 'success' : 'warning'}
-                title={isExempt ? '不需認列所得' : '需認列所得'}
+                variant={isTBD ? 'info' : isExempt ? 'success' : 'warning'}
+                title={isTBD ? '需 TAMD 單位評估' : isExempt ? '不需認列所得' : '需認列所得'}
                 description={
                   <div className="flex flex-col gap-[var(--layout-space-tight)]">
                     <div>
@@ -154,7 +166,11 @@ export function IncomeQuestionnaireDialog({
                     <div>
                       所得人清單：
                       <span className="font-medium">
-                        {isExempt ? '無須填寫' : '請於所得人清單填寫資訊'}
+                        {isTBD
+                          ? '請依 TAMD 單位評估結果填寫，並附上詢問信件'
+                          : isExempt
+                            ? '無須填寫'
+                            : '請於所得人清單填寫資訊'}
                       </span>
                     </div>
                   </div>
@@ -183,7 +199,7 @@ export function IncomeQuestionnaireDialog({
 
             {natureOptions.length > 0 && (
               <Field>
-                <FieldLabel required>2. 所得 / 交易性質</FieldLabel>
+                <FieldLabel required>2. 購買 / 所得性質</FieldLabel>
                 <RadioGroup
                   value={nature}
                   onValueChange={(v) => { setNature(v); setIncomeTypeOverride('') }}
