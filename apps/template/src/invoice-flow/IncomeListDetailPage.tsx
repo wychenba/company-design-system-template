@@ -6,6 +6,7 @@ import {
 } from '@qijenchen/design-system'
 import { Plus, ChevronDown, Download, Pencil, Trash2, FileSpreadsheet } from 'lucide-react'
 import { AppLayout } from './AppLayout'
+import { DeleteConfirmDialog } from './DeleteConfirmDialog'
 import { showToast } from './useToast'
 
 export interface IncomeListDetail {
@@ -88,7 +89,7 @@ export function IncomeListDetailPage({ detail, onBack, onNavigate }: IncomeListD
 
   function deleteRow(id: string) {
     setRows((prev) => prev.filter((r) => r.id !== id))
-    showToast('deletePaymentItem')
+    showToast('deletePayee')
   }
 
   const TYPE_OPTIONS = ['員工', '本國公司 / 機構', '本國個人', '外國公司 / 機構', '外國個人']
@@ -287,7 +288,13 @@ export function IncomeListDetailPage({ detail, onBack, onNavigate }: IncomeListD
                             style={{ position: 'sticky', right: 0, zIndex: 1, minHeight: 72, backgroundColor: 'inherit', boxShadow: STICKY_SHADOW(isLastRow) }}
                           >
                             <Button variant="text" size="xs" iconOnly startIcon={Pencil} aria-label="編輯" onClick={() => openEditDialog(row)} />
-                            <Button variant="text" size="xs" iconOnly startIcon={Trash2} aria-label="刪除" onClick={() => deleteRow(row.id)} />
+                            <DeleteConfirmDialog
+                              trigger={<Button variant="text" size="xs" iconOnly startIcon={Trash2} aria-label="刪除" />}
+                              title="是否刪除所得人"
+                              description="刪除後將無法復原，確定要刪除嗎？"
+                              confirmLabel="刪除所得人"
+                              onConfirm={() => deleteRow(row.id)}
+                            />
                           </div>
                         </div>
                       )
