@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import {
-  Button, Checkbox,
+  Button, Checkbox, Input, Select,
+  Dialog, DialogContent, DialogHeader, DialogTitle, DialogBody, DialogFooter,
   DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem,
 } from '@qijenchen/design-system'
 import { Plus, ChevronDown, Download, Pencil, Trash2, FileSpreadsheet } from 'lucide-react'
@@ -90,6 +91,85 @@ export function IncomeListDetailPage({ detail, onBack, onNavigate }: IncomeListD
     showToast('deletePaymentItem')
   }
 
+  const TYPE_OPTIONS = ['員工', '本國公司 / 機構', '本國個人', '外國公司 / 機構', '外國個人']
+  function residentForType(type: string) {
+    return type === '外國公司 / 機構' || type === '外國個人' ? '非居住者' : '居住者'
+  }
+
+  const [showAddDialog, setShowAddDialog] = useState(false)
+  const emptyForm = () => ({
+    type: '員工', resident: '居住者', name: '', beneficiaryId: '',
+    nationality: 'TW', residenceCert: '',
+    birthDate: '', email: '', address: '',
+    currency: detail.currency, amount: '',
+  })
+  const [form, setForm] = useState(emptyForm)
+
+  function setFormType(type: string) {
+    setForm((prev) => ({ ...prev, type, resident: residentForType(type) }))
+  }
+
+  function openAddDialog() {
+    setForm(emptyForm())
+    setShowAddDialog(true)
+  }
+
+  function submitAdd() {
+    const id = `P-${rows.length + 1}`
+    const now = new Date().toLocaleDateString('zh-TW', { year: 'numeric', month: '2-digit', day: '2-digit' })
+    setRows((prev) => [...prev, {
+      id,
+      type: form.type,
+      resident: form.resident,
+      name: form.name,
+      beneficiaryId: form.beneficiaryId,
+      amount: form.amount,
+      currency: form.currency,
+      incomeType: detail.incomeType || '50',
+      taxRate: '0',
+      taxAmount: '0',
+      nhi: '0',
+      nationality: form.nationality,
+      residenceCert: form.residenceCert,
+      birthDate: form.birthDate,
+      address: form.address,
+      email: form.email,
+      updatedAt: now,
+    }])
+    setShowAddDialog(false)
+  }
+
+  const [editRow, setEditRow] = useState<PayeeRow | null>(null)
+  const [editForm, setEditForm] = useState(emptyForm)
+
+  function openEditDialog(row: PayeeRow) {
+    setEditForm({
+      type: row.type, resident: row.resident, name: row.name, beneficiaryId: row.beneficiaryId,
+      nationality: row.nationality, residenceCert: row.residenceCert,
+      birthDate: row.birthDate, email: row.email, address: row.address,
+      currency: row.currency, amount: row.amount,
+    })
+    setEditRow(row)
+  }
+
+  function setEditFormType(type: string) {
+    setEditForm((prev) => ({ ...prev, type, resident: residentForType(type) }))
+  }
+
+  function submitEdit() {
+    if (!editRow) return
+    const now = new Date().toLocaleDateString('zh-TW', { year: 'numeric', month: '2-digit', day: '2-digit' })
+    setRows((prev) => prev.map((r) => r.id === editRow.id ? {
+      ...r,
+      type: editForm.type, resident: editForm.resident, name: editForm.name,
+      beneficiaryId: editForm.beneficiaryId, nationality: editForm.nationality,
+      residenceCert: editForm.residenceCert, birthDate: editForm.birthDate,
+      email: editForm.email, address: editForm.address,
+      currency: editForm.currency, amount: editForm.amount, updatedAt: now,
+    } : r))
+    setEditRow(null)
+  }
+
   return (
     <AppLayout activeMenu="所得人清單" onNavigate={onNavigate}>
       <div className="flex flex-col h-full">
@@ -131,7 +211,7 @@ export function IncomeListDetailPage({ detail, onBack, onNavigate }: IncomeListD
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
-                    <DropdownMenuItem startIcon={Plus} onClick={addRow}>新增</DropdownMenuItem>
+                    <DropdownMenuItem startIcon={Plus} onClick={openAddDialog}>新增</DropdownMenuItem>
                     <DropdownMenuItem startIcon={FileSpreadsheet} onClick={() => showToast('notImplemented')}>Excel 匯入</DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
@@ -206,7 +286,7 @@ export function IncomeListDetailPage({ detail, onBack, onNavigate }: IncomeListD
                             className="flex items-center justify-center gap-[var(--layout-space-tight)] p-[var(--layout-space-tight)]"
                             style={{ position: 'sticky', right: 0, zIndex: 1, minHeight: 72, backgroundColor: 'inherit', boxShadow: STICKY_SHADOW(isLastRow) }}
                           >
-                            <Button variant="text" size="xs" iconOnly startIcon={Pencil} aria-label="編輯" onClick={() => showToast('notImplemented')} />
+                            <Button variant="text" size="xs" iconOnly startIcon={Pencil} aria-label="編輯" onClick={() => openEditDialog(row)} />
                             <Button variant="text" size="xs" iconOnly startIcon={Trash2} aria-label="刪除" onClick={() => deleteRow(row.id)} />
                           </div>
                         </div>
@@ -220,7 +300,148 @@ export function IncomeListDetailPage({ detail, onBack, onNavigate }: IncomeListD
         </div>
 
       </div>
+      {/* 新增 Dialog */}
+      <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
+        <DialogContent maxWidth={720}>
+          <DialogHeader>
+            <DialogTitle>新增所得人清單</DialogTitle>
+          </DialogHeader>
+          <DialogBody>
+            <PayeeForm
+              form={form}
+              onChange={setForm}
+              onTypeChange={setFormType}
+              typeOptions={TYPE_OPTIONS}
+              incomeType={detail.incomeType || '50'}
+            />
+          </DialogBody>
+          <DialogFooter>
+            <Button variant="secondary" size="sm" onClick={() => setShowAddDialog(false)}>關閉</Button>
+            <Button variant="primary" size="sm" onClick={submitAdd}>新增</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* 編輯 Dialog */}
+      <Dialog open={!!editRow} onOpenChange={(open) => { if (!open) setEditRow(null) }}>
+        <DialogContent maxWidth={720}>
+          <DialogHeader>
+            <DialogTitle>編輯所得人清單</DialogTitle>
+          </DialogHeader>
+          <DialogBody>
+            <PayeeForm
+              form={editForm}
+              onChange={setEditForm}
+              onTypeChange={setEditFormType}
+              typeOptions={TYPE_OPTIONS}
+              incomeType={editRow?.incomeType || detail.incomeType || '50'}
+            />
+          </DialogBody>
+          <DialogFooter>
+            <Button variant="secondary" size="sm" onClick={() => setEditRow(null)}>關閉</Button>
+            <Button variant="primary" size="sm" onClick={submitEdit}>更新</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </AppLayout>
+  )
+}
+
+interface PayeeFormData {
+  type: string; resident: string; name: string; beneficiaryId: string;
+  nationality: string; residenceCert: string; birthDate: string;
+  email: string; address: string; currency: string; amount: string;
+}
+
+function PayeeForm({
+  form, onChange, onTypeChange, typeOptions, incomeType,
+}: {
+  form: PayeeFormData
+  onChange: (f: PayeeFormData) => void
+  onTypeChange: (t: string) => void
+  typeOptions: string[]
+  incomeType: string
+}) {
+  const f = (field: keyof PayeeFormData) => (val: string) => onChange({ ...form, [field]: val })
+  const selectOptions = typeOptions.map((o) => ({ value: o, label: o }))
+  return (
+    <div className="flex flex-col gap-[var(--layout-space-tight)]">
+      <div className="grid grid-cols-2 gap-[var(--layout-space-tight)]">
+        <div className="flex flex-col gap-[4px]">
+          <label className="text-caption text-fg">*類型</label>
+          <Select value={form.type} options={selectOptions} onChange={onTypeChange} />
+        </div>
+        <div className="flex flex-col gap-[4px]">
+          <label className="text-caption text-fg">居住者/非居住者</label>
+          <Input value={form.resident} mode="readonly" />
+        </div>
+      </div>
+      <div className="grid grid-cols-2 gap-[var(--layout-space-tight)]">
+        <div className="flex flex-col gap-[4px]">
+          <label className="text-caption text-fg">*受益人姓名</label>
+          <Input value={form.name} onChange={(e) => f('name')(e.target.value)} />
+        </div>
+        <div className="flex flex-col gap-[4px]">
+          <label className="text-caption text-fg">*受益人ID</label>
+          <Input value={form.beneficiaryId} onChange={(e) => f('beneficiaryId')(e.target.value)} />
+        </div>
+      </div>
+      <div className="grid grid-cols-2 gap-[var(--layout-space-tight)]">
+        <div className="flex flex-col gap-[4px]">
+          <label className="text-caption text-fg">*國籍</label>
+          <Input value={form.nationality} onChange={(e) => f('nationality')(e.target.value)} />
+        </div>
+        <div className="flex flex-col gap-[4px]">
+          <label className="text-caption text-fg">*居留證號</label>
+          <Input value={form.residenceCert} onChange={(e) => f('residenceCert')(e.target.value)} />
+        </div>
+      </div>
+      <div className="grid grid-cols-2 gap-[var(--layout-space-tight)]">
+        <div className="flex flex-col gap-[4px]">
+          <label className="text-caption text-fg">出生日期</label>
+          <Input value={form.birthDate} onChange={(e) => f('birthDate')(e.target.value)} placeholder="YYYY/MM/DD" />
+        </div>
+        <div className="flex flex-col gap-[4px]">
+          <label className="text-caption text-fg">E-mail</label>
+          <Input value={form.email} onChange={(e) => f('email')(e.target.value)} />
+        </div>
+      </div>
+      <div className="flex flex-col gap-[4px]">
+        <label className="text-caption text-fg">地址</label>
+        <Input value={form.address} onChange={(e) => f('address')(e.target.value)} />
+      </div>
+      <div className="grid grid-cols-2 gap-[var(--layout-space-tight)]">
+        <div className="flex flex-col gap-[4px]">
+          <label className="text-caption text-fg">幣別</label>
+          <Input value={form.currency} mode="readonly" />
+        </div>
+        <div className="flex flex-col gap-[4px]">
+          <label className="text-caption text-fg">金額</label>
+          <Input value={form.amount} onChange={(e) => f('amount')(e.target.value)} />
+        </div>
+      </div>
+      <div className="flex gap-[var(--layout-space-tight)] bg-surface-raised border border-divider rounded p-[var(--layout-space-tight)]">
+        <div className="flex-1 flex flex-col gap-[4px]">
+          <span className="text-caption text-fg-secondary">代扣金額</span>
+          <span className="text-body text-fg">0</span>
+        </div>
+        <div className="w-px bg-divider" />
+        <div className="flex-1 flex flex-col gap-[4px]">
+          <span className="text-caption text-fg-secondary">代扣稅率</span>
+          <span className="text-body text-fg">0</span>
+        </div>
+        <div className="w-px bg-divider" />
+        <div className="flex-1 flex flex-col gap-[4px]">
+          <span className="text-caption text-fg-secondary">二代健保</span>
+          <span className="text-body text-fg">0</span>
+        </div>
+        <div className="w-px bg-divider" />
+        <div className="flex-1 flex flex-col gap-[4px]">
+          <span className="text-caption text-fg-secondary">收入類型</span>
+          <span className="text-body text-fg">{incomeType}</span>
+        </div>
+      </div>
+    </div>
   )
 }
 
