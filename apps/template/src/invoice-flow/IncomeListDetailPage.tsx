@@ -227,7 +227,7 @@ export function IncomeListDetailPage({ detail, onBack, onNavigate }: IncomeListD
               const COLS = '40px 120px 160px 120px 120px 80px 120px 120px 120px 120px 120px 120px 160px 160px 120px 88px'
               const STICKY_SHADOW = (isLast: boolean) =>
                 `-1px 0 0 0 var(--color-border-divider, #e5e7eb)${isLast ? '' : ', inset 0 -1px 0 0 var(--color-border-divider, #e5e7eb)'}`
-              const stickyHead: React.CSSProperties = { position: 'sticky', right: 0, zIndex: 2, boxShadow: '-1px 0 0 0 var(--color-border-divider, #e5e7eb), inset 0 -1px 0 0 var(--color-border-divider, #e5e7eb)' }
+              const stickyHead: React.CSSProperties = { position: 'sticky', right: 0, zIndex: 2, alignSelf: 'stretch', boxShadow: '-1px 0 0 0 var(--color-border-divider, #e5e7eb), inset 0 -1px 0 0 var(--color-border-divider, #e5e7eb)' }
               return (
                 <div className="overflow-x-auto rounded border border-divider bg-surface">
                   <div style={{ minWidth: 1788 }}>
