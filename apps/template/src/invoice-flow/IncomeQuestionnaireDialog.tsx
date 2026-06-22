@@ -32,13 +32,26 @@ interface NatureOption {
   incomeTypes: IncomeTypeOption[]
 }
 
-const PAYEE_OPTIONS: { value: string; label: string }[] = [
+interface PayeeOption {
+  value: string
+  label: string
+  // If set, this Q1 option resolves directly without Q2 (Spec D rows 1 and 4).
+  directIncomeType?: IncomeTypeOption
+}
+
+const PAYEE_OPTIONS: PayeeOption[] = [
   { value: 'individual-domestic', label: '個人 — 國內人士 (一般)' },
+  { value: 'individual-union', label: '個人 — 國內人士 (取得職業工會投保的繳費證明，免二代健保)' },
   { value: 'individual-overseas', label: '個人 — 國外人士' },
-  { value: 'company-domestic-org', label: '公司 — 國內機關團體' },
-  { value: 'company-domestic-firm', label: '公司 — 國內事務所 / 律師 / 會計師' },
-  { value: 'company-overseas', label: '公司 — 國外公司' },
+  { value: 'company-gov', label: '公司 — 國內政府 / 公家機關 / 國立組織' /* Spec D1 → 直接 00 */ },
+  { value: 'company-domestic-org', label: '公司 — 國內民間團體 / 公營事業 / 非上述國內公司' },
+  { value: 'company-domestic-firm', label: '公司 — 國內事務所 / 律師 / 會計師 / 建築師' },
+  { value: 'company-taxi', label: '公司 — 國內計程車 / Uber' /* Spec D4 → 直接 00 */ },
+  { value: 'company-overseas-firm', label: '公司 — 國外事務所 (律師 / 會計師)' },
+  { value: 'company-overseas', label: '公司 — 國外公司 / 機關團體 / 政府機關' },
 ]
+
+// Direct-resolution map for Q1 options that skip Q2.
 
 const T = {
   i50: { code: '50', label: '50 薪資所得' },
@@ -63,9 +76,22 @@ const INDIVIDUAL_NATURE: NatureOption[] = [
   { value: 'special', label: '特殊案例：依稅務部意見免列所得 (需附 apply reason 與核准信)', incomeTypes: [T.TBD] },
 ]
 
+const DIRECT_RESOLVE: Record<string, IncomeTypeOption> = {
+  'company-gov': T.i00,
+  'company-taxi': T.i00,
+}
+
 const NATURE_OPTIONS_BY_PAYEE: Record<string, NatureOption[]> = {
   'individual-domestic': INDIVIDUAL_NATURE,
+  'individual-union': INDIVIDUAL_NATURE,
   'individual-overseas': INDIVIDUAL_NATURE,
+
+  // Spec F-1 — 國外事務所
+  'company-overseas-firm': [
+    { value: 'offshore', label: '是 — 國外事務所在台灣境外執行業務 (免列所得)', incomeTypes: [T.i00] },
+    { value: 'onshore', label: '否 — 在台灣境內執行業務 (列 92 其他所得)', incomeTypes: [T.i92] },
+  ],
+
 
   // Spec E — 國內機關團體
   'company-domestic-org': [
@@ -165,9 +191,10 @@ export function IncomeQuestionnaireDialog({
     }
   }, [open])
 
-  // Vendor route — payee + nature
+  // Vendor route — payee + nature (or direct resolution for Spec D1/D4)
   const payeeOption = PAYEE_OPTIONS.find((o) => o.value === payeeKind)
-  const natureOptions = payeeKind ? NATURE_OPTIONS_BY_PAYEE[payeeKind] ?? [] : []
+  const directType = payeeKind ? DIRECT_RESOLVE[payeeKind] : undefined
+  const natureOptions = payeeKind && !directType ? NATURE_OPTIONS_BY_PAYEE[payeeKind] ?? [] : []
   const natureOption = natureOptions.find((o) => o.value === nature)
 
   // Gift route — walk the H/H-1/I/I-1 tree
@@ -192,6 +219,8 @@ export function IncomeQuestionnaireDialog({
   const selectedIncomeType = (() => {
     if (route === 'tbd') return T.TBD
     if (route === 'direct') return T.i00
+    // Vendor route — direct-resolve Q1 (政府/計程車) skips Q2.
+    if (route === 'vendor' && directType) return directType
     if (!activeNatureOption) return null
     return activeNatureOption.incomeTypes.find((t) => t.code === incomeTypeOverride) ?? activeNatureOption.incomeTypes[0]
   })()
@@ -202,6 +231,7 @@ export function IncomeQuestionnaireDialog({
   const canConfirm = (() => {
     if (route === 'tbd' || route === 'direct') return true
     if (route === 'gift') return giftTerminal !== null
+    if (directType) return payeeKind !== ''
     return payeeKind !== '' && nature !== '' && selectedIncomeType !== null
   })()
 
@@ -210,9 +240,14 @@ export function IncomeQuestionnaireDialog({
     let payeeKindLabel = ''
     let natureLabel = ''
     if (route === 'vendor') {
-      if (!payeeOption || !natureOption) return
+      if (!payeeOption) return
       payeeKindLabel = payeeOption.label
-      natureLabel = natureOption.label
+      if (directType) {
+        natureLabel = '直接認列'
+      } else {
+        if (!natureOption) return
+        natureLabel = natureOption.label
+      }
     } else if (route === 'gift') {
       payeeKindLabel = '禮券 / 禮物'
       natureLabel = giftTerminal?.label ?? ''
