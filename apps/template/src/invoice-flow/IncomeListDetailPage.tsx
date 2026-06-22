@@ -285,7 +285,7 @@ export function IncomeListDetailPage({ detail, onBack, onNavigate }: IncomeListD
                           <div className="flex items-center p-[var(--layout-space-tight)] text-body text-fg" style={{ minHeight: 72 }}>{row.updatedAt}</div>
                           <div
                             className="flex items-center justify-center gap-[var(--layout-space-tight)] p-[var(--layout-space-tight)] bg-surface group-hover:bg-surface-raised"
-                            style={{ position: 'sticky', right: 0, zIndex: 1, minHeight: 72, boxShadow: STICKY_SHADOW(isLastRow) }}
+                            style={{ position: 'sticky', right: 0, zIndex: 1, alignSelf: 'stretch', boxShadow: STICKY_SHADOW(isLastRow) }}
                           >
                             <Button variant="text" size="xs" iconOnly startIcon={Pencil} aria-label="編輯" onClick={() => openEditDialog(row)} />
                             <DeleteConfirmDialog
