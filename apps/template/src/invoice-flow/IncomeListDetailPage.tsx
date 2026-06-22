@@ -40,9 +40,10 @@ interface PayeeRow {
 interface IncomeListDetailPageProps {
   detail: IncomeListDetail
   onBack: () => void
+  onNavigate?: (id: string) => void
 }
 
-export function IncomeListDetailPage({ detail, onBack }: IncomeListDetailPageProps) {
+export function IncomeListDetailPage({ detail, onBack, onNavigate }: IncomeListDetailPageProps) {
   const [rows, setRows] = useState<PayeeRow[]>([{
     id: 'P-1',
     type: detail.payeeType || '員工',
@@ -89,7 +90,7 @@ export function IncomeListDetailPage({ detail, onBack }: IncomeListDetailPagePro
   }
 
   return (
-    <AppLayout activeMenu="所得人清單">
+    <AppLayout activeMenu="所得人清單" onNavigate={onNavigate}>
       <div className="flex flex-col h-full">
         <div className="bg-surface border-b border-divider px-[var(--layout-space-loose)] py-[var(--layout-space-loose)]">
           <h1 className="text-h3 font-medium text-fg">所得人清單</h1>

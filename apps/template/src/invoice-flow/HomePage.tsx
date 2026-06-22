@@ -36,9 +36,10 @@ const HEADERS = ['單號', '申請日期', '公司代號', '申請人', '收款�
 interface HomePageProps {
   onNewApplication: () => void
   onEditApplication: (row: DraftRow) => void
+  onNavigate?: (id: string) => void
 }
 
-export function HomePage({ onNewApplication, onEditApplication }: HomePageProps) {
+export function HomePage({ onNewApplication, onEditApplication, onNavigate }: HomePageProps) {
   const [activeTab, setActiveTab] = useState<TabId>('general')
   const [rows, setRows] = useState<DraftRow[]>(DRAFT_ROWS)
 
@@ -48,7 +49,7 @@ export function HomePage({ onNewApplication, onEditApplication }: HomePageProps)
   }
 
   return (
-    <AppLayout activeMenu="暫存申請單">
+    <AppLayout activeMenu="暫存申請單" onNavigate={onNavigate}>
       <div className="flex flex-col h-full">
         {/* Page header + tabs */}
         <div className="bg-surface border-b border-divider px-[var(--layout-space-loose)] pt-[var(--layout-space-loose)]">

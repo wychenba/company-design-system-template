@@ -19,6 +19,7 @@ import { showToast } from './useToast'
 interface AppLayoutProps {
   children: ReactNode
   activeMenu: string
+  onNavigate?: (id: string) => void
 }
 
 const MENU_SECTIONS: {
@@ -52,7 +53,7 @@ const MENU_SECTIONS: {
 
 // Left nav — consumes Sidebar primitive. Brand + account live in the global
 // header (primary-header mode), so the sidebar carries navigation only.
-function InvoiceSidebar() {
+function InvoiceSidebar({ onNavigate }: { onNavigate?: (id: string) => void }) {
   return (
     <Sidebar collapsible="icon" viewportInsetTop="var(--chrome-header-height)">
       <SidebarContent>
@@ -63,7 +64,12 @@ function InvoiceSidebar() {
               <SidebarMenu>
                 {section.items.map((item) => (
                   <SidebarMenuItem key={item.id}>
-                    <SidebarMenuButton id={item.id} startIcon={item.icon} tooltip={item.label}>
+                    <SidebarMenuButton
+                      id={item.id}
+                      startIcon={item.icon}
+                      tooltip={item.label}
+                      onClick={() => onNavigate?.(item.id)}
+                    >
                       {item.label}
                     </SidebarMenuButton>
                   </SidebarMenuItem>
@@ -130,16 +136,14 @@ function AccountMenu() {
   )
 }
 
-export function AppLayout({ children, activeMenu }: AppLayoutProps) {
-  // Prototype navigation is static (one page per screen); seed active state from
-  // the current page so the matching menu item highlights.
+export function AppLayout({ children, activeMenu, onNavigate }: AppLayoutProps) {
   const [activeId, setActiveId] = useState(activeMenu)
   return (
     <SidebarProvider activeId={activeId} onActiveChange={setActiveId}>
       <AppShell
         layout="primary-header"
         globalHeader={<GlobalHeader />}
-        sidebar={<InvoiceSidebar />}
+        sidebar={<InvoiceSidebar onNavigate={onNavigate} />}
       >
         {children}
       </AppShell>

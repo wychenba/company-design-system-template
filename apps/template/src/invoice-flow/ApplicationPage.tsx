@@ -32,6 +32,7 @@ interface ApplicationPageProps {
   onBack: () => void
   initialData?: ApplicationInitialData
   onGoToIncomeList?: () => void
+  onNavigate?: (id: string) => void
 }
 
 const PAYEE_OPTIONS = [
@@ -251,7 +252,7 @@ function AttachmentTable({ attachments, onEdit, onDelete }: {
   )
 }
 
-export function ApplicationPage({ onBack, initialData, onGoToIncomeList }: ApplicationPageProps) {
+export function ApplicationPage({ onBack, initialData, onGoToIncomeList, onNavigate }: ApplicationPageProps) {
   const [company, setCompany] = useState(initialData?.company ?? 'TA01')
   const [payeeType, setPayeeType] = useState<string>(initialData?.payeeType ?? 'employee')
   const [reason, setReason] = useState(initialData?.reason ?? '')
@@ -446,7 +447,7 @@ export function ApplicationPage({ onBack, initialData, onGoToIncomeList }: Appli
   ) : null
 
   return (
-    <AppLayout activeMenu="暫存申請單">
+    <AppLayout activeMenu="暫存申請單" onNavigate={onNavigate}>
       <div className="flex flex-col h-full">
 
         {/* Page header */}

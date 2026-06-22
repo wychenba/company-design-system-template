@@ -88,12 +88,18 @@ export default function InvoiceFlow() {
   const [initialData, setInitialData] = useState<ApplicationInitialData | undefined>(undefined)
   const [incomeDetail, setIncomeDetail] = useState<IncomeListDetail | undefined>(undefined)
 
+  function navigate(menuId: string) {
+    if (menuId === '首頁') setView('home')
+    else if (menuId === '所得人清單') setView('incomeList')
+  }
+
   return (
     <div className="min-h-screen min-w-[1200px] bg-surface-sunken">
       {view === 'home' && (
         <HomePage
           onNewApplication={() => { setInitialData(undefined); setView('application') }}
           onEditApplication={(row) => { setInitialData(rowToInitialData(row)); setView('application') }}
+          onNavigate={navigate}
         />
       )}
       {view === 'application' && (
@@ -101,13 +107,21 @@ export default function InvoiceFlow() {
           onBack={() => setView('home')}
           initialData={initialData}
           onGoToIncomeList={() => setView('incomeList')}
+          onNavigate={navigate}
         />
       )}
       {view === 'incomeList' && (
-        <IncomeListPage onOpenDetail={(d) => { setIncomeDetail(d); setView('incomeListDetail') }} />
+        <IncomeListPage
+          onOpenDetail={(d) => { setIncomeDetail(d); setView('incomeListDetail') }}
+          onNavigate={navigate}
+        />
       )}
       {view === 'incomeListDetail' && incomeDetail && (
-        <IncomeListDetailPage detail={incomeDetail} onBack={() => setView('incomeList')} />
+        <IncomeListDetailPage
+          detail={incomeDetail}
+          onBack={() => setView('incomeList')}
+          onNavigate={navigate}
+        />
       )}
     </div>
   )

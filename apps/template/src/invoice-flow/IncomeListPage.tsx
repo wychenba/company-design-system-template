@@ -66,9 +66,10 @@ const unfilledCount = STUB_ROWS.filter((r) => r.status === 'unfilled').length
 
 interface IncomeListPageProps {
   onOpenDetail?: (detail: IncomeListDetail) => void
+  onNavigate?: (id: string) => void
 }
 
-export function IncomeListPage({ onOpenDetail }: IncomeListPageProps = {}) {
+export function IncomeListPage({ onOpenDetail, onNavigate }: IncomeListPageProps = {}) {
   function openDetail(row: IncomeListRow) {
     onOpenDetail?.({
       serialNo: row.serialNo,
@@ -83,7 +84,7 @@ export function IncomeListPage({ onOpenDetail }: IncomeListPageProps = {}) {
   }
 
   return (
-    <AppLayout activeMenu="所得人清單">
+    <AppLayout activeMenu="所得人清單" onNavigate={onNavigate}>
       <div className="flex flex-col h-full">
         <div className="bg-surface border-b border-divider px-[var(--layout-space-loose)] py-[var(--layout-space-loose)]">
           <h1 className="text-h3 font-medium text-fg">所得人清單</h1>
