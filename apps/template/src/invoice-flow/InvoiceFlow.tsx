@@ -89,7 +89,7 @@ export default function InvoiceFlow() {
   const [incomeDetail, setIncomeDetail] = useState<IncomeListDetail | undefined>(undefined)
 
   function navigate(menuId: string) {
-    if (menuId === '首頁') setView('home')
+    if (menuId === '首頁' || menuId === '暫存申請單') setView('home')
     else if (menuId === '所得人清單') setView('incomeList')
   }
 
