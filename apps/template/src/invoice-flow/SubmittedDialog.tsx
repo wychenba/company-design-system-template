@@ -113,7 +113,8 @@ function SectionCard({
 function InvoiceItemRow({ inv }: { inv: InvoiceRow }) {
   const [open, setOpen] = useState(false)
 
-  const LINE_COLS = '44px minmax(200px,1fr) 80px 120px 80px 56px 80px 120px minmax(140px,1fr)'
+  const LINE_COLS = '40px minmax(160px,1.4fr) 72px 96px 72px 52px 72px 100px minmax(120px,1fr)'
+  const LINE_MIN_WIDTH = 760
 
   return (
     <div className="border border-divider rounded-lg overflow-hidden flex-shrink-0">
@@ -171,7 +172,7 @@ function InvoiceItemRow({ inv }: { inv: InvoiceRow }) {
           {/* Line items table */}
           <div className="border border-divider rounded overflow-x-auto">
             <div
-              style={{ display: 'grid', gridTemplateColumns: LINE_COLS, minWidth: 900 }}
+              style={{ display: 'grid', gridTemplateColumns: LINE_COLS, minWidth: LINE_MIN_WIDTH }}
               className="bg-surface-raised border-b border-divider text-caption text-fg-secondary font-medium"
             >
               {['序號', '分類/子分類', '成本中心', '會計科目', '總額', '稅率', '稅額', '是否提供合約編號', '合約編號/無合約原因'].map((h, i) => (
@@ -183,7 +184,7 @@ function InvoiceItemRow({ inv }: { inv: InvoiceRow }) {
             ) : inv.items.map((item, i) => (
               <div
                 key={item.id}
-                style={{ display: 'grid', gridTemplateColumns: LINE_COLS, minWidth: 900 }}
+                style={{ display: 'grid', gridTemplateColumns: LINE_COLS, minWidth: LINE_MIN_WIDTH }}
                 className="border-b border-divider last:border-b-0 text-body text-fg hover:bg-surface-raised"
               >
                 <div className="px-[var(--layout-space-tight)] py-[var(--layout-space-tight)] text-fg-secondary">{i + 1}</div>
@@ -245,7 +246,7 @@ export function SubmittedDialog({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
-      <DialogContent maxWidth={960} autoHeight>
+      <DialogContent maxWidth={880} autoHeight>
         <DialogHeader>
           <DialogTitle>申請單預覽</DialogTitle>
         </DialogHeader>
