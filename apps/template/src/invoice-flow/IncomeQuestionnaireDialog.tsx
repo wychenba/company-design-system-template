@@ -40,15 +40,11 @@ interface PayeeOption {
 }
 
 const PAYEE_OPTIONS: PayeeOption[] = [
-  { value: 'individual-domestic', label: '個人 — 國內人士 (一般)' },
-  { value: 'individual-union', label: '個人 — 國內人士 (取得職業工會投保的繳費證明，免二代健保)' },
-  { value: 'individual-overseas', label: '個人 — 國外人士' },
-  { value: 'company-gov', label: '公司 — 國內政府 / 公家機關 / 國立組織' /* Spec D1 → 直接 00 */ },
-  { value: 'company-domestic-org', label: '公司 — 國內民間團體 / 公營事業 / 非上述國內公司' },
-  { value: 'company-domestic-firm', label: '公司 — 國內事務所 / 律師 / 會計師 / 建築師' },
-  { value: 'company-taxi', label: '公司 — 國內計程車 / Uber' /* Spec D4 → 直接 00 */ },
-  { value: 'company-overseas-firm', label: '公司 — 國外事務所 (律師 / 會計師)' },
-  { value: 'company-overseas', label: '公司 — 國外公司 / 機關團體 / 政府機關' },
+  { value: 'domestic-org', label: '國內法人/組織' },
+  { value: 'domestic-individual', label: '國內個人' },
+  { value: 'overseas-org', label: '國外公司/機構' },
+  { value: 'overseas-individual', label: '國外個人' },
+  { value: 'gov', label: '政府/公立組織' },
 ]
 
 // Direct-resolution map for Q1 options that skip Q2.
@@ -77,40 +73,28 @@ const INDIVIDUAL_NATURE: NatureOption[] = [
 ]
 
 const DIRECT_RESOLVE: Record<string, IncomeTypeOption> = {
-  'company-gov': T.i00,
-  'company-taxi': T.i00,
+  'gov': T.i00,
 }
 
 const NATURE_OPTIONS_BY_PAYEE: Record<string, NatureOption[]> = {
-  'individual-domestic': INDIVIDUAL_NATURE,
-  'individual-union': INDIVIDUAL_NATURE,
-  'individual-overseas': INDIVIDUAL_NATURE,
+  'domestic-individual': INDIVIDUAL_NATURE,
+  'overseas-individual': INDIVIDUAL_NATURE,
 
-  // Spec F-1 — 國外事務所
-  'company-overseas-firm': [
-    { value: 'offshore', label: '是 — 國外事務所在台灣境外執行業務 (免列所得)', incomeTypes: [T.i00] },
-    { value: 'onshore', label: '否 — 在台灣境內執行業務 (列 92 其他所得)', incomeTypes: [T.i92] },
-  ],
-
-
-  // Spec E — 國內機關團體
-  'company-domestic-org': [
+  // 國內法人/組織：合併 Spec E (機關團體) + Spec F (事務所)
+  'domestic-org': [
     { value: 'product', label: '購買實體物品 (如：喜餅、月餅) — 免列所得', incomeTypes: [T.i00] },
     { value: 'reimburse', label: '代墊費 (如：政府規費) — 免列所得', incomeTypes: [T.i00] },
     { value: 'membership', label: '常年會員費 — 免列所得', incomeTypes: [T.i00] },
     { value: 'consult', label: '顧問費 / 訓練費 / 研討會報名費等 — 列所得', incomeTypes: [T.i92] },
     { value: 'donation', label: '捐贈 / 贊助 (如：香油錢) — 列所得', incomeTypes: [T.i97] },
-  ],
-
-  // Spec F — 國內事務所
-  'company-domestic-firm': [
-    { value: 'reimburse', label: '代墊費 (如：政府規費) — 免列所得', incomeTypes: [T.i00] },
     { value: 'service', label: '無形勞務 (如：律師公費) — 9A 執行業務', incomeTypes: [T.i9A] },
     { value: 'mixed', label: '同時包含無形勞務及代墊費 (代墊費需填入 Tax Exempt 欄位)', incomeTypes: [T.i9A] },
   ],
 
-  // Spec J + K (flattened) — 國外公司
-  'company-overseas': [
+  // 國外公司/機構：合併 Spec F-1 (國外事務所) + Spec J+K (國外公司)
+  'overseas-org': [
+    { value: 'firm-offshore', label: '國外事務所在台灣境外執行業務 — 免列所得', incomeTypes: [T.i00] },
+    { value: 'firm-onshore', label: '國外事務所在台灣境內執行業務 — 列 92 其他所得', incomeTypes: [T.i92] },
     { value: 'database', label: '線上資料庫查詢 (含電子書)：非雲端、非客製化、無雙方互動 — 免列所得', incomeTypes: [T.i00] },
     { value: 'onsite', label: '來台提供服務 (顧問 / 訓練) — 有雙方互動', incomeTypes: [T.i92] },
     { value: 'offshore', label: '勞務提供地在國外 — 需 TAMD 評估', incomeTypes: [T.TBD] },
@@ -191,7 +175,7 @@ export function IncomeQuestionnaireDialog({
     }
   }, [open])
 
-  // Vendor route — payee + nature (or direct resolution for Spec D1/D4)
+  // Vendor route — payee + nature (or direct resolution for gov)
   const payeeOption = PAYEE_OPTIONS.find((o) => o.value === payeeKind)
   const directType = payeeKind ? DIRECT_RESOLVE[payeeKind] : undefined
   const natureOptions = payeeKind && !directType ? NATURE_OPTIONS_BY_PAYEE[payeeKind] ?? [] : []
@@ -280,41 +264,48 @@ export function IncomeQuestionnaireDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent maxWidth={640} autoHeight>
         <DialogHeader>
-          <DialogTitle>{initial ? '編輯問券' : '所得問券'}</DialogTitle>
+          <DialogTitle>填寫問券</DialogTitle>
         </DialogHeader>
         <DialogBody>
           <div className="flex flex-col gap-[var(--layout-space-loose)]">
             {selectedIncomeType ? (
               <Alert
-                variant={isTBD ? 'info' : isExempt ? 'success' : 'warning'}
+                variant={isTBD ? 'info' : isExempt ? 'success' : 'info'}
                 title={isTBD ? '需 TAMD 單位評估' : isExempt ? '不需認列所得' : '需認列所得'}
                 description={
                   <div className="flex flex-col gap-[var(--layout-space-tight)]">
-                    <div>
-                      推薦收入類型：<span className="font-medium">{selectedIncomeType.label}</span>
-                      {hasMultiple && <span className="text-caption text-fg-secondary ml-[4px]">(可調整)</span>}
-                    </div>
-                    {hasMultiple && activeNatureOption && (
-                      <div className="flex items-center gap-[var(--layout-space-tight)]">
-                        <span className="text-caption">調整為：</span>
-                        <Select
-                          size="sm"
-                          value={selectedIncomeType.code}
-                          options={activeNatureOption.incomeTypes.map((t) => ({ value: t.code, label: t.label }))}
-                          onChange={setIncomeTypeOverride}
-                        />
-                      </div>
+                    {hasMultiple && activeNatureOption ? (
+                      <>
+                        <div>
+                          收入類型建議：<span className="font-medium">{activeNatureOption.incomeTypes.map((t) => t.code).join('、')}</span>
+                          ，系統預計推薦 <span className="font-medium">{selectedIncomeType.label}</span>（可前往發票編輯所得類型）。
+                        </div>
+                        <div className="flex items-center gap-[var(--layout-space-tight)]">
+                          <span className="shrink-0">調整為：</span>
+                          <Select
+                            size="sm"
+                            value={selectedIncomeType.code}
+                            options={activeNatureOption.incomeTypes.map((t) => ({ value: t.code, label: t.label }))}
+                            onChange={setIncomeTypeOverride}
+                          />
+                        </div>
+                        <div>備註：請於送出申請單前填寫<span className="text-primary cursor-pointer hover:underline">所得人清單</span></div>
+                      </>
+                    ) : (
+                      <>
+                        <div>推薦收入類型：<span className="font-medium">{selectedIncomeType.label}</span></div>
+                        <div>
+                          所得人清單：
+                          <span className="font-medium">
+                            {isTBD
+                              ? '請依 TAMD 單位評估結果填寫，並附上詢問信件'
+                              : isExempt
+                                ? '無須填寫'
+                                : '請於所得人清單填寫資訊'}
+                          </span>
+                        </div>
+                      </>
                     )}
-                    <div>
-                      所得人清單：
-                      <span className="font-medium">
-                        {isTBD
-                          ? '請依 TAMD 單位評估結果填寫，並附上詢問信件'
-                          : isExempt
-                            ? '無須填寫'
-                            : '請於所得人清單填寫資訊'}
-                      </span>
-                    </div>
                   </div>
                 }
               />
@@ -333,18 +324,29 @@ export function IncomeQuestionnaireDialog({
             {/* Vendor route */}
             {route === 'vendor' && (
               <>
-                <Field>
-                  <FieldLabel required>1. 付款對象類別</FieldLabel>
+                <div className="flex flex-col gap-[var(--layout-space-tight)]">
+                  <FieldLabel required>1. 付款對象類型</FieldLabel>
                   <RadioGroup
                     value={payeeKind}
                     onValueChange={(v) => { setPayeeKind(v); setNature(''); setIncomeTypeOverride('') }}
-                    className="flex flex-col gap-[var(--layout-space-tight)]"
+                    className="grid grid-cols-2 gap-[var(--layout-space-tight)]"
                   >
                     {PAYEE_OPTIONS.map((o) => (
-                      <RadioGroupItem key={o.value} value={o.value} label={o.label} />
+                      <label
+                        key={o.value}
+                        className={[
+                          'flex items-center gap-[var(--layout-space-tight)] px-[12px] py-[12px] rounded border cursor-pointer transition-colors',
+                          payeeKind === o.value
+                            ? 'border-primary bg-transparent'
+                            : 'border-border-default hover:bg-surface-raised',
+                        ].join(' ')}
+                        onClick={() => { setPayeeKind(o.value); setNature(''); setIncomeTypeOverride('') }}
+                      >
+                        <RadioGroupItem value={o.value} label={o.label} />
+                      </label>
                     ))}
                   </RadioGroup>
-                </Field>
+                </div>
 
                 {natureOptions.length > 0 && (
                   <Field>
@@ -402,7 +404,7 @@ export function IncomeQuestionnaireDialog({
         </DialogBody>
         <DialogFooter>
           <Button variant="tertiary" onClick={() => onOpenChange(false)}>取消</Button>
-          <Button variant="primary" disabled={!canConfirm} onClick={handleConfirm}>確認</Button>
+          <Button variant="primary" disabled={!canConfirm} onClick={handleConfirm}>完成</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
