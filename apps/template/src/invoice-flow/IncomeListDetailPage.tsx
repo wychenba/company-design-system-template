@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import {
   Button, Checkbox,
+  DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem,
 } from '@qijenchen/design-system'
-import { Plus, ChevronDown, Download, Pencil, Trash2 } from 'lucide-react'
+import { Plus, ChevronDown, Download, Pencil, Trash2, FileSpreadsheet } from 'lucide-react'
 import { AppLayout } from './AppLayout'
 import { showToast } from './useToast'
 
@@ -92,8 +93,18 @@ export function IncomeListDetailPage({ detail, onBack, onNavigate }: IncomeListD
   return (
     <AppLayout activeMenu="所得人清單" onNavigate={onNavigate}>
       <div className="flex flex-col h-full">
-        <div className="bg-surface border-b border-divider px-[var(--layout-space-loose)] py-[var(--layout-space-loose)]">
-          <h1 className="text-h3 font-medium text-fg">所得人清單</h1>
+        <div className="bg-surface border-b border-divider px-[var(--layout-space-loose)] py-[var(--layout-space-loose)] flex flex-col gap-[var(--layout-space-tight)]">
+          <div className="flex items-center gap-[var(--layout-space-tight)]">
+            <button
+              type="button"
+              className="text-caption text-fg-secondary hover:text-fg bg-transparent border-0 cursor-pointer p-0"
+              onClick={() => onNavigate?.('所得人清單')}
+            >
+              所得人清單
+            </button>
+            <span className="text-caption text-fg-muted">/</span>
+          </div>
+          <h1 className="text-h3 font-medium text-fg">申請單資訊</h1>
         </div>
 
         <div className="flex-1 overflow-auto p-[var(--layout-space-loose)] flex flex-col gap-[var(--layout-space-loose)]">
@@ -113,9 +124,17 @@ export function IncomeListDetailPage({ detail, onBack, onNavigate }: IncomeListD
             <div className="flex items-center justify-between">
               <h2 className="text-h4 font-medium text-fg">所得人資訊</h2>
               <div className="flex items-center gap-[var(--layout-space-tight)]">
-                <Button variant="primary" size="sm" startIcon={Plus} endIcon={ChevronDown} onClick={addRow}>
-                  新增
-                </Button>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="primary" size="sm" startIcon={Plus} endIcon={ChevronDown}>
+                      新增
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem startIcon={Plus} onClick={addRow}>新增</DropdownMenuItem>
+                    <DropdownMenuItem startIcon={FileSpreadsheet} onClick={() => showToast('notImplemented')}>Excel 匯入</DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
                 <Button variant="tertiary" size="sm" startIcon={Download} onClick={() => showToast('notImplemented')}>
                   下載 Excel 範本
                 </Button>
@@ -200,11 +219,6 @@ export function IncomeListDetailPage({ detail, onBack, onNavigate }: IncomeListD
           </section>
         </div>
 
-        {/* Footer */}
-        <div className="bg-surface border-t border-divider px-[var(--layout-space-loose)] py-[var(--layout-space-loose)] flex items-center justify-end gap-[var(--layout-space-tight)]">
-          <Button variant="tertiary" onClick={onBack}>取消</Button>
-          <Button variant="primary" onClick={() => { showToast('saveDraft'); onBack() }}>儲存</Button>
-        </div>
       </div>
     </AppLayout>
   )
