@@ -37,7 +37,7 @@ export const STUB_ROWS: IncomeListRow[] = [
     applicationId: '',
     serialNo: 'PAGE2605250001-2',
     company: 'TA01',
-    status: 'unfilled',
+    status: 'filled',
     payeeType: '員工',
     payee: '林問宜 (023156)',
     invoiceNo: 'BD28114045',
