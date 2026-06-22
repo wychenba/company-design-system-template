@@ -18,6 +18,7 @@ import { SubmittedDialog } from './SubmittedDialog'
 import { SubmitSuccessDialog } from './SubmitSuccessDialog'
 import { CancelApplicationDialog } from './CancelApplicationDialog'
 import { IncomeQuestionnaireDialog, type IncomeAnswer } from './IncomeQuestionnaireDialog'
+import { getQuestionnaireRoute, type QuestionnaireRoute } from './questionnaireRouting'
 import { showToast } from './useToast'
 
 export interface ApplicationInitialData {
@@ -87,8 +88,22 @@ const NO_QUESTIONNAIRE_CATEGORIES = new Set<string>([
 
 function deriveIncomeRequirement(items: PaymentItem[]): IncomeStatus {
   if (items.length === 0) return 'notRequired'
-  const needsQuestionnaire = items.some((it) => !NO_QUESTIONNAIRE_CATEGORIES.has(it.category))
+  // 'none' route skips questionnaire entirely; everything else (vendor/gift/tbd/direct) needs an answer.
+  const needsQuestionnaire = items.some((it) => {
+    if (NO_QUESTIONNAIRE_CATEGORIES.has(it.category)) return false
+    return getQuestionnaireRoute(it.category, it.subCategory) !== 'none'
+  })
   return needsQuestionnaire ? 'unfilled' : 'notRequired'
+}
+
+function pickInvoiceRoute(items: PaymentItem[]): QuestionnaireRoute {
+  // Take the route of the first item that actually needs questionnaire interaction.
+  for (const it of items) {
+    if (NO_QUESTIONNAIRE_CATEGORIES.has(it.category)) continue
+    const route = getQuestionnaireRoute(it.category, it.subCategory)
+    if (route !== 'none') return route
+  }
+  return 'vendor'
 }
 
 interface AttachmentRow {
@@ -774,6 +789,7 @@ export function ApplicationPage({ onBack, initialData, onGoToIncomeList, onNavig
           open={questionnaireInvoiceId !== null}
           onOpenChange={(o) => { if (!o) setQuestionnaireInvoiceId(null) }}
           initial={questionnaireInitial}
+          route={questionnaireInvoice ? pickInvoiceRoute(questionnaireInvoice.items) : 'vendor'}
           onConfirm={(answer) => {
             if (questionnaireInvoiceId) answerQuestionnaire(questionnaireInvoiceId, answer)
             setQuestionnaireInvoiceId(null)
