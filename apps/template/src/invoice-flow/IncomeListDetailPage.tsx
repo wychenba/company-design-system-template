@@ -167,7 +167,7 @@ export function IncomeListDetailPage({ detail, onBack, onNavigate }: IncomeListD
                       <div className="p-[var(--layout-space-tight)] text-body text-fg">地址</div>
                       <div className="p-[var(--layout-space-tight)] text-body text-fg">E-Mail</div>
                       <div className="p-[var(--layout-space-tight)] text-body text-fg">更新時間</div>
-                      <div className="p-[var(--layout-space-tight)] bg-surface-raised" style={stickyHead} />
+                      <div className="p-[var(--layout-space-tight)]" style={{ ...stickyHead, backgroundColor: 'var(--color-surface-raised, #f5f5f5)' }} />
                     </div>
 
                     {/* Rows */}
@@ -177,7 +177,7 @@ export function IncomeListDetailPage({ detail, onBack, onNavigate }: IncomeListD
                         <div
                           key={row.id}
                           className={`group grid items-start bg-surface hover:bg-surface-raised ${isLastRow ? '' : 'border-b border-divider'}`}
-                          style={{ gridTemplateColumns: COLS, minHeight: 72 }}
+                          style={{ gridTemplateColumns: COLS, minHeight: 72, isolation: 'isolate' }}
                         >
                           <div className="flex items-center justify-center p-[var(--layout-space-tight)]" style={{ minHeight: 72 }}>
                             <Checkbox checked={selected.has(row.id)} onCheckedChange={() => toggleSelect(row.id)} />
@@ -203,8 +203,8 @@ export function IncomeListDetailPage({ detail, onBack, onNavigate }: IncomeListD
                           <div className="flex items-center p-[var(--layout-space-tight)] text-body text-fg" style={{ minHeight: 72 }}>{row.email}</div>
                           <div className="flex items-center p-[var(--layout-space-tight)] text-body text-fg" style={{ minHeight: 72 }}>{row.updatedAt}</div>
                           <div
-                            className="flex items-center justify-center gap-[var(--layout-space-tight)] p-[var(--layout-space-tight)] bg-surface group-hover:bg-surface-raised"
-                            style={{ position: 'sticky', right: 0, zIndex: 1, minHeight: 72, boxShadow: STICKY_SHADOW(isLastRow) }}
+                            className="flex items-center justify-center gap-[var(--layout-space-tight)] p-[var(--layout-space-tight)]"
+                            style={{ position: 'sticky', right: 0, zIndex: 1, minHeight: 72, backgroundColor: 'inherit', boxShadow: STICKY_SHADOW(isLastRow) }}
                           >
                             <Button variant="text" size="xs" iconOnly startIcon={Pencil} aria-label="編輯" onClick={() => showToast('notImplemented')} />
                             <Button variant="text" size="xs" iconOnly startIcon={Trash2} aria-label="刪除" onClick={() => deleteRow(row.id)} />

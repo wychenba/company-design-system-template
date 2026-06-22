@@ -110,8 +110,8 @@ export function IncomeListPage({ onOpenDetail, onNavigate }: IncomeListPageProps
                   return (
                     <div
                       key={i}
-                      className="p-[var(--layout-space-tight)] text-body text-fg bg-surface-raised"
-                      style={isLast ? { position: 'sticky', right: 0, zIndex: 2, boxShadow: '-1px 0 0 0 var(--color-border-divider, #e5e7eb)' } : undefined}
+                      className="p-[var(--layout-space-tight)] text-body text-fg"
+                      style={isLast ? { position: 'sticky', right: 0, zIndex: 2, backgroundColor: 'var(--color-surface-raised, #f5f5f5)', boxShadow: '-1px 0 0 0 var(--color-border-divider, #e5e7eb)' } : undefined}
                     >
                       {h}
                     </div>
@@ -124,7 +124,7 @@ export function IncomeListPage({ onOpenDetail, onNavigate }: IncomeListPageProps
                 return (
                   <div
                     key={row.serialNo}
-                    style={{ display: 'grid', gridTemplateColumns: COL_TEMPLATE }}
+                    style={{ display: 'grid', gridTemplateColumns: COL_TEMPLATE, isolation: 'isolate' }}
                     className={`group bg-surface hover:bg-surface-raised ${isLastRow ? '' : 'border-b border-divider'}`}
                   >
                     <div className="flex items-center p-[var(--layout-space-tight)] text-body text-fg" style={{ minHeight: 56 }}>
@@ -159,12 +159,13 @@ export function IncomeListPage({ onOpenDetail, onNavigate }: IncomeListPageProps
                       {row.total}
                     </div>
                     <div
-                      className="flex items-center justify-end p-[var(--layout-space-tight)] bg-surface group-hover:bg-surface-raised"
+                      className="flex items-center justify-end p-[var(--layout-space-tight)]"
                       style={{
                         minHeight: 56,
                         position: 'sticky',
                         right: 0,
                         zIndex: 1,
+                        backgroundColor: 'inherit',
                         boxShadow: `-1px 0 0 0 var(--color-border-divider, #e5e7eb)${isLastRow ? '' : ', inset 0 -1px 0 0 var(--color-border-divider, #e5e7eb)'}`,
                       }}
                     >
