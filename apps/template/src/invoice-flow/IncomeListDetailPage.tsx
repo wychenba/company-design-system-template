@@ -31,6 +31,10 @@ interface PayeeRow {
   nhi: string
   nationality: string
   residenceCert: string
+  birthDate: string
+  address: string
+  email: string
+  updatedAt: string
 }
 
 interface IncomeListDetailPageProps {
@@ -52,7 +56,11 @@ export function IncomeListDetailPage({ detail, onBack }: IncomeListDetailPagePro
     taxAmount: '0',
     nhi: '0',
     nationality: 'TW',
-    residenceCert: 'F123456',
+    residenceCert: 'F123456789',
+    birthDate: '2000/06/18',
+    address: '300新竹市東區科園里力行路21號',
+    email: 'wenee@gmail.com',
+    updatedAt: new Date().toLocaleDateString('zh-TW', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\//g, '/'),
   }])
   const [selected, setSelected] = useState<Set<string>>(new Set())
 
@@ -71,6 +79,7 @@ export function IncomeListDetailPage({ detail, onBack }: IncomeListDetailPagePro
       id, type: '員工', resident: '居住者', name: '', beneficiaryId: '',
       amount: '', currency: 'TWD', incomeType: '50', taxRate: '0',
       taxAmount: '0', nhi: '0', nationality: 'TW', residenceCert: '',
+      birthDate: '', address: '', email: '', updatedAt: '',
     }])
   }
 
@@ -113,18 +122,17 @@ export function IncomeListDetailPage({ detail, onBack }: IncomeListDetailPagePro
             </div>
 
             {(() => {
-              const COLS = '40px 80px 110px 150px 90px 70px 90px 80px 80px 80px 100px 88px'
-              const STICKY_HEAD: React.CSSProperties = { position: 'sticky', right: 0, zIndex: 2, boxShadow: '-1px 0 0 0 var(--color-border-divider, #e5e7eb)' }
-              const STICKY_CELL_BASE: React.CSSProperties = { position: 'sticky', right: 0, zIndex: 1 }
+              // Figma column widths: 40+120+160+120+120+80+120+120+120+120+120+120+160+160+120 = 1700px + 88px sticky
+              const COLS = '40px 120px 160px 120px 120px 80px 120px 120px 120px 120px 120px 120px 160px 160px 120px 88px'
+              const STICKY_SHADOW = (isLast: boolean) =>
+                `-1px 0 0 0 var(--color-border-divider, #e5e7eb)${isLast ? '' : ', inset 0 -1px 0 0 var(--color-border-divider, #e5e7eb)'}`
+              const stickyHead: React.CSSProperties = { position: 'sticky', right: 0, zIndex: 2, boxShadow: '-1px 0 0 0 var(--color-border-divider, #e5e7eb)' }
               return (
                 <div className="overflow-x-auto rounded border border-divider bg-surface">
-                  <div style={{ minWidth: 1140 }}>
+                  <div style={{ minWidth: 1788 }}>
                     {/* Header */}
-                    <div
-                      className="bg-surface-raised border-b border-divider grid items-center"
-                      style={{ gridTemplateColumns: COLS }}
-                    >
-                      <div className="p-[var(--layout-space-tight)]"></div>
+                    <div className="bg-surface-raised border-b border-divider grid items-center" style={{ gridTemplateColumns: COLS }}>
+                      <div className="p-[var(--layout-space-tight)]" />
                       <div className="p-[var(--layout-space-tight)] text-body text-fg">類型</div>
                       <div className="p-[var(--layout-space-tight)] text-body text-fg">居住者 / 非居住者</div>
                       <div className="p-[var(--layout-space-tight)] text-body text-fg">受益人姓名<br />受益人 ID</div>
@@ -135,7 +143,11 @@ export function IncomeListDetailPage({ detail, onBack }: IncomeListDetailPagePro
                       <div className="p-[var(--layout-space-tight)] text-body text-fg">代扣金額</div>
                       <div className="p-[var(--layout-space-tight)] text-body text-fg">二代健保</div>
                       <div className="p-[var(--layout-space-tight)] text-body text-fg">國籍<br />居留證號</div>
-                      <div className="p-[var(--layout-space-tight)] bg-surface-raised" style={STICKY_HEAD}></div>
+                      <div className="p-[var(--layout-space-tight)] text-body text-fg">出生日期</div>
+                      <div className="p-[var(--layout-space-tight)] text-body text-fg">地址</div>
+                      <div className="p-[var(--layout-space-tight)] text-body text-fg">E-Mail</div>
+                      <div className="p-[var(--layout-space-tight)] text-body text-fg">更新時間</div>
+                      <div className="p-[var(--layout-space-tight)] bg-surface-raised" style={stickyHead} />
                     </div>
 
                     {/* Rows */}
@@ -166,13 +178,13 @@ export function IncomeListDetailPage({ detail, onBack }: IncomeListDetailPagePro
                             <span className="text-body text-fg">{row.nationality}</span>
                             <span className="text-caption text-fg-secondary">{row.residenceCert}</span>
                           </div>
+                          <div className="flex items-center p-[var(--layout-space-tight)] text-body text-fg" style={{ minHeight: 72 }}>{row.birthDate}</div>
+                          <div className="flex items-center p-[var(--layout-space-tight)] text-body text-fg" style={{ minHeight: 72 }}>{row.address}</div>
+                          <div className="flex items-center p-[var(--layout-space-tight)] text-body text-fg" style={{ minHeight: 72 }}>{row.email}</div>
+                          <div className="flex items-center p-[var(--layout-space-tight)] text-body text-fg" style={{ minHeight: 72 }}>{row.updatedAt}</div>
                           <div
                             className="flex items-center justify-center gap-[var(--layout-space-tight)] p-[var(--layout-space-tight)] bg-surface group-hover:bg-surface-raised"
-                            style={{
-                              ...STICKY_CELL_BASE,
-                              minHeight: 72,
-                              boxShadow: `-1px 0 0 0 var(--color-border-divider, #e5e7eb)${isLastRow ? '' : ', inset 0 -1px 0 0 var(--color-border-divider, #e5e7eb)'}`,
-                            }}
+                            style={{ position: 'sticky', right: 0, zIndex: 1, minHeight: 72, boxShadow: STICKY_SHADOW(isLastRow) }}
                           >
                             <Button variant="text" size="xs" iconOnly startIcon={Pencil} aria-label="編輯" onClick={() => showToast('notImplemented')} />
                             <Button variant="text" size="xs" iconOnly startIcon={Trash2} aria-label="刪除" onClick={() => deleteRow(row.id)} />
