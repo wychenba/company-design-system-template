@@ -268,49 +268,6 @@ export function IncomeQuestionnaireDialog({
         </DialogHeader>
         <DialogBody>
           <div className="flex flex-col gap-[var(--layout-space-loose)]">
-            {selectedIncomeType ? (
-              <Alert
-                variant={isTBD ? 'info' : isExempt ? 'success' : 'info'}
-                title={isTBD ? '需 TAMD 單位評估' : isExempt ? '不需認列所得' : '需認列所得'}
-                description={
-                  <div className="flex flex-col gap-[var(--layout-space-tight)]">
-                    {hasMultiple && activeNatureOption ? (
-                      <>
-                        <div>
-                          收入類型建議：<span className="font-medium">{activeNatureOption.incomeTypes.map((t) => t.code).join('、')}</span>
-                          ，系統預計推薦 <span className="font-medium">{selectedIncomeType.label}</span>（可前往發票編輯所得類型）。
-                        </div>
-                        <div>備註：請於送出申請單前填寫<span className="text-primary cursor-pointer hover:underline">所得人清單</span></div>
-                      </>
-                    ) : (
-                      <>
-                        <div>推薦收入類型：<span className="font-medium">{selectedIncomeType.label}</span></div>
-                        <div>
-                          所得人清單：
-                          <span className="font-medium">
-                            {isTBD
-                              ? '請依 TAMD 單位評估結果填寫，並附上詢問信件'
-                              : isExempt
-                                ? '無須填寫'
-                                : '請於所得人清單填寫資訊'}
-                          </span>
-                        </div>
-                      </>
-                    )}
-                  </div>
-                }
-              />
-            ) : (
-              <Alert
-                variant="info"
-                title="填寫說明"
-                description={
-                  route === 'gift'
-                    ? '此項屬於禮券 / 禮物，請依贈送類型回答。對應多種收入類別時，將預設顯示最常使用的。'
-                    : '請依實際付款對象與所得性質回答，系統將依此判斷收入類型及代扣稅額。對應多種類別時，將預設顯示最常使用的。'
-                }
-              />
-            )}
 
             {/* Vendor route */}
             {route === 'vendor' && (
@@ -390,6 +347,41 @@ export function IncomeQuestionnaireDialog({
                   ← 重新選擇
                 </button>
               </div>
+            )}
+
+            {/* Result alert — shown at bottom only after last question is answered */}
+            {selectedIncomeType && (
+              <Alert
+                variant={isTBD ? 'info' : isExempt ? 'neutral' : 'info'}
+                title={isTBD ? '需 TAMD 單位評估' : isExempt ? '無需認列所得' : '需認列所得'}
+                description={
+                  <div className="flex flex-col gap-[var(--layout-space-tight)]">
+                    {hasMultiple && activeNatureOption ? (
+                      <>
+                        <div>
+                          收入類型建議：<span className="font-medium">{activeNatureOption.incomeTypes.map((t) => t.code).join('、')}</span>
+                          ，系統預計推薦 <span className="font-medium">{selectedIncomeType.label}</span>（可前往發票編輯所得類型）。
+                        </div>
+                        <div>備註：請於送出申請單前填寫<span className="text-primary cursor-pointer hover:underline">所得人清單</span></div>
+                      </>
+                    ) : (
+                      <>
+                        <div>建議所得類型：<span className="font-medium">{selectedIncomeType.label}</span></div>
+                        <div>
+                          備註：
+                          <span className="font-medium">
+                            {isTBD
+                              ? '請依 TAMD 單位評估結果填寫，並附上詢問信件'
+                              : isExempt
+                                ? '不認列'
+                                : '請於送出申請單後填寫所得人清單'}
+                          </span>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                }
+              />
             )}
           </div>
         </DialogBody>
