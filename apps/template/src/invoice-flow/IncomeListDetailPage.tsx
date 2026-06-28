@@ -321,6 +321,7 @@ export function IncomeListDetailPage({ detail, onBack, onNavigate }: IncomeListD
               onTypeChange={setFormType}
               typeOptions={TYPE_OPTIONS}
               incomeType={detail.incomeType || '50'}
+              onNavigateToDraft={() => { setShowAddDialog(false); onNavigate?.('暫存申請單') }}
             />
           </DialogBody>
           <DialogFooter>
@@ -343,6 +344,7 @@ export function IncomeListDetailPage({ detail, onBack, onNavigate }: IncomeListD
               onTypeChange={setEditFormType}
               typeOptions={TYPE_OPTIONS}
               incomeType={editRow?.incomeType || detail.incomeType || '50'}
+              onNavigateToDraft={() => { setEditRow(null); onNavigate?.('暫存申請單') }}
             />
           </DialogBody>
           <DialogFooter>
@@ -362,13 +364,14 @@ interface PayeeFormData {
 }
 
 function PayeeForm({
-  form, onChange, onTypeChange, typeOptions, incomeType,
+  form, onChange, onTypeChange, typeOptions, incomeType, onNavigateToDraft,
 }: {
   form: PayeeFormData
   onChange: (f: PayeeFormData) => void
   onTypeChange: (t: string) => void
   typeOptions: string[]
   incomeType: string
+  onNavigateToDraft?: () => void
 }) {
   const f = (field: keyof PayeeFormData) => (val: string) => onChange({ ...form, [field]: val })
   const selectOptions = typeOptions.map((o) => ({ value: o, label: o }))
@@ -463,7 +466,17 @@ function PayeeForm({
                   <Info size={14} />
                 </button>
               </TooltipTrigger>
-              <TooltipContent>欲調整收入類型請至暫存申請單編輯申請資訊</TooltipContent>
+              <TooltipContent>
+                欲調整所得類型請至
+                <button
+                  type="button"
+                  className="underline cursor-pointer bg-transparent border-0 p-0 inline"
+                  onClick={onNavigateToDraft}
+                >
+                  暫存申請單
+                </button>
+                編輯申請資訊
+              </TooltipContent>
             </Tooltip>
           </span>
           <span className="text-body text-fg">{incomeType}</span>
