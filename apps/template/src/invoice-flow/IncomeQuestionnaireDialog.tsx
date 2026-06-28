@@ -336,18 +336,24 @@ export function IncomeQuestionnaireDialog({
                     <span>已選：{giftPath.map((p) => GIFT_TREE[p.q].options.find((o) => o.value === p.v)?.label).join(' › ')}</span>
                   </div>
                 )}
-                <Field>
+                <div className="flex flex-col gap-[var(--layout-space-tight)]">
                   <FieldLabel required>{giftPath.length + 1}. {GIFT_TREE[giftCurrentQ].question}</FieldLabel>
                   <RadioGroup
                     value=""
                     onValueChange={(v) => pickGift(giftCurrentQ, v)}
-                    className="flex flex-col gap-[var(--layout-space-tight)]"
+                    className="flex flex-col gap-y-[12px]"
                   >
                     {GIFT_TREE[giftCurrentQ].options.map((o) => (
-                      <RadioGroupItem key={o.value} value={o.value} label={o.label} />
+                      <label
+                        key={o.value}
+                        className="flex flex-col items-start p-[12px] rounded-[4px] border cursor-pointer transition-colors border-border-default hover:bg-surface-raised"
+                        onClick={() => pickGift(giftCurrentQ, o.value)}
+                      >
+                        <RadioGroupItem value={o.value} label={o.label} />
+                      </label>
                     ))}
                   </RadioGroup>
-                </Field>
+                </div>
               </>
             )}
 
