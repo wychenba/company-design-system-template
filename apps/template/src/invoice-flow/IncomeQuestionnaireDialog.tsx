@@ -297,18 +297,29 @@ export function IncomeQuestionnaireDialog({
                 </div>
 
                 {natureOptions.length > 0 && (
-                  <Field>
+                  <div className="flex flex-col gap-[var(--layout-space-tight)]">
                     <FieldLabel required>2. 購買 / 所得性質</FieldLabel>
                     <RadioGroup
                       value={nature}
                       onValueChange={(v) => { setNature(v); setIncomeTypeOverride('') }}
-                      className="flex flex-col gap-[var(--layout-space-tight)]"
+                      className="flex flex-col gap-y-[12px]"
                     >
                       {natureOptions.map((o) => (
-                        <RadioGroupItem key={o.value} value={o.value} label={o.label} />
+                        <label
+                          key={o.value}
+                          className={[
+                            'flex flex-col items-start p-[12px] rounded-[4px] border cursor-pointer transition-colors',
+                            nature === o.value
+                              ? 'border-primary'
+                              : 'border-border-default hover:bg-surface-raised',
+                          ].join(' ')}
+                          onClick={() => { setNature(o.value); setIncomeTypeOverride('') }}
+                        >
+                          <RadioGroupItem value={o.value} label={o.label} />
+                        </label>
                       ))}
                     </RadioGroup>
-                  </Field>
+                  </div>
                 )}
               </>
             )}
