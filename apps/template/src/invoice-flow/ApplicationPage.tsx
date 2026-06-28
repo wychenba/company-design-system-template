@@ -577,6 +577,24 @@ export function ApplicationPage({ onBack, initialData, onGoToIncomeList, onNavig
                             <span>收款人：{inv.payee}｜日期：{inv.date}</span>
                             <span>｜所得判斷：</span>
                             <IncomeStatusBadge status={inv.incomeStatus} />
+                            {inv.incomeStatus === 'unfilled' && (
+                              <button
+                                type="button"
+                                className="text-caption text-primary hover:underline cursor-pointer bg-transparent border-0 p-0"
+                                onClick={() => setQuestionnaireInvoiceId(inv.id)}
+                              >
+                                填寫問券
+                              </button>
+                            )}
+                            {inv.incomeStatus === 'filled' && (
+                              <button
+                                type="button"
+                                className="text-caption text-primary hover:underline cursor-pointer bg-transparent border-0 p-0"
+                                onClick={() => setQuestionnaireInvoiceId(inv.id)}
+                              >
+                                編輯問券
+                              </button>
+                            )}
                           </div>
                         </div>
                         <div className="flex items-center gap-[var(--layout-space-tight)] shrink-0">
@@ -618,16 +636,7 @@ export function ApplicationPage({ onBack, initialData, onGoToIncomeList, onNavig
                                 key: 'income',
                                 label: '收入類型',
                                 value: inv.incomeStatus === 'filled' && inv.incomeType ? (
-                                  <span className="flex items-center gap-[var(--layout-space-tight)]">
-                                    <span className="text-body text-fg">{inv.incomeType}</span>
-                                    <button
-                                      type="button"
-                                      className="text-body text-primary hover:underline"
-                                      onClick={() => setQuestionnaireInvoiceId(inv.id)}
-                                    >
-                                      編輯問券
-                                    </button>
-                                  </span>
+                                  <span className="text-body text-fg">{inv.incomeType}</span>
                                 ) : (
                                   <span className="text-body text-fg-secondary">—</span>
                                 ),
@@ -641,21 +650,6 @@ export function ApplicationPage({ onBack, initialData, onGoToIncomeList, onNavig
                             ))}
                           </div>
 
-                          {/* Income questionnaire alert (only when unfilled) */}
-                          {inv.incomeStatus === 'unfilled' && (
-                            <div className="px-[var(--layout-space-tight)] pt-[var(--layout-space-tight)]">
-                              <Alert
-                                variant="warning"
-                                title="所得問券待填寫"
-                                description="此發票須完成所得判斷，請填寫問券確認收入類型是否需要認列。"
-                                endContent={
-                                  <Button variant="tertiary" size="sm" onClick={() => setQuestionnaireInvoiceId(inv.id)}>
-                                    填寫問券
-                                  </Button>
-                                }
-                              />
-                            </div>
-                          )}
 
                           {/* Line items section */}
                           <div className="bg-surface-sunken p-[var(--layout-space-tight)]">
