@@ -121,7 +121,7 @@ function IncomeStatusBadge({ status }: { status: IncomeStatus }) {
     return <Tag color="green" size="sm" icon={CheckCircle2}>已認列所得</Tag>
   }
   if (status === 'unfilled') {
-    return <Tag color="yellow" size="sm" icon={AlertTriangle}>未填寫問券</Tag>
+    return <Tag color="yellow" size="sm" icon={AlertTriangle} />
   }
   return <Tag color="neutral" size="sm">不需填寫</Tag>
 }
