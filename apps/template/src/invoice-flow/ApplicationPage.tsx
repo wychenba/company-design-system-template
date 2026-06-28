@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import {
-  Button, Field, FieldLabel, Input, Select, Textarea, Alert, Checkbox, Tag, Empty,
+  Button, Field, FieldLabel, Input, Select, Textarea, Alert, Checkbox, Tag, Empty, Tooltip, TooltipTrigger, TooltipContent,
 } from '@qijenchen/design-system'
-import { Plus, ArrowUpFromLine, Calendar, Pencil, Copy, Trash2, ChevronDown, ChevronUp, AlignLeft, Paperclip, AlertTriangle, CheckCircle2 } from 'lucide-react'
+import { Plus, ArrowUpFromLine, Calendar, Pencil, Copy, Trash2, ChevronDown, ChevronUp, AlignLeft, Paperclip, AlertTriangle, CheckCircle2, Info } from 'lucide-react'
 import { AppLayout } from './AppLayout'
 import { AddInvoiceDialog, VOUCHER_TYPES, type NewInvoiceData } from './AddInvoiceDialog'
 import { EditInvoiceDialog } from './EditInvoiceDialog'
@@ -121,7 +121,7 @@ function IncomeStatusBadge({ status }: { status: IncomeStatus }) {
     return <CheckCircle2 size={16} className="text-success shrink-0" />
   }
   if (status === 'unfilled') {
-    return <Tag color="yellow" size="sm" icon={AlertTriangle} />
+    return <AlertTriangle size={16} className="text-warning shrink-0" />
   }
   return <Tag color="neutral" size="sm">不需填寫</Tag>
 }
@@ -634,7 +634,19 @@ export function ApplicationPage({ onBack, initialData, onGoToIncomeList, onNavig
                               { key: 'tax', label: '稅額', value: <span className="text-body text-fg">{inv.taxAmount}</span> },
                               {
                                 key: 'income',
-                                label: '所得類型',
+                                label: (
+                                  <span className="flex items-center gap-[4px]">
+                                    <span>所得類型</span>
+                                    <Tooltip>
+                                      <TooltipTrigger asChild>
+                                        <button type="button" className="inline-flex items-center text-fg-secondary hover:text-fg bg-transparent border-0 p-0 cursor-help" aria-label="所得類型說明">
+                                          <Info size={12} />
+                                        </button>
+                                      </TooltipTrigger>
+                                      <TooltipContent>所得類型依照所得問券判斷</TooltipContent>
+                                    </Tooltip>
+                                  </span>
+                                ),
                                 value: inv.incomeStatus === 'filled' && inv.incomeType ? (
                                   <span className="text-body text-fg">{inv.incomeType}</span>
                                 ) : (
