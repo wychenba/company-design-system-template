@@ -1,9 +1,9 @@
 import { useState } from 'react'
 import {
   Dialog, DialogTrigger, DialogContent, DialogHeader, DialogBody, DialogFooter, DialogTitle,
-  Button, Textarea,
+  Button, Textarea, Tooltip, TooltipTrigger, TooltipContent,
 } from '@qijenchen/design-system'
-import { ChevronDown, FileText, Plus, GripVertical, Trash2 } from 'lucide-react'
+import { ChevronDown, FileText, Plus, GripVertical, Trash2, Info } from 'lucide-react'
 import { showToast } from './useToast'
 import type { ReactNode } from 'react'
 
@@ -150,7 +150,6 @@ function InvoiceItemRow({ inv }: { inv: InvoiceRow }) {
               { label: '發票號碼', value: inv.voucherNumber || '-' },
               { label: '合計金額（未稅）', value: `TWD ${inv.amount.toLocaleString()}` },
               { label: '稅額', value: String(inv.taxAmount) },
-              { label: '所得類型', value: '50' },
             ].map((cell, i) => (
               <div
                 key={i}
@@ -161,6 +160,23 @@ function InvoiceItemRow({ inv }: { inv: InvoiceRow }) {
                 <span className="text-body font-medium text-fg">{cell.value}</span>
               </div>
             ))}
+            <div
+              className="flex-1 flex flex-col pl-[var(--layout-space-loose)] border-l border-divider ml-[var(--layout-space-loose)]"
+              style={{ gap: 4 /* @layout-space-magic-ok: intra-element label/value micro-stack */ }}
+            >
+              <span className="text-caption text-fg-secondary flex items-center gap-[4px]">
+                <span>所得類型</span>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button type="button" className="inline-flex items-center text-fg-secondary hover:text-fg bg-transparent border-0 p-0 cursor-help" aria-label="所得類型說明">
+                      <Info size={14} />
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent>所得類型依照所得問券判斷</TooltipContent>
+                </Tooltip>
+              </span>
+              <span className="text-body font-medium text-fg">50</span>
+            </div>
           </div>
 
           {/* Line items label */}
