@@ -118,7 +118,7 @@ function CardTitle({ children }: { children: React.ReactNode }) {
 
 function IncomeStatusBadge({ status }: { status: IncomeStatus }) {
   if (status === 'filled') {
-    return <Tag color="green" size="sm" icon={CheckCircle2}>已認列所得</Tag>
+    return <CheckCircle2 size={16} className="text-success shrink-0" />
   }
   if (status === 'unfilled') {
     return <Tag color="yellow" size="sm" icon={AlertTriangle} />
