@@ -183,7 +183,7 @@ export function EditInvoiceDialog({ trigger, payeeType = 'employee', initialData
               <>
                 <div className="grid grid-cols-2 gap-[var(--layout-space-loose)]">
                   <Field>
-                    <FieldLabel>收入類型&nbsp;<InfoIcon tip="所得類型代碼" /></FieldLabel>
+                    <FieldLabel>所得類型&nbsp;<InfoIcon tip="所得類型代碼" /></FieldLabel>
                     <Input placeholder="" />
                   </Field>
                   <Field>

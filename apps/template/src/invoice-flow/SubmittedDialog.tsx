@@ -150,7 +150,7 @@ function InvoiceItemRow({ inv }: { inv: InvoiceRow }) {
               { label: '發票號碼', value: inv.voucherNumber || '-' },
               { label: '合計金額（未稅）', value: `TWD ${inv.amount.toLocaleString()}` },
               { label: '稅額', value: String(inv.taxAmount) },
-              { label: '收入類型', value: '50' },
+              { label: '所得類型', value: '50' },
             ].map((cell, i) => (
               <div
                 key={i}

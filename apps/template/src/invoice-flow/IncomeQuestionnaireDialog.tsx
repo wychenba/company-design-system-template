@@ -359,7 +359,7 @@ export function IncomeQuestionnaireDialog({
                     {hasMultiple && activeNatureOption ? (
                       <>
                         <div>
-                          收入類型建議：<span className="font-medium">{activeNatureOption.incomeTypes.map((t) => t.code).join('、')}</span>
+                          所得類型建議：<span className="font-medium">{activeNatureOption.incomeTypes.map((t) => t.code).join('、')}</span>
                           ，系統預計推薦 <span className="font-medium">{selectedIncomeType.label}</span>（可前往發票編輯所得類型）。
                         </div>
                         <div>備註：請於送出申請單前填寫<span className="text-primary cursor-pointer hover:underline">所得人清單</span></div>

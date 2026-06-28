@@ -240,7 +240,7 @@ export function IncomeListDetailPage({ detail, onBack, onNavigate }: IncomeListD
                       <div className="p-[var(--layout-space-tight)] text-body text-fg">受益人姓名<br />受益人 ID</div>
                       <div className="p-[var(--layout-space-tight)] text-body text-fg">金額</div>
                       <div className="p-[var(--layout-space-tight)] text-body text-fg">幣別</div>
-                      <div className="p-[var(--layout-space-tight)] text-body text-fg">收入類型</div>
+                      <div className="p-[var(--layout-space-tight)] text-body text-fg">所得類型</div>
                       <div className="p-[var(--layout-space-tight)] text-body text-fg">代扣稅率</div>
                       <div className="p-[var(--layout-space-tight)] text-body text-fg">代扣金額</div>
                       <div className="p-[var(--layout-space-tight)] text-body text-fg">二代健保</div>
@@ -459,10 +459,10 @@ function PayeeForm({
         <div className="w-px bg-divider" />
         <div className="flex-1 flex flex-col gap-[4px]">
           <span className="text-caption text-fg-secondary flex items-center gap-[4px]">
-            <span>收入類型</span>
+            <span>所得類型</span>
             <Tooltip>
               <TooltipTrigger asChild>
-                <button type="button" className="inline-flex items-center text-fg-secondary hover:text-fg bg-transparent border-0 p-0 cursor-help" aria-label="收入類型 說明">
+                <button type="button" className="inline-flex items-center text-fg-secondary hover:text-fg bg-transparent border-0 p-0 cursor-help" aria-label="所得類型 說明">
                   <Info size={14} />
                 </button>
               </TooltipTrigger>

@@ -79,7 +79,7 @@ export interface InvoiceRow {
 
 // Categories that do NOT require income questionnaire (small office supplies,
 // internal training, etc). Anything else needs the questionnaire to determine
-// 收入類型 / 所得認列.
+// 所得類型 / 所得認列.
 
 function deriveIncomeRequirement(items: PaymentItem[]): IncomeStatus {
   if (items.length === 0) return 'notRequired'
@@ -634,7 +634,7 @@ export function ApplicationPage({ onBack, initialData, onGoToIncomeList, onNavig
                               { key: 'tax', label: '稅額', value: <span className="text-body text-fg">{inv.taxAmount}</span> },
                               {
                                 key: 'income',
-                                label: '收入類型',
+                                label: '所得類型',
                                 value: inv.incomeStatus === 'filled' && inv.incomeType ? (
                                   <span className="text-body text-fg">{inv.incomeType}</span>
                                 ) : (
