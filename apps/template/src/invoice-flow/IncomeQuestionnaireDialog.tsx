@@ -277,15 +277,15 @@ export function IncomeQuestionnaireDialog({
                   <RadioGroup
                     value={payeeKind}
                     onValueChange={(v) => { setPayeeKind(v); setNature(''); setIncomeTypeOverride('') }}
-                    className="grid grid-cols-2 gap-[var(--layout-space-tight)]"
+                    className="grid grid-cols-2 gap-x-[8px] gap-y-[12px]"
                   >
                     {PAYEE_OPTIONS.map((o) => (
                       <label
                         key={o.value}
                         className={[
-                          'flex items-center gap-[var(--layout-space-tight)] px-[12px] py-[12px] rounded border cursor-pointer transition-colors',
+                          'flex flex-col items-start p-[12px] rounded-[4px] border cursor-pointer transition-colors',
                           payeeKind === o.value
-                            ? 'border-primary bg-transparent'
+                            ? 'border-primary'
                             : 'border-border-default hover:bg-surface-raised',
                         ].join(' ')}
                         onClick={() => { setPayeeKind(o.value); setNature(''); setIncomeTypeOverride('') }}
